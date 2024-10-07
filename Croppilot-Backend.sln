@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Croppilot.Core", "Croppilot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Croppilot.Date", "Croppilot.Date\Croppilot.Date.csproj", "{B874749F-DF2F-4300-9A48-54C9122C5642}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Croppilot.Services", "Croppilot.Services\Croppilot.Services.csproj", "{DAC976D4-A77B-4524-9373-8039E71B1CF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B874749F-DF2F-4300-9A48-54C9122C5642}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B874749F-DF2F-4300-9A48-54C9122C5642}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B874749F-DF2F-4300-9A48-54C9122C5642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAC976D4-A77B-4524-9373-8039E71B1CF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAC976D4-A77B-4524-9373-8039E71B1CF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAC976D4-A77B-4524-9373-8039E71B1CF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAC976D4-A77B-4524-9373-8039E71B1CF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
