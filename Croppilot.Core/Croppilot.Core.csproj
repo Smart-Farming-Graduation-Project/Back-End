@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Croppilot.Date\Croppilot.Date.csproj" />
+  </ItemGroup>
+
 </Project>

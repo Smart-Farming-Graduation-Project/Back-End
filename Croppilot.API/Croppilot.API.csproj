@@ -11,4 +11,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Croppilot.Core\Croppilot.Core.csproj" />
+    <ProjectReference Include="..\Croppilot.Infrastructure\Croppilot.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
