@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Croppilot.Core\Croppilot.Core.csproj" />
+    <ProjectReference Include="..\Croppilot.Date\Croppilot.Date.csproj" />
   </ItemGroup>
 
 </Project>
