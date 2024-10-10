@@ -27,7 +27,7 @@ def custom_assignee_name(assignee):
     return assignee
 
 # Function to update an existing row or append new data if not found
-def update_google_sheet(ID, Task Name, Assigned Member, Assigned Date, Deadline, Date Completed, Status, Task Quality, Comments):
+def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline, Date_Completed, Status, Task_Quality, Comments):
     SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  # Replace with your Google Sheet ID
     RANGE_NAME = "Web!A:I"  
     service = get_sheets_service()
