@@ -24,7 +24,7 @@ jobs:
 
       - name: Update Google Sheet
         run: |
-          python update_google_sheet.py "${{ github.event.issue.title }}" "${{ github.event.issue.body }}" "${{ github.event.issue.state }}"
+          python .github/workflows/update_google_sheet.py "${{ github.event.issue.title }}" "${{ github.event.issue.body }}" "${{ github.event.issue.state }}"
           
         env:
           GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEET_CREDENTIALS }}
