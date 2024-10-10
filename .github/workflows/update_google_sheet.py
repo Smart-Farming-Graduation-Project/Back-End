@@ -1,6 +1,7 @@
 import os
 import json
 import sys
+from datetime import datetime
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 
@@ -9,6 +10,23 @@ def get_sheets_service():
     creds_dict = json.loads(os.getenv('GOOGLE_SHEETS_CREDENTIALS'))
     creds = Credentials.from_service_account_info(creds_dict, scopes=["https://www.googleapis.com/auth/spreadsheets"])
     return build('sheets', 'v4', credentials=creds)
+
+# Function to format ISO date to "10 Oct 24"
+def format_date(iso_date):
+    if not iso_date or iso_date == 'N/A':
+        return 'N/A'
+    # Parse the ISO date and format it
+    parsed_date = datetime.strptime(iso_date, '%Y-%m-%dT%H:%M:%SZ')
+    return parsed_date.strftime('%d %b %y')  # Converts to '10 Oct 24'
+# Function to map assignee GitHub username to custom names
+def custom_assignee_name(assignee):
+    if assignee == 'Mohamedzonkol':
+        return 'Zonkol'
+    elif assignee == 'redaelsayed':
+        return 'reda'
+    # Default case, if no specific mapping is needed
+    return assignee
+
 
 # Function to update an existing row or append new data if not found
 def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assignee, created_at, closed_at):
@@ -25,10 +43,12 @@ def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assi
     for i, row in enumerate(values):
         if row[0] == issue_number:  # Assuming the issue number is in column A
             issue_row = i + 1  # Sheet rows are 1-indexed
-
+  # Format dates and assignee
+    formatted_created_at = format_date(created_at)
+    formatted_closed_at = format_date(closed_at)
+    custom_assignee = custom_assignee_name(assignee)
     # Prepare data to insert/update
-    row_data = [issue_number, issue_title, issue_body, issue_state, assignee, created_at, closed_at]
-
+    row_data = [issue_number, issue_title, issue_body, issue_state, custom_assignee, formatted_created_at, formatted_closed_at]
     if issue_row:
         # Update the existing row
         range_to_update = f"Sheet1!A{issue_row}:G{issue_row}"
