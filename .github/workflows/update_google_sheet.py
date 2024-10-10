@@ -21,17 +21,17 @@ def format_date(iso_date):
 # Function to map assignee GitHub username to custom names
 def custom_assignee_name(assignee):
     if assignee == 'Mohamedzonkol':
-        return 'Zonkol'
+        return 'Mohamed Elsayed'
     elif assignee == 'redaelsayed':
-        return 'reda'
+        return 'Reda Elsayed'
     # Default case, if no specific mapping is needed
     return assignee
 
 
 # Function to update an existing row or append new data if not found
 def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assignee, created_at, closed_at):
-    SPREADSHEET_ID = "1atfohlYVp6LcswuRapXt6Xf5GJmEH2OXo8mESezyPQc"  # Replace with your Google Sheet ID
-    RANGE_NAME = "Sheet1!A:H"  # Modify this based on your column structure
+    SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  
+    RANGE_NAME = "Sheet1!A:I"  
     service = get_sheets_service()
 
     # Fetch current data from the sheet
@@ -47,11 +47,22 @@ def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assi
     formatted_created_at = format_date(created_at)
     formatted_closed_at = format_date(closed_at)
     custom_assignee = custom_assignee_name(assignee)
+    status = 'Done' if issue_state == 'closed' else 'In Progress'
     # Prepare data to insert/update
-    row_data = [issue_number, issue_title, issue_body, issue_state, custom_assignee, formatted_created_at, formatted_closed_at]
-    if issue_row:
+   row_data = [
+        issue_number,               # TaskId
+        issue_title,                # Task Name
+        custom_assignee,            # Assigned Member
+        formatted_assigned_date,    # Assigned Date
+        'N/A',                      # Deadline (You can set this manually)
+        formatted_closed_at,        # Date Completed
+        status,                     # Status
+        0,                          # Task Quality (1-5), default to 0
+        issue_link                  # Comments (link to issue)
+    ]
+  if issue_row:
         # Update the existing row
-        range_to_update = f"Sheet1!A{issue_row}:G{issue_row}"
+        range_to_update = f"Sheet1!A{issue_row}:I{issue_row}"
         body = {
             'values': [row_data]
         }
@@ -70,12 +81,16 @@ def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assi
         print(f"Issue {issue_number} appended to the sheet.")
 
 if __name__ == "__main__":
-    issue_number = sys.argv[1]
-    issue_title = sys.argv[2]
-    issue_body = sys.argv[3]
-    issue_state = sys.argv[4]
-    assignee = sys.argv[5] or 'Unassigned'
-    created_at = sys.argv[6]
-    closed_at = sys.argv[7] or 'N/A'
+    issue_number = sys.argv[1]  # TaskId
+    issue_title = sys.argv[2]   # Task Name
+    issue_state = sys.argv[3]   # Status (open/closed)
+    assignee = sys.argv[4] or 'Unassigned'  # Assigned Member
+    assigned_date = sys.argv[5]  # Assigned Date
+    closed_at = sys.argv[6] or 'N/A'  # Date Completed
+    repo_owner = sys.argv[7]
+    repo_name = sys.argv[8]
 
-    update_google_sheet(issue_number, issue_title, issue_body, issue_state, assignee, created_at, closed_at)
+    # Construct the issue link
+    issue_link = f"https://github.com/{repo_owner}/{repo_name}/issues/{issue_number}"
+
+    update_google_sheet(issue_number, issue_title, assignee, assigned_date, closed_at, issue_state, issue_link)
