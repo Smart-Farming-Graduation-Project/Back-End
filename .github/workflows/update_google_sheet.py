@@ -18,6 +18,7 @@ def format_date(iso_date):
     # Parse the ISO date and format it
     parsed_date = datetime.strptime(iso_date, '%Y-%m-%dT%H:%M:%SZ')
     return parsed_date.strftime('%d %b %y')  # Converts to '10 Oct 24'
+    
 # Function to map assignee GitHub username to custom names
 def custom_assignee_name(assignee):
     if assignee == 'Mohamedzonkol':
@@ -30,7 +31,7 @@ def custom_assignee_name(assignee):
 
 # Function to update an existing row or append new data if not found
 def update_google_sheet(issue_number, issue_title, assignee, assigned_date, closed_at, issue_state, issue_link):
-    SPREADSHEET_ID = "your-spreadsheet-id"  # Replace with your Google Sheet ID
+    SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  # Replace with your Google Sheet ID
     RANGE_NAME = "Sheet1!A:I"  # Modify this based on your column structure
     service = get_sheets_service()
 
