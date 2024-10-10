@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test Access to Google Sheets
-        uses: ViRGiL175/github-project-issue-to-sheets@v1
+        uses: ViRGiL175/github-project-issue-to-sheets@dev
         with:
           google-api-service-account-credentials: ${{ secrets.GOOGLE_SHEET_CREDENTIALS }}
           document-id: '1atfohlYVp6LcswuRapXt6Xf5GJmEH2OXo8mESezyPQc'
