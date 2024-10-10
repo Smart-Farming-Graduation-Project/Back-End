@@ -80,13 +80,13 @@ if __name__ == "__main__":
     # Read arguments from the command line
     ID = sys.argv[1]
     Task_Name = sys.argv[2]
-    Assigned_Member = sys.argv[3]
+    Assigned_Member = sys.argv[3] or 'Unassigned'
     Assigned_Date = sys.argv[4]
     Deadline = sys.argv[5]
     Date_Completed = sys.argv[6] or 'N/A'
     Status = sys.argv[7]
     Task_Quality = sys.argv[8]
-    Comments = sys.argv[9]
+    Comments = f"https://github.com/{repo_owner}/{repo_name}/issues/{issue_number}"f"https://github.com/{repo_owner}/{repo_name}/issues/{issue_number}"
 
     # Call the function to update or append the Google Sheet
     update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline, Date_Completed, Status, Task_Quality, Comments)
