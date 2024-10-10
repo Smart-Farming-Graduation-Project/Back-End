@@ -27,60 +27,72 @@ def custom_assignee_name(assignee):
     return assignee
 
 # Function to update an existing row or append new data if not found
-def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assignee, created_at, closed_at, issue_link):
+def update_google_sheet(ID, Task Name, Assigned Member, Assigned Date, Deadline, Date Completed, Status, Task Quality, Comments):
     SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  # Replace with your Google Sheet ID
-    RANGE_NAME = "Web!A:H"  # Modify this based on your column structure
+    RANGE_NAME = "Web!A:I"  
     service = get_sheets_service()
 
     # Fetch current data from the sheet
     result = service.spreadsheets().values().get(spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME).execute()
     values = result.get('values', [])
 
-    issue_row = None
+    # Check if the task ID already exists in the sheet
+    task_row = None
     for i, row in enumerate(values):
-        if len(row) > 0 and row[0] == issue_number:  # Ensure the row has content before checking
-            issue_row = i + 1  # Sheet rows are 1-indexed
+        if len(row) > 0 and row[0] == ID:  # Ensure the row has content before checking
+            task_row = i + 1  # Google Sheets rows are 1-indexed
+            
+    # # Format dates and assignee
+    # formatted_created_at = format_date(created_at)
+    # formatted_closed_at = format_date(closed_at)
+    # custom_assignee = custom_assignee_name(assignee)
 
-    # Format dates and assignee
-    formatted_created_at = format_date(created_at)
-    formatted_closed_at = format_date(closed_at)
-    custom_assignee = custom_assignee_name(assignee)
+    # Prepare data to insert/update
+    row_data = [
+        ID,                 # Task ID
+        Task_Name,          # Task Name
+        Assigned_Member,    # Assigned Member
+        Assigned_Date,      # Assigned Date
+        Deadline,           # Deadline
+        Date_Completed,     # Date Completed
+        Status,             # Task Status (Open/Closed)
+        Task_Quality,       # Task Quality (if applicable)
+        Comments            # Comments
+    ]
 
-    # Prepare data to insert/update, including the issue link
-    row_data = [issue_number, issue_title, issue_body, issue_state, custom_assignee, formatted_created_at, formatted_closed_at, issue_link]
-
-    if issue_row:
+      if task_row:
         # Update the existing row
-        range_to_update = f"Sheet1!A{issue_row}:H{issue_row}"
+        range_to_update = f"Web!A{task_row}:I{task_row}"
         body = {
             'values': [row_data]
         }
         service.spreadsheets().values().update(
             spreadsheetId=SPREADSHEET_ID, range=range_to_update,
             valueInputOption="RAW", body=body).execute()
-        print(f"Issue {issue_number} updated in row {issue_row}.")
+        print(f"Task {ID} updated in row {task_row}.")
     else:
-        # Append new data if the issue does not exist
+        # Append new data if the task does not exist
         body = {
             'values': [row_data]
         }
         service.spreadsheets().values().append(
             spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME,
             valueInputOption="RAW", insertDataOption="INSERT_ROWS", body=body).execute()
-        print(f"Issue {issue_number} appended to the sheet.")
+        print(f"Task {ID} appended to the sheet.")
 
 if __name__ == "__main__":
-    issue_number = sys.argv[1]
-    issue_title = sys.argv[2]
-    issue_body = sys.argv[3]
-    issue_state = sys.argv[4]
-    assignee = sys.argv[5] or 'Unassigned'
-    created_at = sys.argv[6]
-    closed_at = sys.argv[7] or 'N/A'
-    repo_owner = sys.argv[8]
-    repo_name = sys.argv[9]
+    # Read arguments from the command line
+    ID = sys.argv[1]
+    Task_Name = sys.argv[2]
+    Assigned_Member = sys.argv[3]
+    Assigned_Date = sys.argv[4]
+    Deadline = sys.argv[5]
+    Date_Completed = sys.argv[6] or 'N/A'
+    Status = sys.argv[7]
+    Task_Quality = sys.argv[8]
+    Comments = sys.argv[9]
 
-    # Construct the issue link
-    issue_link = f"https://github.com/{repo_owner}/{repo_name}/issues/{issue_number}"
+    # Call the function to update or append the Google Sheet
+    update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline, Date_Completed, Status, Task_Quality, Comments)
 
-    update_google_sheet(issue_number, issue_title, issue_body, issue_state, assignee, created_at, closed_at, issue_link)
+
