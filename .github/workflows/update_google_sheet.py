@@ -36,10 +36,9 @@ def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assi
     result = service.spreadsheets().values().get(spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME).execute()
     values = result.get('values', [])
 
-    # Check if the issue already exists in the sheet based on the issue number
     issue_row = None
     for i, row in enumerate(values):
-        if row[0] == issue_number:  # Assuming the issue number is in column A
+        if len(row) > 0 and row[0] == issue_number:  # Ensure the row has content before checking
             issue_row = i + 1  # Sheet rows are 1-indexed
 
     # Format dates and assignee
