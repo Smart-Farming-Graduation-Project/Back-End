@@ -62,11 +62,12 @@ def update_google_sheet(issue_number, issue_title, assignee, assigned_date, clos
         issue_link                  # Comments (link to issue)
     ]
 
-    # Check if the issue already exists in the sheet
-    issue_row = None
+ issue_row = None
     for i, row in enumerate(values, start=1):  # Start from 1 to match Google Sheets row index
-        if str(row[2]) == str(issue_number):
+        # Ensure the row has at least 3 columns before accessing row[2]
+        if len(row) > 2 and str(row[2]) == str(issue_number):
             issue_row = i + 1  # Google Sheets is 1-indexed, so add 1 to match
+
 
     if issue_row:
         # Update the existing row
