@@ -34,7 +34,6 @@ def custom_assignee_name(assignee):
     return assignee
 
 
-# Function to update an existing row or append new data if not found
 def update_google_sheet(issue_number, issue_title, assignee, assigned_date, closed_at, issue_state, issue_link):
     SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  # Replace with your Google Sheet ID
     RANGE_NAME = "Web!A:J"  # Modify this based on your column structure
@@ -44,14 +43,13 @@ def update_google_sheet(issue_number, issue_title, assignee, assigned_date, clos
     result = service.spreadsheets().values().get(spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME).execute()
     values = result.get('values', [])
 
-
     # Format dates and assignee
     formatted_assigned_date = format_date(assigned_date)
     formatted_closed_at = format_date(closed_at)
     custom_assignee = custom_assignee_name(assignee)
     status = 'Closed' if issue_state == 'closed' else 'Open'
 
-    # Prepare data to insert/update, including TaskId, Task Name, Assigned Member, etc.
+    # Prepare data to insert/update
     row_data = [
         issue_number,               # TaskId
         issue_title,                # Task Name
@@ -64,9 +62,15 @@ def update_google_sheet(issue_number, issue_title, assignee, assigned_date, clos
         issue_link                  # Comments (link to issue)
     ]
 
+    # Check if the issue already exists in the sheet
+    issue_row = None
+    for i, row in enumerate(values, start=1):  # Start from 1 to match Google Sheets row index
+        if str(row[0]) == str(issue_number):
+            issue_row = i + 1  # Google Sheets is 1-indexed, so add 1 to match
+
     if issue_row:
         # Update the existing row
-        range_to_update = f"Sheet1!A{issue_row}:I{issue_row}"
+        range_to_update = f"Web!A{issue_row}:I{issue_row}"
         body = {
             'values': [row_data]
         }
