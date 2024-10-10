@@ -32,7 +32,7 @@ def custom_assignee_name(assignee):
 # Function to update an existing row or append new data if not found
 def update_google_sheet(issue_number, issue_title, assignee, assigned_date, closed_at, issue_state, issue_link):
     SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  # Replace with your Google Sheet ID
-    RANGE_NAME = "Web!A:I"  # Modify this based on your column structure
+    RANGE_NAME = "Web!A:J"  # Modify this based on your column structure
     service = get_sheets_service()
 
     # Fetch current data from the sheet
