@@ -18,6 +18,22 @@ def format_date(iso_date):
     parsed_date = datetime.strptime(iso_date, '%Y-%m-%dT%H:%M:%SZ')
     return parsed_date.strftime('%d %b %y')
 
+
+# Function to map assignee GitHub username to custom names
+def custom_assignee_name(assignee):
+    if assignee == 'Mohamedzonkol':
+        return 'Zonkol'
+    elif assignee == 'redaelsayed':
+        return 'reda'
+    return assignee
+# Function to handle assignee, fall back to 'Unassigned' if empty
+def custom_assignee(assignee):
+    if assignee == 'Mohamedzonkol':
+        return 'Mohamed Elsayed'
+    elif assignee == 'redaelsayed':
+        return 'reda'
+    return assignee
+
 # Function to update an existing row or append new data if not found
 def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline, Date_Completed, Status, Task_Quality, Comments):
     SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  # Replace with your Google Sheet ID
@@ -76,10 +92,10 @@ if __name__ == "__main__":
 
     ID = sys.argv[1]  # Issue number
     Task_Name = sys.argv[2]  # Issue title
-    Assigned_Member = sys.argv[5] or 'Unassigned'  # Assignee login or 'Unassigned'
-    Assigned_Date = sys.argv[6]  # Created date
+    Assigned_Member = custom_assignee(sys.argv[5])  # Use the custom assignee function
+    Assigned_Date = format_date(sys.argv[6])  # Use the format_date function
     Deadline = 'N/A'  # No deadline provided in the workflow
-    Date_Completed = sys.argv[7] if len(sys.argv) > 7 else 'N/A'  # Closed date
+    Date_Completed = format_date(sys.argv[7]) if len(sys.argv) > 7 else 'N/A'  # Use format_date for completed date
     Status = sys.argv[4]  # Issue state (open/closed)
     Task_Quality = 5  # Fixed value, no input for task quality
     repo_owner = sys.argv[8]  # Repository owner
