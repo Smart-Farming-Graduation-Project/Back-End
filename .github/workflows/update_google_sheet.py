@@ -33,7 +33,7 @@ def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline,
     for i, row in enumerate(values):
         if len(row) > 0 and row[0] == ID:  # Ensure the row has content before checking
             task_row = i + 1  # Google Sheets rows are 1-indexed
-            
+
     # Prepare data to insert/update
     row_data = [
         ID,                 # Task ID
@@ -70,22 +70,21 @@ def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline,
 
 if __name__ == "__main__":
     # Check if enough arguments are provided
-    if len(sys.argv) < 12:
+    if len(sys.argv) < 11:
         print("Error: Missing arguments. Ensure all required arguments are passed.")
         sys.exit(1)
 
     # Read arguments from the command line
     ID = sys.argv[1]
     Task_Name = sys.argv[2]
-    Assigned_Member = sys.argv[5] or'Unassigned'  
-    Assigned_Date = sys.argv[5] if len(sys.argv) > 4 else 'N/A'
-    Deadline = 'N/A'
-    Date_Completed = sys.argv[6] if len(sys.argv) > 6 else 'N/A'
+    Assigned_Member = sys.argv[5] or 'Unassigned'
+    Assigned_Date = sys.argv[6] if len(sys.argv) > 5 else 'N/A'
+    Deadline = sys.argv[7] if len(sys.argv) > 6 else 'N/A'
+    Date_Completed = sys.argv[8] if len(sys.argv) > 7 else 'N/A'
     Status = sys.argv[4]
-    Task_Quality = 5
-    repo_owner = sys.argv[8]
-    repo_name = sys.argv[9]
-
+    Task_Quality = 5  # Use a default quality rating
+    repo_owner = sys.argv[9]
+    repo_name = sys.argv[10]
 
     # Construct the GitHub issue URL for comments
     Comments = f"https://github.com/{repo_owner}/{repo_name}/issues/{ID}"
