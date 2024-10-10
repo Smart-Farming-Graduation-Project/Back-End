@@ -65,7 +65,7 @@ def update_google_sheet(issue_number, issue_title, assignee, assigned_date, clos
  issue_row = None
     for i, row in enumerate(values, start=1):  # Start from 1 to match Google Sheets row index
         # Ensure the row has at least 3 columns before accessing row[2]
-        if len(row) > 2 and str(row[2]) == str(issue_number):
+        if len(row) > 1 and str(row[1) == str(issue_number):
             issue_row = i + 1  # Google Sheets is 1-indexed, so add 1 to match
 
 
