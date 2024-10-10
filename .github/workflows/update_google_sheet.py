@@ -18,14 +18,6 @@ def format_date(iso_date):
     parsed_date = datetime.strptime(iso_date, '%Y-%m-%dT%H:%M:%SZ')
     return parsed_date.strftime('%d %b %y')
 
-# Function to map assignee GitHub username to custom names
-def custom_assignee_name(assignee):
-    if assignee == 'Mohamedzonkol':
-        return 'Zonkol'
-    elif assignee == 'redaelsayed':
-        return 'reda'
-    return assignee
-
 # Function to update an existing row or append new data if not found
 def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline, Date_Completed, Status, Task_Quality, Comments):
     SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  # Replace with your Google Sheet ID
@@ -52,7 +44,7 @@ def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline,
         Date_Completed,     # Date Completed
         Status,             # Task Status (Open/Closed)
         Task_Quality,       # Task Quality (if applicable)
-        Comments            # Comments
+        Comments            # Comments (GitHub URL)
     ]
 
     if task_row:
@@ -86,7 +78,12 @@ if __name__ == "__main__":
     Date_Completed = sys.argv[6] or 'N/A'
     Status = sys.argv[7]
     Task_Quality = sys.argv[8]
-    Comments = f"https://github.com/{repo_owner}/{repo_name}/issues/{issue_number}"f"https://github.com/{repo_owner}/{repo_name}/issues/{issue_number}"
+    repo_owner = sys.argv[9]
+    repo_name = sys.argv[10]
+    task_number = sys.argv[11]  # Assuming you have the task number for the GitHub issue
+
+    # Construct the GitHub issue URL for comments
+    Comments = f"https://github.com/{repo_owner}/{repo_name}/issues/{task_number}"
 
     # Call the function to update or append the Google Sheet
     update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline, Date_Completed, Status, Task_Quality, Comments)
