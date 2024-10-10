@@ -13,4 +13,4 @@ jobs:
           google-api-service-account-credentials: ${{ secrets.GOOGLE_SHEET_CREDENTIALS }}
           document-id: '1atfohlYVp6LcswuRapXt6Xf5GJmEH2OXo8mESezyPQc'
           sheet-name: 'test'
-
+          github-token: ${{ secrets.TOKEN }}
