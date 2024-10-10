@@ -2,7 +2,12 @@ name: Update Google Sheets on Issue Update
 
 on:
   issues:
-    types: [edited, opened, closed]
+      types:
+      - opened
+      - edited
+      - closed
+      - assigned    # Trigger when someone is assigned to an issue
+      - unassigned  # Trigger when someone is unassigned from an issue
 
 jobs:
   update-sheet:
@@ -31,7 +36,9 @@ jobs:
             "${{ github.event.issue.state }}" \
             "${{ github.event.issue.assignee.login }}" \
             "${{ github.event.issue.created_at }}" \
-            "${{ github.event.issue.closed_at }}"
+            "${{ github.event.issue.closed_at }}" \
+            "${{ github.repository_owner }}" \
+            "${{ github.event.repository.name }}"
 
         env:
           GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEET_CREDENTIALS }}
