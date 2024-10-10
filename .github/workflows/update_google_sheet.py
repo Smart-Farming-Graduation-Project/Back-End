@@ -29,9 +29,9 @@ def custom_assignee_name(assignee):
 
 
 # Function to update an existing row or append new data if not found
-def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assignee, created_at, closed_at):
-    SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  
-    RANGE_NAME = "Sheet1!A:I"  
+def update_google_sheet(issue_number, issue_title, assignee, assigned_date, closed_at, issue_state, issue_link):
+    SPREADSHEET_ID = "your-spreadsheet-id"  # Replace with your Google Sheet ID
+    RANGE_NAME = "Sheet1!A:I"  # Modify this based on your column structure
     service = get_sheets_service()
 
     # Fetch current data from the sheet
@@ -41,15 +41,17 @@ def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assi
     # Check if the issue already exists in the sheet based on the issue number
     issue_row = None
     for i, row in enumerate(values):
-        if row[0] == issue_number:  # Assuming the issue number is in column A
+        if row[0] == issue_number:  # Assuming the issue number is in column A (TaskId)
             issue_row = i + 1  # Sheet rows are 1-indexed
-  # Format dates and assignee
-    formatted_created_at = format_date(created_at)
+
+    # Format dates and assignee
+    formatted_assigned_date = format_date(assigned_date)
     formatted_closed_at = format_date(closed_at)
     custom_assignee = custom_assignee_name(assignee)
-    status = 'Done' if issue_state == 'closed' else 'In Progress'
-    # Prepare data to insert/update
-   row_data = [
+    status = 'Closed' if issue_state == 'closed' else 'Open'
+
+    # Prepare data to insert/update, including TaskId, Task Name, Assigned Member, etc.
+    row_data = [
         issue_number,               # TaskId
         issue_title,                # Task Name
         custom_assignee,            # Assigned Member
@@ -60,7 +62,8 @@ def update_google_sheet(issue_number, issue_title, issue_body, issue_state, assi
         0,                          # Task Quality (1-5), default to 0
         issue_link                  # Comments (link to issue)
     ]
-  if issue_row:
+
+    if issue_row:
         # Update the existing row
         range_to_update = f"Sheet1!A{issue_row}:I{issue_row}"
         body = {
@@ -94,3 +97,4 @@ if __name__ == "__main__":
     issue_link = f"https://github.com/{repo_owner}/{repo_name}/issues/{issue_number}"
 
     update_google_sheet(issue_number, issue_title, assignee, assigned_date, closed_at, issue_state, issue_link)
+
