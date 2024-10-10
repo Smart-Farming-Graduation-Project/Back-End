@@ -29,7 +29,7 @@ jobs:
 
       - name: Update Google Sheet
         run: |
-          python .github/workflows/update_google_sheet.py \
+           python .github/workflows/update_google_sheet.py \
             "${{ github.event.issue.number }}" \
             "${{ github.event.issue.title }}" \
             "${{ github.event.issue.body }}" \
@@ -37,6 +37,7 @@ jobs:
             "${{ github.event.issue.assignee.login }}" \
             "${{ github.event.issue.created_at }}" \
             "${{ github.event.issue.closed_at }}" \
+            "N/A" \  # Assuming Deadline as N/A since it's not in the event
             "${{ github.repository_owner }}" \
             "${{ github.event.repository.name }}"
 
