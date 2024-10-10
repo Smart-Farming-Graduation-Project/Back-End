@@ -30,16 +30,15 @@ jobs:
       - name: Update Google Sheet
         run: |
            python .github/workflows/update_google_sheet.py \
-            "${{ github.event.issue.number }}" \
-            "${{ github.event.issue.title }}" \
-            "${{ github.event.issue.body }}" \
-            "${{ github.event.issue.state }}" \
-            "${{ github.event.issue.assignee.login }}" \
-            "${{ github.event.issue.created_at }}" \
-            "${{ github.event.issue.closed_at }}" \
-            "N/A" \  # Assuming Deadline as N/A since it's not in the event
-            "${{ github.repository_owner }}" \
-            "${{ github.event.repository.name }}"
+              "${{ github.event.issue.number }}" \
+              "${{ github.event.issue.title }}" \
+              "${{ github.event.issue.body }}" \
+              "${{ github.event.issue.state }}" \
+              "${{ github.event.issue.assignee.login }}" \
+              "${{ github.event.issue.created_at }}" \
+              "${{ github.event.issue.closed_at }}" \
+              "${{ github.repository_owner }}" \
+              "${{ github.event.repository.name }}"
 
         env:
           GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEET_CREDENTIALS }}
