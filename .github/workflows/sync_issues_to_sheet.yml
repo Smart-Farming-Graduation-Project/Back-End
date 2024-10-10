@@ -1,0 +1,40 @@
+name: Sync Tasks to Google Sheets
+
+on:
+  issues:
+    types: [opened, edited]  # Trigger on issue creation or edits
+  project:
+    types: [created, updated, moved]  # Trigger on project (Kanban) changes
+
+jobs:
+  sync_to_sheet:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout code if needed (not always necessary for API work)
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.12
+
+    # Install required libraries
+    - name: Install dependencies
+      run: |
+        python -m venv myenv
+        source myenv/bin/activate
+        pip install --upgrade pip
+        pip install google-auth google-auth-httplib2 google-api-python-client requests
+
+    # Sync GitHub Issues to Google Sheets
+    - name: Sync task to Google Sheets
+      run: |
+        source myenv/bin/activate
+        python sync_issues_to_sheets.py
+      env:
+        GOOGLE_SHEET_CREDENTIALS: ${{ secrets.GOOGLE_SHEET_CREDENTIALS }}
+        SHEET_ID: 'your-google-sheet-id'  # Put your actual Google Sheet ID here
+
