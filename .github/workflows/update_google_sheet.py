@@ -42,11 +42,6 @@ def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline,
         if len(row) > 0 and row[0] == ID:  # Ensure the row has content before checking
             task_row = i + 1  # Google Sheets rows are 1-indexed
             
-    # # Format dates and assignee
-    # formatted_created_at = format_date(created_at)
-    # formatted_closed_at = format_date(closed_at)
-    # custom_assignee = custom_assignee_name(assignee)
-
     # Prepare data to insert/update
     row_data = [
         ID,                 # Task ID
@@ -60,7 +55,7 @@ def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline,
         Comments            # Comments
     ]
 
-      if task_row:
+    if task_row:
         # Update the existing row
         range_to_update = f"Web!A{task_row}:I{task_row}"
         body = {
@@ -94,5 +89,3 @@ if __name__ == "__main__":
 
     # Call the function to update or append the Google Sheet
     update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline, Date_Completed, Status, Task_Quality, Comments)
-
-
