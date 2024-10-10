@@ -69,13 +69,18 @@ def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline,
         print(f"Task {ID} appended to the sheet.")
 
 if __name__ == "__main__":
+    # Check if enough arguments are provided
+    if len(sys.argv) < 12:
+        print("Error: Missing arguments. Ensure all required arguments are passed.")
+        sys.exit(1)
+
     # Read arguments from the command line
     ID = sys.argv[1]
     Task_Name = sys.argv[2]
-    Assigned_Member = sys.argv[3] or 'Unassigned'
-    Assigned_Date = sys.argv[4]
-    Deadline = sys.argv[5]
-    Date_Completed = sys.argv[6] or 'N/A'
+    Assigned_Member = sys.argv[3] if sys.argv[3] != 'None' else 'Unassigned'  # Fallback if None
+    Assigned_Date = sys.argv[4] if len(sys.argv) > 4 else 'N/A'
+    Deadline = sys.argv[5] if len(sys.argv) > 5 else 'N/A'
+    Date_Completed = sys.argv[6] if len(sys.argv) > 6 else 'N/A'
     Status = sys.argv[7]
     Task_Quality = sys.argv[8]
     repo_owner = sys.argv[9]
