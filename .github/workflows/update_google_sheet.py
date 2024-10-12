@@ -20,11 +20,14 @@ def format_date(iso_date):
 
 
 def custom_assignee(assignee):
-    if assignee == 'Mohamedzonkol':
-        return 'Mohamed Elsayed'
-    elif assignee == 'redaelsayed':
-        return 'reda'
-    return assignee
+    assignee_mapping = {
+        'Mohamedzonkol': 'Mohamed Elsayed',
+        'redaelsayied': 'Reda Elsayed',
+        'mohamedelofa': 'Elofa',
+        'abdo-ibrahim': 'Abdulrahman Ibrahim'
+    }
+    return assignee_mapping.get(assignee.strip(), assignee)
+
 
 
 
