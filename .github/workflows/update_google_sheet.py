@@ -28,12 +28,12 @@ def custom_assignee(assignee):
 
 
 
-def get_default_deadline(assigned_date):
-    if assigned_date == 'N/A':
-        return 'N/A'
-    parsed_date = datetime.strptime(assigned_date, '%Y-%m-%dT%H:%M:%SZ')
-    deadline = parsed_date + timedelta(days=2)
-    return deadline.strftime('%d %b %y')
+# def get_default_deadline(assigned_date):
+#     if assigned_date == 'N/A':
+#         return 'N/A'
+#     parsed_date = datetime.strptime(assigned_date, '%Y-%m-%dT%H:%M:%SZ')
+#     deadline = parsed_date + timedelta(days=2)
+#     return deadline.strftime('%d %b %y')
 
 
 
@@ -46,8 +46,8 @@ def custom_status(status):
     return status  
 
 
-def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline, Date_Completed, Status, Task_Quality, Comments):
-    SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  # Replace with your Google Sheet ID
+def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Date_Completed, Status, Comments):
+    SPREADSHEET_ID = "17eMiDmtMaqnpfzDzzB5IQyT0rB5udHprYdDlB-W7Krw"  
     RANGE_NAME = "Web!A:I"  
     service = get_sheets_service()
 
@@ -66,10 +66,8 @@ def update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline,
         Task_Name,          
         Assigned_Member,    
         Assigned_Date,      
-        Deadline,           
         Date_Completed,     
         Status,            
-        Task_Quality,       
         Comments            
     ]
 
@@ -103,12 +101,12 @@ if __name__ == "__main__":
     Assigned_Member = custom_assignee(sys.argv[5]) or 'Unassigned' 
     Assigned_Date = format_date(sys.argv[6]) 
     Deadline = get_default_deadline(sys.argv[6])
-    Date_Completed = format_date(sys.argv[7]) if len(sys.argv) > 7 else 'N/A'  
+    # Date_Completed = format_date(sys.argv[7]) if len(sys.argv) > 7 else 'N/A'  
     Status =  custom_status(sys.argv[4])
-    Task_Quality = 5  
+    # Task_Quality = 5  
     repo_owner = sys.argv[8]  
     repo_name = sys.argv[9]  
 
     Comments = f"https://github.com/{repo_owner}/{repo_name}/issues/{ID}"
 
-    update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Deadline, Date_Completed, Status, Task_Quality, Comments)
+    update_google_sheet(ID, Task_Name, Assigned_Member, Assigned_Date, Date_Completed, Status, Comments)
