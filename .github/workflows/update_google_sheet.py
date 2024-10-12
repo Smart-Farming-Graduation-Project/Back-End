@@ -100,8 +100,8 @@ if __name__ == "__main__":
     Task_Name = sys.argv[2]   
     Assigned_Member = custom_assignee(sys.argv[5]) or 'Unassigned' 
     Assigned_Date = format_date(sys.argv[6]) 
-    Deadline = get_default_deadline(sys.argv[6])
-    # Date_Completed = format_date(sys.argv[7]) if len(sys.argv) > 7 else 'N/A'  
+    # Deadline = get_default_deadline(sys.argv[6])
+    Date_Completed = format_date(sys.argv[7]) if len(sys.argv) > 7 else 'N/A'  
     Status =  custom_status(sys.argv[4])
     # Task_Quality = 5  
     repo_owner = sys.argv[8]  
