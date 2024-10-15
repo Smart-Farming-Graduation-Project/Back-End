@@ -11,4 +11,8 @@
     <ProjectReference Include="..\Croppilot.Services\Croppilot.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Product\" />
+  </ItemGroup>
+
 </Project>

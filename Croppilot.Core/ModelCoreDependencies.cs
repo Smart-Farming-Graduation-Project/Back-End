@@ -1,7 +1,6 @@
 ﻿namespace Croppilot.Core
 {
-    public class Class1
+    internal class ModelCoreDependencies
     {
-
     }
 }
