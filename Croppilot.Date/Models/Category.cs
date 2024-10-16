@@ -15,5 +15,5 @@ public class Category
     public string Description { get; set; } = default!;
 
     [ValidateNever]
-    public ICollection<Product> Products { get; set; }
+    public ICollection<Product> Products { get; set; } = new List<Product>();
 }

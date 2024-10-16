@@ -1,6 +1,7 @@
 ﻿using Croppilot.Date.Enum;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Croppilot.Date.Models;
 
@@ -27,10 +28,14 @@ public class Product
     [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+    public int CategoryId { get; set; }
+    [ForeignKey("CategoryId")]
     [ValidateNever]
-    public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    public Category Category { get; set; }
+
+    [ValidateNever]
+    public List<ProductImage> ProductImages { get; set; }
     [ValidateNever]
     public ICollection<Leasing> Leasings { get; set; } = new List<Leasing>();
 
-    [ValidateNever] public ICollection<Category> Categories { get; set; } = new List<Category>();
 }
