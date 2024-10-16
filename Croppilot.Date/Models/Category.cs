@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Croppilot.Date.Models;
 
@@ -16,7 +12,8 @@ public class Category
 
 
     [StringLength(500, ErrorMessage = "Description cannot be longer than 500 characters")]
-    public string Description { get; set; }
+    public string Description { get; set; } = default!;
 
+    [ValidateNever]
     public ICollection<Product> Products { get; set; }
 }

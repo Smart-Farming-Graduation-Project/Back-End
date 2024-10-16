@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Croppilot.Date.Models;
 public class ProductImage
@@ -15,6 +11,6 @@ public class ProductImage
 
     [Required(ErrorMessage = "Product ID is required")]
     public int ProductId { get; set; }
-
+    [ValidateNever]
     public Product Product { get; set; }
 }

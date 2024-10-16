@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Croppilot.Date.Models;
 
@@ -20,7 +16,7 @@ public class Leasing
     [Required(ErrorMessage = "Leasing Details ID is required")]
     public string LeasingDetails { get; set; }
 
-    [DataType(DataType.DateTime)] 
+    [DataType(DataType.DateTime)]
     public DateTime? EndDate { get; set; }
 
     [ValidateNever]
