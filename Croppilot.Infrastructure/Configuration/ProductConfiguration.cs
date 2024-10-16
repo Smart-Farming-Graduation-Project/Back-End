@@ -18,7 +18,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasMany(p => p.Leasings)
             .WithOne(l => l.Product)
             .HasForeignKey(l => l.ProductId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         ////Make Many To Many Rel between ( Products and Categories)
         //builder
