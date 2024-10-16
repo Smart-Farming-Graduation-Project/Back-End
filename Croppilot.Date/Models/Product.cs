@@ -10,7 +10,7 @@ namespace Croppilot.Date.Models;
 
 public class Product
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     [StringLength(100, ErrorMessage = "Name cannot be longer than 100 characters")]
     public string Name { get; set; }
@@ -31,7 +31,7 @@ public class Product
     [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    public IEnumerable<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
-    public IEnumerable<Leasing> Leasings { get; set; } = new List<Leasing>();
-    public IEnumerable<Category> Categories { get; set; } = new List<Category>();
+    public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    public ICollection<Leasing> Leasings { get; set; } = new List<Leasing>();
+    public ICollection<Category> Categories { get; set; } = new List<Category>();
 }

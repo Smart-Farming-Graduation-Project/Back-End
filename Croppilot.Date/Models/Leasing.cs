@@ -9,16 +9,20 @@ namespace Croppilot.Date.Models;
 
 public class Leasing
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     [Required(ErrorMessage = "Product ID is required")]
-    public Guid ProductId { get; set; }
+    public int ProductId { get; set; }
 
     [Required(ErrorMessage = "Leasing start date is required")]
     public DateTime StartingDate { get; set; }
 
+    [Required(ErrorMessage = "Leasing Details ID is required")]
+    public string LeasingDetails { get; set; }
+
     [DataType(DataType.DateTime)] 
     public DateTime? EndDate { get; set; }
 
+    [ValidateNever]
     public Product Product { get; set; }
 }
