@@ -1,13 +1,6 @@
-﻿using Croppilot.Date.Models;
-using Croppilot.Infrastructure.Data;
+﻿using Croppilot.Infrastructure.Data;
 using Croppilot.Infrastructure.Generics.Implementation;
 using Croppilot.Infrastructure.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Croppilot.Infrastructure.Repositories.Implementation
 {

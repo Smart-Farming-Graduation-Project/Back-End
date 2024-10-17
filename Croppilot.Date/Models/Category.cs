@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using System.ComponentModel.DataAnnotations;
-
-namespace Croppilot.Date.Models;
+﻿namespace Croppilot.Date.Models;
 
 public class Category
 {
