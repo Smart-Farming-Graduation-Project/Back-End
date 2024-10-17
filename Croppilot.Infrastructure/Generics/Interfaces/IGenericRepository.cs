@@ -1,6 +1,6 @@
 ﻿namespace Croppilot.Infrastructure.Generics.Interfaces
 {
-    public interface IGenericRepository<T> where T : class
+    internal interface IGenericRepository<T> where T : class
     {
         Task<List<T>> GetAll();
         Task<T?> GetById(int id);
