@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Croppilot.Date.Models;
-using Croppilot.Infrastructure.Configuration;
-using Microsoft.EntityFrameworkCore;
+﻿using Croppilot.Infrastructure.Configuration;
 
 namespace Croppilot.Infrastructure.Data
 {

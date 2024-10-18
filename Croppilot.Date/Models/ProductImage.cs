@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Croppilot.Date.Models;
+﻿namespace Croppilot.Date.Models;
 public class ProductImage
 {
     public int Id { get; set; }

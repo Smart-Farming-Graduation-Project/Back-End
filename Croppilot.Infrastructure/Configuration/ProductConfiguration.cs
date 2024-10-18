@@ -1,8 +1,4 @@
-﻿using Croppilot.Date.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Croppilot.Infrastructure.Configuration;
+﻿namespace Croppilot.Infrastructure.Configuration;
 
 public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {

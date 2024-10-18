@@ -1,8 +1,5 @@
 ﻿using Croppilot.Infrastructure.Data;
 using Croppilot.Infrastructure.Generics.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Croppilot.Infrastructure.Generics.Implementation
 {
