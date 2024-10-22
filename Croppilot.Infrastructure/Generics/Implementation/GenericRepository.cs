@@ -1,5 +1,6 @@
 ﻿using Croppilot.Infrastructure.Generics.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Linq.Expressions;
 
 namespace Croppilot.Infrastructure.Generics.Implementation
 {
@@ -18,10 +19,55 @@ namespace Croppilot.Infrastructure.Generics.Implementation
         //    return await _context.Set<T>().ToListAsync();
         //}
 
-        public virtual async Task<T?> GetByIdAsync(int id)
-        {
-            return await _dbSet.FindAsync(id);
+        //public virtual async Task<T?> GetByIdAsync(int id)
+        //{
+        //    return await _dbSet.FindAsync(id);
 
+        //}
+        //public virtual async Task<List<T>> GetAllAsNoTrackingAsync()
+        //{
+        //    return await _dbSet.AsNoTracking().ToListAsync();
+        //}
+
+
+        //public async Task<List<T>> GetAllAsTrackingAsync()
+        //{
+        //    return await _dbSet.ToListAsync();
+        //}
+
+        public IEnumerable<T> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperty = null, bool tracked = false)
+        {
+            IQueryable<T> query;
+            query = tracked ? _dbSet : _dbSet.AsNoTracking();
+
+
+            if (filter is not null)
+                query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperty))
+            {
+                //Be Careful The include property case sensitive
+                foreach (var item in includeProperty.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(item.Trim());
+                }
+            }
+            return query.ToList();
+        }
+
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter, string? includeProperty = null, bool tracked = false)
+        {
+            IQueryable<T> query;
+            query = tracked ? _dbSet : _dbSet.AsNoTracking();
+            if (filter is not null)
+                query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperty))
+            {
+                foreach (var item in includeProperty.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(item.Trim());
+                }
+            }
+            return await query.FirstOrDefaultAsync();
         }
 
         public virtual async Task<T> AddAsync(T entity)
@@ -56,21 +102,8 @@ namespace Croppilot.Infrastructure.Generics.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public Task<List<T>> GetAllAsNoTracking()
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual async Task<List<T>> GetAllAsNoTrackingAsync()
-        {
-            return await _dbSet.AsNoTracking().ToListAsync();
-        }
 
 
-        public async Task<List<T>> GetAllAsTrackingAsync()
-        {
-            return await _dbSet.ToListAsync();
-        }
 
         public IDbContextTransaction BeginTransaction()
         {
@@ -85,6 +118,12 @@ namespace Croppilot.Infrastructure.Generics.Implementation
         public void RollbackTransaction()
         {
             _context.Database.RollbackTransaction();
+        }
+
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter)
+        {
+            return await _dbSet.AnyAsync(filter);
         }
 
     }
