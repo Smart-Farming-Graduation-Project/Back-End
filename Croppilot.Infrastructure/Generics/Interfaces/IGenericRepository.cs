@@ -12,9 +12,8 @@ namespace Croppilot.Infrastructure.Generics.Interfaces
         Task DeleteAsync(T entity);
         Task DeleteRangeAsync(IEnumerable<T> entities);
 
-        IQueryable<T> GetAllAsNoTracking();
-        IQueryable<T> GetAllAsTracking();
-
+        Task<List<T>> GetAllAsNoTracking();
+        Task<List<T>> GetAllAsTrackingAsync();
 
         IDbContextTransaction BeginTransaction();
         void CommitTransaction();

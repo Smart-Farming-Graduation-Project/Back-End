@@ -56,14 +56,20 @@ namespace Croppilot.Infrastructure.Generics.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public IQueryable<T> GetAllAsNoTracking()
+        public Task<List<T>> GetAllAsNoTracking()
         {
-            return _dbSet.AsNoTracking();
+            throw new NotImplementedException();
         }
 
-        public IQueryable<T> GetAllAsTracking()
+        public virtual async Task<List<T>> GetAllAsNoTrackingAsync()
         {
-            return _dbSet.AsTracking();
+            return await _dbSet.AsNoTracking().ToListAsync();
+        }
+
+
+        public async Task<List<T>> GetAllAsTrackingAsync()
+        {
+            return await _dbSet.ToListAsync();
         }
 
         public IDbContextTransaction BeginTransaction()
