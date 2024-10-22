@@ -1,10 +1,8 @@
-﻿using Croppilot.Infrastructure.Data;
-using Croppilot.Infrastructure.Generics.Implementation;
-using Croppilot.Infrastructure.Repositories.Interfaces;
+﻿using Croppilot.Infrastructure.Generics.Implementation;
 
 namespace Croppilot.Infrastructure.Repositories.Implementation
 {
-    public class ProductRepository : GenericRepository<Product> , IProductRepository
+    public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         public ProductRepository(AppDbContext context) : base(context) { }
 
