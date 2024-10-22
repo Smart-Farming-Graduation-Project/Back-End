@@ -2,7 +2,7 @@
 
 namespace Croppilot.Infrastructure.Repositories.Interfaces
 {
-    internal interface IProductRepository : IGenericRepository<Product>
+    public interface IProductRepository : IGenericRepository<Product>
     {
     }
 }

@@ -1,29 +1,35 @@
-﻿using Croppilot.Infrastructure.Data;
-using Croppilot.Infrastructure.Generics.Implementation;
-using Croppilot.Infrastructure.Repositories.Interfaces;
+﻿using Croppilot.Infrastructure.Generics.Implementation;
 
 namespace Croppilot.Infrastructure.Repositories.Implementation
 {
-    public class ProductRepository : GenericRepository<Product> , IProductRepository
+    public class ProductRepository(AppDbContext context) : GenericRepository<Product>(context), IProductRepository
     {
-        public ProductRepository(AppDbContext context) : base(context) { }
-
-        public override async Task<List<Product>> GetAll()
+        private readonly DbSet<Product> _product = context.Set<Product>();
+        //for ex 
+        public async Task<List<Product>> GetProductsByCategoryAsync(int categoryId)
         {
-            return await _context.Products
-                .Include(p => p.Category)
-                .Include(P => P.Leasings)
-                .Include(p => p.ProductImages)
+            return await _context.Set<Product>()
+                .Where(p => p.CategoryId == categoryId)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
-        public override async Task<Product?> GetById(int id)
-        {
-            return await _context.Products
-                .Include(p => p.Category)
-                .Include(P => P.Leasings)
-                .Include(p => p.ProductImages)
-                .SingleOrDefaultAsync(p => p.Id == id);
-        }
+        //public override async Task<List<Product>> GetAll()
+        //{
+        //    return await _context.Products
+        //        .Include(p => p.Category)
+        //        .Include(P => P.Leasings)
+        //        .Include(p => p.ProductImages)
+        //        .ToListAsync();
+        //}
+
+        //public override async Task<Product?> GetById(int id)
+        //{
+        //    return await _context.Products
+        //        .Include(p => p.Category)
+        //        .Include(P => P.Leasings)
+        //        .Include(p => p.ProductImages)
+        //        .SingleOrDefaultAsync(p => p.Id == id);
+        //}
     }
 }
