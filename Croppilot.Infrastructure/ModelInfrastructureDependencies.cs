@@ -1,7 +1,4 @@
-﻿using Croppilot.Infrastructure.Generics.Implementation;
-using Croppilot.Infrastructure.Generics.Interfaces;
-using Croppilot.Infrastructure.Repositories.Implementation;
-using Croppilot.Infrastructure.Repositories.Interfaces;
+﻿using Croppilot.Infrastructure.Repositories.Implementation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Croppilot.Infrastructure
@@ -10,8 +7,10 @@ namespace Croppilot.Infrastructure
     {
         public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection service)
         {
-            service.AddTransient(typeof(IGenericRepository<>),typeof(GenericRepository<>));
-            service.AddTransient<IProductRepository, ProductRepository>();
+            // service.AddTransient(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+            //service.AddTransient<IProductRepository, ProductRepository>();
+            service.AddTransient<IUnitOfWork, UnitOfWork>();
+
             return service;
         }
     }
