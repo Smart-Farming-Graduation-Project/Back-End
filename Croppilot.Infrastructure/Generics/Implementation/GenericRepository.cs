@@ -4,8 +4,9 @@ using System.Linq.Expressions;
 
 namespace Croppilot.Infrastructure.Generics.Implementation
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IDisposable, IGenericRepository<T> where T : class
     {
+        private bool disposed = false;
         protected readonly AppDbContext _context;
         private readonly DbSet<T> _dbSet;
 
@@ -125,6 +126,17 @@ namespace Croppilot.Infrastructure.Generics.Implementation
         {
             return await _dbSet.AnyAsync(filter);
         }
-
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        public void Dispose(bool dispossing)
+        {
+            if (!this.disposed)
+                if (dispossing)
+                    _context.Dispose();
+            this.disposed = true;
+        }
     }
 }
