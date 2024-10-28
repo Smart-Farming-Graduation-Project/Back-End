@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Featuers\Product\Command\Validators\" />
     <Folder Include="Features\Product\" />
   </ItemGroup>
 
