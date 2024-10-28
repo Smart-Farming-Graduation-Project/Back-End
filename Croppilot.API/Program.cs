@@ -1,20 +1,25 @@
-using Croppilot.Infrastructure.Data;
+using Croppilot.Core;
 using Croppilot.Infrastructure;
+using Croppilot.Infrastructure.Data;
+using Croppilot.Services.Abstract;
+using Croppilot.Services.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-
+builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
-builder.Services.AddInfrastructureDependencies();
+builder.Services.AddInfrastructureDependencies().AddCoreDependencies();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapControllers();
 
 
 app.Run();

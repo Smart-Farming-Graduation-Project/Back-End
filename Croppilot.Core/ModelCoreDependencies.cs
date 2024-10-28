@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Croppilot.Core.Featuers.Product.Query.GetProduct;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Croppilot.Core
 {
@@ -6,7 +7,7 @@ namespace Croppilot.Core
     {
         public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
         {
-            service.AddMediatR(con => con.RegisterServicesFromAssembly(typeof(ModelCoreDependencies).Assembly));
+            service.AddMediatR(con => con.RegisterServicesFromAssembly(typeof(GetAllProductHandlers).Assembly));
 
             return service;
         }

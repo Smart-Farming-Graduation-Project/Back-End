@@ -36,24 +36,27 @@ namespace Croppilot.Infrastructure.Generics.Implementation
         //    return await _dbSet.ToListAsync();
         //}
 
-        public IEnumerable<T> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperty = null, bool tracked = false)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperty = null, bool tracked = false)
         {
-            IQueryable<T> query;
-            query = tracked ? _dbSet : _dbSet.AsNoTracking();
-
+            IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
 
             if (filter is not null)
+            {
                 query = query.Where(filter);
+            }
+
             if (!string.IsNullOrEmpty(includeProperty))
             {
-                //Be Careful The include property case sensitive
-                foreach (var item in includeProperty.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var item in includeProperty.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     query = query.Include(item.Trim());
                 }
             }
-            return query.ToList();
+
+            return await query.ToListAsync();
         }
+
+
 
         public async Task<T> GetAsync(Expression<Func<T, bool>> filter, string? includeProperty = null, bool tracked = false)
         {
