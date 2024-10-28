@@ -5,7 +5,7 @@ namespace Croppilot.Infrastructure.Generics.Interfaces
 {
     public interface IGenericRepository<T> : IDisposable
     {
-        IEnumerable<T> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperty = null, bool tracked = false);
+        Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperty = null, bool tracked = false);
         Task<T> GetAsync(Expression<Func<T, bool>> filter, string? includeProperty = null, bool tracked = false);
 
         Task<T> AddAsync(T entity);
