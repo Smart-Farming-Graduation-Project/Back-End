@@ -1,6 +1,14 @@
-﻿namespace Croppilot.Core
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Croppilot.Core
 {
-    internal class ModelCoreDependencies
+    public static class ModelCoreDependencies
     {
+        public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
+        {
+            service.AddMediatR(con => con.RegisterServicesFromAssembly(typeof(ModelCoreDependencies).Assembly));
+
+            return service;
+        }
     }
 }
