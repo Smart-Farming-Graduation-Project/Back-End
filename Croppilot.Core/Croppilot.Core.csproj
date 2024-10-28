@@ -12,12 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Featuers\Product\Command\Validators\" />
-    <Folder Include="Features\Product\" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.4.1" />
+    <Folder Include="Featuers\Product\Command\" />
   </ItemGroup>
 
 </Project>
