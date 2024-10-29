@@ -1,145 +1,205 @@
 ﻿using Croppilot.Infrastructure.Generics.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
-using System.Linq.Expressions;
 
-namespace Croppilot.Infrastructure.Generics.Implementation
+namespace Croppilot.Infrastructure.Generics.Implementation;
+
+public class GenericRepository<T> :IGenericRepository<T> where T : class
 {
-    public class GenericRepository<T> : IDisposable, IGenericRepository<T> where T : class
+    private bool _disposed;
+    protected readonly AppDbContext _context;
+    private readonly DbSet<T> _dbSet;
+
+    public GenericRepository(AppDbContext context)
     {
-        private bool disposed = false;
-        protected readonly AppDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        _context = context;
+        _dbSet = _context.Set<T>();
+    }
 
-        public GenericRepository(AppDbContext context)
+    public async Task<List<T>> GetAllAsync(
+        Expression<Func<T, bool>>? filter = null,
+        string? includeProperties = null,
+        bool tracked = false
+        , CancellationToken cancellationToken = default)
+    {
+        IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
+
+        if (filter != null)
         {
-            _context = context;
-            _dbSet = _context.Set<T>();
+            query = query.Where(filter);
         }
-        //public virtual async Task<List<T>> GetAll()
-        //{
-        //    return await _context.Set<T>().ToListAsync();
-        //}
 
-        //public virtual async Task<T?> GetByIdAsync(int id)
-        //{
-        //    return await _dbSet.FindAsync(id);
-
-        //}
-        //public virtual async Task<List<T>> GetAllAsNoTrackingAsync()
-        //{
-        //    return await _dbSet.AsNoTracking().ToListAsync();
-        //}
-
-
-        //public async Task<List<T>> GetAllAsTrackingAsync()
-        //{
-        //    return await _dbSet.ToListAsync();
-        //}
-
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperty = null, bool tracked = false)
+        if (!string.IsNullOrWhiteSpace(includeProperties))
         {
-            IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
+            var properties =
+                includeProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(p => p.Trim());
 
-            if (filter is not null)
+            foreach (var property in properties)
             {
-                query = query.Where(filter);
+                query = query.Include(property);
             }
+        }
 
-            if (!string.IsNullOrEmpty(includeProperty))
+        return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<T?> GetAsync(
+        Expression<Func<T, bool>>? filter = null,
+        string? includeProperties = null,
+        bool tracked = false,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        if (!string.IsNullOrWhiteSpace(includeProperties))
+        {
+            var properties = includeProperties
+                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(p => p.Trim());
+
+            foreach (var property in properties)
             {
-                foreach (var item in includeProperty.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(item.Trim());
-                }
+                query = query.Include(property);
             }
-
-            return await query.ToListAsync();
         }
 
+        return await query.FirstOrDefaultAsync(cancellationToken);
+    }
 
-
-        public async Task<T> GetAsync(Expression<Func<T, bool>> filter, string? includeProperty = null, bool tracked = false)
+    public virtual async Task<T> AddAsync(
+        T entity, CancellationToken cancellationToken = default)
+    {
+        if (entity == null)
         {
-            IQueryable<T> query;
-            query = tracked ? _dbSet : _dbSet.AsNoTracking();
-            if (filter is not null)
-                query = query.Where(filter);
-            if (!string.IsNullOrEmpty(includeProperty))
-            {
-                foreach (var item in includeProperty.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(item.Trim());
-                }
-            }
-            return await query.FirstOrDefaultAsync();
+            throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
         }
 
-        public virtual async Task<T> AddAsync(T entity)
+        try
         {
-            await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return entity;
-        }
+            await _dbSet.AddAsync(entity, cancellationToken);
 
-        public virtual async Task AddRangeAsync(IEnumerable<T> entities)
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex)
         {
-            await _dbSet.AddRangeAsync(entities);
-            await _context.SaveChangesAsync();
+            throw new InvalidOperationException("An error occurred while saving the entity to the database.", ex);
         }
 
-        public virtual async Task UpdateAsync(T entity)
+        return entity;
+    }
+
+    public virtual async Task AddRangeAsync(
+        IEnumerable<T> entities, CancellationToken cancellationToken = default)
+    {
+        if (entities == null)
+        {
+            throw new ArgumentNullException(nameof(entities), "Entities collection cannot be null.");
+        }
+
+        try
+        {
+            await _dbSet.AddRangeAsync(entities, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new InvalidOperationException("An error occurred while saving the entities to the database.", ex);
+        }
+    }
+    
+    public virtual async Task UpdateAsync(
+        T entity, CancellationToken cancellationToken = default)
+    {
+        if (entity == null)
+        {
+            throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
+        }
+
+        try
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new InvalidOperationException("An error occurred while updating the entity in the database.", ex);
+        }
+    }
+
+    public virtual async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
+    {
+        if (entity == null)
+        {
+            throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
         }
 
-
-        public virtual async Task DeleteAsync(T entity)
+        try
         {
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new InvalidOperationException("An error occurred while deleting the entity from the database.", ex);
+        }
+    }
+
+    public virtual async Task DeleteRangeAsync(
+        IEnumerable<T> entities, CancellationToken cancellationToken = default
+    )
+    {
+        if (entities == null)
+        {
+            throw new ArgumentNullException(nameof(entities), "Entities collection cannot be null.");
         }
 
-        public async Task DeleteRangeAsync(IEnumerable<T> entities)
+        try
         {
             _dbSet.RemoveRange(entities);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
-
-
-
-
-        public IDbContextTransaction BeginTransaction()
+        catch (DbUpdateException ex)
         {
-            return _context.Database.BeginTransaction();
+            throw new InvalidOperationException("An error occurred while deleting the entities from the database.", ex);
         }
+    }
+    
+    public IDbContextTransaction BeginTransaction()
+    {
+        return _context.Database.BeginTransaction();
+    }
 
-        public void CommitTransaction()
-        {
-            _context.Database.CommitTransaction();
-        }
+    public void CommitTransaction()
+    {
+        _context.Database.CommitTransaction();
+    }
 
-        public void RollbackTransaction()
-        {
-            _context.Database.RollbackTransaction();
-        }
+    public void RollbackTransaction()
+    {
+        _context.Database.RollbackTransaction();
+    }
+    
+    public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.AnyAsync(filter, cancellationToken);
+    }
 
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter)
-        {
-            return await _dbSet.AnyAsync(filter);
-        }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        public void Dispose(bool dispossing)
-        {
-            if (!this.disposed)
-                if (dispossing)
-                    _context.Dispose();
-            this.disposed = true;
-        }
+    private void Dispose(bool disposing)
+    {
+        if (!_disposed)
+            if (disposing)
+                _context.Dispose();
+        _disposed = true;
     }
 }

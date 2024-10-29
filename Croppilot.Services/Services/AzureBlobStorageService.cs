@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Croppilot.Services.Services
+﻿namespace Croppilot.Services.Services
 {
     internal class AzureBlobStorageService
     {

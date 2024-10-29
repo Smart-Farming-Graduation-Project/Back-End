@@ -1,8 +1,7 @@
 using Croppilot.Core;
 using Croppilot.Infrastructure;
 using Croppilot.Infrastructure.Data;
-using Croppilot.Services.Abstract;
-using Croppilot.Services.Services;
+using Croppilot.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,11 +14,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
-builder.Services.AddInfrastructureDependencies().AddCoreDependencies();
+builder.Services.AddInfrastructureDependencies().AddCoreDependencies().AddServicesDependencies();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

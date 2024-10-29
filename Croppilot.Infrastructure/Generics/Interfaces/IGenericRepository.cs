@@ -1,27 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using System.Linq.Expressions;
-
-namespace Croppilot.Infrastructure.Generics.Interfaces
+﻿namespace Croppilot.Infrastructure.Generics.Interfaces
 {
     public interface IGenericRepository<T> : IDisposable
     {
-        Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperty = null, bool tracked = false);
-        Task<T> GetAsync(Expression<Func<T, bool>> filter, string? includeProperty = null, bool tracked = false);
+        Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, bool tracked = false,CancellationToken cancellationToken = default);
+        Task<T?> GetAsync(Expression<Func<T, bool>>? filter, string? includeProperties = null, bool tracked = false,CancellationToken cancellationToken = default);
 
-        Task<T> AddAsync(T entity);
-        Task AddRangeAsync(IEnumerable<T> entities);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
-        Task DeleteRangeAsync(IEnumerable<T> entities);
-
-        //Task<List<T>> GetAllAsNoTracking();
-        //Task<List<T>> GetAllAsTrackingAsync();
-        //Task<T?> GetByIdAsync(int id);
-        //  Task<List<T>> GetAll();
-
+        Task<T> AddAsync(T entity,CancellationToken cancellationToken = default);
+        Task AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
+        Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
+        Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
+        Task DeleteRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
+        Task<bool> AnyAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default);
         IDbContextTransaction BeginTransaction();
         void CommitTransaction();
         void RollbackTransaction();
-        Task<bool> AnyAsync(Expression<Func<T, bool>> filter);
     }
 }
