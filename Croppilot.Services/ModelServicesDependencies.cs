@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Croppilot.Services.Abstract;
+using Croppilot.Services.Services;
 
 namespace Croppilot.Services
 {
-    class ModelServicesDependencies
+    public static class ModelServicesDependencies
     {
+        public static IServiceCollection AddServicesDependencies(this IServiceCollection service)
+        {
+            service.AddScoped<IProductServices, ProductServices>();
+            service.AddScoped<ICategoryService, CategoryService>();
+
+            return service;
+        }
     }
 }
