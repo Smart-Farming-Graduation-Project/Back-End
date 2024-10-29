@@ -5,21 +5,23 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
 {
     public class UnitOfWork : IUnitOfWork
     {
+        
+        public IProductRepository ProductRepository { get; }
+        public ICategoryRepository CategoryRepository { get; }
+        
         private readonly AppDbContext _context;
-        private bool _disposed = false;
-
-        public IGenericRepository<T> GenericRepository<T>() where T : class
-        {
-            return new GenericRepository<T>(_context);
-        }
-
-        public IProductRepository ProductRepository { get; private set; }
-        private bool dispossed = false;
-
+        private bool _disposed;
+        
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
             ProductRepository = new ProductRepository(_context);
+            CategoryRepository = new CategoryRepository(_context);
+        }
+
+        public IGenericRepository<T> GenericRepository<T>() where T : class
+        {
+            return new GenericRepository<T>(_context);
         }
 
         public void Dispose()

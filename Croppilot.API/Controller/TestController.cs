@@ -1,17 +1,29 @@
-﻿using Croppilot.Services.Abstract;
+﻿using Croppilot.Date.Models;
+using Croppilot.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Croppilot.API.Controller
+namespace Croppilot.API.Controller;
+
+[Route("api/[controller]")]
+[ApiController]
+public class TestController(IProductServices _productServices)
+    : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TestController(IProductServices services) : ControllerBase
+    [HttpGet("ProductList")]
+    public async Task<IActionResult> GetProduct()
     {
-        [HttpGet("ProductList")]
-        public async Task<IActionResult> GetProduct()
+        var products = await _productServices.GetAll();
+        return Ok(products);
+    }
+    
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Product?>> GetProductById(int id, string? includeProperties = null, CancellationToken cancellationToken = default)
+    {
+        var product = await _productServices.GetById(id, includeProperties, cancellationToken);
+        if (product == null)
         {
-            var products = await services.GetAllProduct(includeProp: "Category");
-            return Ok(products);
+            return NotFound();
         }
+        return Ok(product);
     }
 }

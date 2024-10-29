@@ -8,7 +8,8 @@ namespace Croppilot.Infrastructure
         public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection service)
         {
             // service.AddTransient(typeof(IGenericRepository<>),typeof(GenericRepository<>));
-            //service.AddTransient<IProductRepository, ProductRepository>();
+            service.AddTransient<IProductRepository, ProductRepository>();
+            service.AddTransient<ICategoryRepository, CategoryRepository>();
             service.AddTransient<IUnitOfWork, UnitOfWork>();
 
             return service;
