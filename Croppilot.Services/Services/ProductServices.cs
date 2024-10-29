@@ -1,16 +1,28 @@
-﻿using Croppilot.Infrastructure.Repositories.Interfaces;
+﻿using Croppilot.Date.DTOS;
+using Croppilot.Infrastructure.Repositories.Interfaces;
 using Croppilot.Services.Abstract;
 
 namespace Croppilot.Services.Services;
 
 public class ProductServices(IUnitOfWork unit) : IProductServices
 {
-    public async Task<List<Product>> GetAll(string? includeProperties = null,
+    public async Task<List<ProductDTO>> GetAll(string? includeProperties = null,
         CancellationToken cancellationToken = default)
     {
-        return await unit.ProductRepository.GetAllAsync(includeProperties: includeProperties,
+        var products = await unit.ProductRepository.GetAllAsync(includeProperties: includeProperties,
             cancellationToken: cancellationToken);
+
+        return products.Select(x => new ProductDTO
+        {
+            ProductId = x.Id,
+            ProductName = x.Name,
+            CategoryName = x.Category.Name,
+            Price = x.Price,
+            Availability = x.Availability.ToString()
+        }).ToList();
     }
+
+ 
 
     public async Task<Product?> GetById(int id, string? includeProperties = null,
         CancellationToken cancellationToken = default)

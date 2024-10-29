@@ -1,8 +1,10 @@
-﻿namespace Croppilot.Services.Abstract
+﻿using Croppilot.Date.DTOS;
+
+namespace Croppilot.Services.Abstract
 {
     public interface IProductServices
     {
-        Task<List<Product>> GetAll(string? includeProperties = null, CancellationToken cancellationToken = default);
+        Task<List<ProductDTO>> GetAll(string? includeProperties = null, CancellationToken cancellationToken = default);
         Task<Product?> GetById(int id, string? includeProperties = null, CancellationToken cancellationToken = default);
         Task CreateAsync(Product product, CancellationToken cancellationToken = default);
         Task UpdateAsync(Product product, CancellationToken cancellationToken = default);

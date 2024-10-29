@@ -12,7 +12,7 @@ public class TestController(IProductServices _productServices)
     [HttpGet("ProductList")]
     public async Task<IActionResult> GetProduct()
     {
-        var products = await _productServices.GetAll();
+        var products = await _productServices.GetAll(includeProperties:"Category", cancellationToken: default);
         return Ok(products);
     }
     
