@@ -1,4 +1,5 @@
 ﻿using Croppilot.Date.DTOS;
+using Croppilot.Date.Models;
 using Croppilot.Infrastructure.Repositories.Interfaces;
 using Croppilot.Services.Abstract;
 
@@ -22,7 +23,7 @@ public class ProductServices(IUnitOfWork unit) : IProductServices
         }).ToList();
     }
 
- 
+
 
     public async Task<Product?> GetById(int id, string? includeProperties = null,
         CancellationToken cancellationToken = default)
@@ -33,6 +34,13 @@ public class ProductServices(IUnitOfWork unit) : IProductServices
 
     public async Task CreateAsync(Product product, CancellationToken cancellationToken = default)
     {
+        // var imageUrl = await _blobService.UploadImageAsync(image);
+        //var productImage = new ProductImage
+        //{
+        //    ProductId = productId,
+        //    ImageUrl = imageUrl
+        //};
+
         await unit.ProductRepository.AddAsync(product, cancellationToken);
     }
 
