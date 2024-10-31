@@ -69,21 +69,43 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
 
     }
 
-    public async Task UpdateAsync(Product product, CancellationToken cancellationToken = default)
+
+    public async Task UpdateAsync(int id, UpdateProductDTO productDto, CancellationToken cancellationToken = default)
     {
+        var product = await GetById(id, includeProperties: "Category,ProductImages", cancellationToken: cancellationToken);
+        if (product == null)
+        {
+            throw new KeyNotFoundException("Product not found");
+        }
+
+        product.Name = productDto.Name;
+        product.Description = productDto.Description;
+        product.Price = productDto.Price;
+        product.Availability = productDto.Availability;
+
+        if (productDto.Images != null && productDto.Images.Any())
+        {
+            var imageUrls = await azureBlobStorage.UploadImagesAsync(productDto.Images, productDto.Name);
+            product.ProductImages = imageUrls.Select(url => new ProductImage { ImageUrl = url }).ToList();
+        }
+        product.UpdatedAt = DateTime.UtcNow;
+
         await unit.ProductRepository.UpdateAsync(product, cancellationToken);
     }
 
     public async Task<bool> Delete(int id, CancellationToken cancellationToken = default)
     {
-        var product = await unit.ProductRepository.GetAsync(x => x.Id == id, cancellationToken: cancellationToken);
-        if (product != null)
+        var product = await GetById(id, includeProperties: "ProductImages", cancellationToken: cancellationToken);
+        if (product == null)
         {
-            await unit.ProductRepository.DeleteAsync(product, cancellationToken);
-            return true;
+            throw new KeyNotFoundException("Product not found");
         }
-
-        return false;
+        foreach (var productImage in product.ProductImages)
+        {
+            await azureBlobStorage.DeleteImageAsync(productImage.ImageUrl);
+        }
+        await unit.ProductRepository.DeleteAsync(product, cancellationToken);
+        return true;
     }
 
     public IEnumerable<Product> GetByDate(int nights, DateOnly checkInDate)
