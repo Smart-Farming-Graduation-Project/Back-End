@@ -10,7 +10,7 @@ namespace Croppilot.Services
         {
             service.AddScoped<IProductServices, ProductServices>();
             service.AddScoped<ICategoryService, CategoryService>();
-
+            service.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
             return service;
         }
     }
