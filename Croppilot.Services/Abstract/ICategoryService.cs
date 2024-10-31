@@ -7,5 +7,7 @@
         Task CreateAsync(Category category, CancellationToken cancellationToken = default);
         Task UpdateAsync(Category category, CancellationToken cancellationToken = default);
         Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
+        Task<Category?> GetByNameAsync(string name);
+
     }
 }

@@ -17,7 +17,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
-builder.Services.AddInfrastructureDependencies().AddCoreDependencies().AddServicesDependencies();
+builder.Services.AddInfrastructureDependencies().AddCoreDependencies().AddServicesDependencies(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

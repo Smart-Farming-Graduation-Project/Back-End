@@ -1,19 +1,18 @@
 ﻿using Croppilot.Date.DTOS;
-using Croppilot.Date.Models;
 using Croppilot.Infrastructure.Repositories.Interfaces;
 using Croppilot.Services.Abstract;
 
 namespace Croppilot.Services.Services;
 
-public class ProductServices(IUnitOfWork unit) : IProductServices
+public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlobStorage, ICategoryService categoryService) : IProductServices
 {
-    public async Task<List<ProductDTO>> GetAll(string? includeProperties = null,
+    public async Task<List<GEtProductDTO>> GetAll(string? includeProperties = null,
         CancellationToken cancellationToken = default)
     {
         var products = await unit.ProductRepository.GetAllAsync(includeProperties: includeProperties,
             cancellationToken: cancellationToken);
 
-        return products.Select(x => new ProductDTO
+        return products.Select(x => new GEtProductDTO
         {
             ProductId = x.Id,
             ProductName = x.Name,
@@ -32,16 +31,42 @@ public class ProductServices(IUnitOfWork unit) : IProductServices
             cancellationToken: cancellationToken);
     }
 
-    public async Task CreateAsync(Product product, CancellationToken cancellationToken = default)
-    {
-        // var imageUrl = await _blobService.UploadImageAsync(image);
-        //var productImage = new ProductImage
-        //{
-        //    ProductId = productId,
-        //    ImageUrl = imageUrl
-        //};
 
+
+    public async Task CreateAsync(CreateProductDTO productDto, CancellationToken cancellationToken = default)
+    {
+        var category = await categoryService.GetByNameAsync(productDto.CategoryName);
+        if (category == null)
+        {
+            await categoryService.CreateAsync(new Category
+            {
+                Name = productDto.CategoryName
+            }, cancellationToken);
+        }
+        var imageUrls = await azureBlobStorage.UploadImagesAsync(productDto.Images, productDto.Name);
+        var product = new Product
+        {
+            Name = productDto.Name,
+            Description = productDto.Description,
+            Price = productDto.Price,
+            Availability = productDto.Availability,
+            CategoryId = category.Id,
+            ProductImages = imageUrls.Select(url => new ProductImage { ImageUrl = url }).ToList(),
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
         await unit.ProductRepository.AddAsync(product, cancellationToken);
+        var productImages = imageUrls.Select(url => new ProductImage
+        {
+            ImageUrl = url,
+            ProductId = product.Id
+        }).ToList();
+
+        foreach (var productImage in productImages)
+        {
+            await unit.ProductImageRepository.AddAsync(productImage, cancellationToken);
+        }
+
     }
 
     public async Task UpdateAsync(Product product, CancellationToken cancellationToken = default)

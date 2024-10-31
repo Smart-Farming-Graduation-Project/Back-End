@@ -1,54 +1,48 @@
-﻿using Azure.Storage;
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Croppilot.Services.Abstract;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 
 namespace Croppilot.Services.Services
 {
-	internal class AzureBlobStorageService : IAzureBlobStorageService
-	{
-		private readonly BlobContainerClient _containerClient;
-        public AzureBlobStorageService(IConfiguration configuration)
-        {
-			_containerClient = new BlobServiceClient(
-				new Uri($"https://{configuration.GetSection("AzureKey:StorageAccount").Value}.blob.core.windows.net"),
-				new StorageSharedKeyCredential(configuration.GetSection("AzureKey:StorageAccount").Value, configuration.GetSection("AzureKey:ConnectionString").Value))
-				.GetBlobContainerClient(configuration.GetSection("AzureKey:ContainerName").Value);
-		}
-        public async Task<bool> DeleteImageAsync(string filaName)
-		{
-			try
-			{
-				var blob = _containerClient.GetBlobClient(filaName);
-				if(await blob.ExistsAsync())
-				{
-					await blob.DeleteAsync();
-					return true;
-				}
-				return false;
-			}
-			catch(Exception e)
-			{
-				throw;
-			}
-		}
+    public class AzureBlobStorageService(BlobServiceClient client) : IAzureBlobStorageService
+    {
 
-		public async Task<string> UploadImageAsync(IFormFile file)
-		{
-			try
-			{
-				var blob = _containerClient.GetBlobClient(file.FileName);
-				await using (var stream = file.OpenReadStream())
-				{
-					await blob.UploadAsync(stream);
-				}
-				return blob.Uri.AbsoluteUri;
-			}
-			catch(Exception e)
-			{
-				throw;
-			}
-		}
-	}
+        private readonly BlobServiceClient blobServiceClient;
+        private readonly string containerName = "product-images";
+
+
+
+        public async Task<List<string>> UploadImagesAsync(List<IFormFile> files, string? imageNamePrefix)
+        {
+            var uploadedUrls = new List<string>();
+            var container = client.GetBlobContainerClient(containerName);
+            await container.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+            foreach (var file in files)
+            {
+                var blobName = $"{imageNamePrefix}_{Path.GetFileNameWithoutExtension(file.FileName)}{Path.GetExtension(file.FileName)}";
+
+                using var memoryStream = new MemoryStream();
+                await file.CopyToAsync(memoryStream);
+                memoryStream.Position = 0;
+
+                var blobClient = container.GetBlobClient(blobName);
+                await blobClient.UploadAsync(memoryStream, overwrite: true);
+
+                uploadedUrls.Add(blobClient.Uri.ToString());
+            }
+
+            return uploadedUrls;
+        }
+
+
+        public async Task DeleteImageAsync(string fileName)
+        {
+            var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            var blobClient = blobContainerClient.GetBlobClient(fileName);
+            await blobClient.DeleteIfExistsAsync();
+        }
+
+    }
 }

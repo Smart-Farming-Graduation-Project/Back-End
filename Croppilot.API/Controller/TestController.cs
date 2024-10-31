@@ -1,4 +1,5 @@
-﻿using Croppilot.Date.Models;
+﻿using Croppilot.Date.DTOS;
+using Croppilot.Date.Models;
 using Croppilot.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,10 @@ public class TestController(IProductServices _productServices)
     [HttpGet("ProductList")]
     public async Task<IActionResult> GetProduct()
     {
-        var products = await _productServices.GetAll(includeProperties:"Category", cancellationToken: default);
+        var products = await _productServices.GetAll(includeProperties: "Category", cancellationToken: default);
         return Ok(products);
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Product?>> GetProductById(int id, string? includeProperties = null, CancellationToken cancellationToken = default)
     {
@@ -25,5 +26,11 @@ public class TestController(IProductServices _productServices)
             return NotFound();
         }
         return Ok(product);
+    }
+    [HttpPost]
+    public async Task<IActionResult> CreateProduct(CreateProductDTO product, CancellationToken cancellationToken = default)
+    {
+        await _productServices.CreateAsync(product, cancellationToken);
+        return Ok();
     }
 }

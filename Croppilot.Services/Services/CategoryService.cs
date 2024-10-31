@@ -41,4 +41,10 @@ public class CategoryService(IUnitOfWork unitOfWork) : ICategoryService
         await unitOfWork.CategoryRepository.DeleteAsync(category, cancellationToken);
         return true;
     }
+
+    public async Task<Category?> GetByNameAsync(string name)
+    {
+        return await unitOfWork.CategoryRepository.GetAsync(c => c.Name == name);
+
+    }
 }

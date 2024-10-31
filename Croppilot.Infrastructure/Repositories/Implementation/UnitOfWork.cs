@@ -8,7 +8,7 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
 
         public IProductRepository ProductRepository { get; }
         public ICategoryRepository CategoryRepository { get; }
-        public IProductImageRepository ProductImage { get; }
+        public IProductImageRepository ProductImageRepository { get; }
 
 
         private readonly AppDbContext _context;
@@ -19,7 +19,7 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
             _context = context;
             ProductRepository = new ProductRepository(_context);
             CategoryRepository = new CategoryRepository(_context);
-            ProductImage = new ProductImageRepository(_context);
+            ProductImageRepository = new ProductImageRepository(_context);
         }
 
         public IGenericRepository<T> GenericRepository<T>() where T : class
