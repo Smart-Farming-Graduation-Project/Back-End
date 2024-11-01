@@ -30,6 +30,7 @@ jobs:
         python <<EOF
         import json
         import requests
+        import os  # Import os to access environment variables
         from datetime import datetime
 
          repo = '${{ github.repository }}'  # Uses the current repository automatically
