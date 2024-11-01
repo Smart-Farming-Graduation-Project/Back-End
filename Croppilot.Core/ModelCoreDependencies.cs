@@ -1,5 +1,5 @@
-﻿using Croppilot.Core.Featuers.Product.Query.GetProduct;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Croppilot.Core
 {
@@ -7,8 +7,15 @@ namespace Croppilot.Core
     {
         public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
         {
-            service.AddMediatR(con => con.RegisterServicesFromAssembly(typeof(GetAllProductHandlers).Assembly));
+            service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
+            //When you use Automapper Uncomment this code
+
+            //service.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            ////When you use Validators Uncomment this code
+
+            //service.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             return service;
         }
     }

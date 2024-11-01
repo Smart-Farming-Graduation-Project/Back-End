@@ -22,6 +22,7 @@ public class ProductRepository(AppDbContext context) : GenericRepository<Product
             .Include(p => p.ProductImages)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
+
     //public override async Task<List<Product>> GetAll()
     //{
     //    return await _context.Products
