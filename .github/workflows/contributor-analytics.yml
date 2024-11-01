@@ -25,7 +25,7 @@ jobs:
     - name: Fetch contributor data
       id: fetch_data
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.Token_Test }}
       run: |
         import json
         import requests
