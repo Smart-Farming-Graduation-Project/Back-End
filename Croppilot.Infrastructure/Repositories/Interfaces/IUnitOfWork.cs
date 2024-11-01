@@ -8,5 +8,6 @@ namespace Croppilot.Infrastructure.Repositories.Interfaces
         IProductRepository ProductRepository { get; }
         ICategoryRepository CategoryRepository { get; }
         IProductImageRepository ProductImageRepository { get; }
+        ILeasingRepository LeasingRepository { get; }
     }
 }

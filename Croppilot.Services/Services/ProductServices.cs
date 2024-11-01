@@ -1,4 +1,5 @@
 ﻿using Croppilot.Date.DTOS;
+using Croppilot.Date.Enum;
 using Croppilot.Infrastructure.Repositories.Interfaces;
 using Croppilot.Services.Abstract;
 
@@ -6,49 +7,26 @@ namespace Croppilot.Services.Services;
 
 public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlobStorage, ICategoryService categoryService) : IProductServices
 {
-    public async Task<List<GEtProductDTO>> GetAll(string? includeProperties = null,
+    public async Task<IQueryable<Product>> GetAll(string? includeProperties = null,
         CancellationToken cancellationToken = default)
     {
-        var products = await unit.ProductRepository.GetAllAsync(includeProperties: includeProperties,
-            cancellationToken: cancellationToken);
-
-        return products.Select(x => new GEtProductDTO
-        {
-            ProductId = x.Id,
-            ProductName = x.Name,
-            CategoryName = x.Category.Name,
-            Description = x.Description,
-            Price = x.Price,
-            Availability = x.Availability.ToString()
-        }).ToList();
+        var products = await unit.ProductRepository.GetAllForPagnition(includeProperties: includeProperties);
+        return products;
     }
 
 
 
-  public async Task<GEtProductDTO?> GetById(int id, string? includeProperties = null,
-    CancellationToken cancellationToken = default)
-{
-    var product = await unit.ProductRepository.GetAsync(
-        x => x.Id == id,
-        includeProperties: includeProperties,
-        cancellationToken: cancellationToken
-    );
-
-    if (product == null)
+    public async Task<Product?> GetById(int id, string? includeProperties = null,
+      CancellationToken cancellationToken = default)
     {
-        return null;
+        var product = await unit.ProductRepository.GetAsync(
+            x => x.Id == id,
+            includeProperties: includeProperties,
+            cancellationToken: cancellationToken
+        );
+
+        return product;
     }
-
-    return new GEtProductDTO
-    {
-        ProductId = product.Id,
-        ProductName = product.Name,
-        CategoryName = product.Category?.Name ?? "Unknown", 
-        Price = product.Price,
-        Availability = product.Availability.ToString(),
-        Images = product.ProductImages?.Select(x => x.ImageUrl).ToList() ?? new List<string>() // Safe null check for ProductImages
-    };
-}
     public async Task CreateAsync(CreateProductDTO productDto, CancellationToken cancellationToken = default)
     {
         var category = await categoryService.GetByNameAsync(productDto.CategoryName);
@@ -106,7 +84,7 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
         product.UpdatedAt = DateTime.UtcNow;
 
         await unit.ProductRepository.UpdateAsync(product, cancellationToken);
-        
+
 
     }
 
@@ -119,17 +97,35 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
         }
         foreach (var productImage in product.ProductImages)
         {
-            var filename= ExtractFileNameFromUrl(productImage.ImageUrl);
+            var filename = ExtractFileNameFromUrl(productImage.ImageUrl);
             await azureBlobStorage.DeleteImageAsync(filename);
         }
         await unit.ProductRepository.DeleteAsync(product, cancellationToken);
         return true;
     }
 
-    
-    
-    
-    
+    public async Task<IQueryable<Product>> FilterProductQueryable(ProductOrderingEnum ordering, string? search)
+    {
+        var queryable = await unit.ProductRepository.GetAllForPagnition(includeProperties: "Category,ProductImages");
+        if (!string.IsNullOrEmpty(search))
+            queryable = queryable.Where(x => x.Name.Contains(search) || x.Category.Name.Contains(search));
+
+        queryable = ordering switch
+        {
+            ProductOrderingEnum.Id => queryable.OrderBy(x => x.Id),
+            ProductOrderingEnum.Name => queryable.OrderBy(x => x.Name),
+            ProductOrderingEnum.Category => queryable.OrderBy(x => x.Category.Name),
+            ProductOrderingEnum.Price => queryable.OrderBy(x => x.Price),
+            ProductOrderingEnum.Availability => queryable.OrderBy(x => x.Availability),
+            ProductOrderingEnum.CreatedAt => queryable.OrderBy(x => x.CreatedAt),
+            ProductOrderingEnum.UpdatedAt => queryable.OrderBy(x => x.UpdatedAt),
+            _ => queryable
+        };
+        return queryable;
+    }
+
+
+
     public IEnumerable<Product> GetByDate(int nights, DateOnly checkInDate)
     {
         //Todo: Implement it
@@ -141,7 +137,7 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
         //Todo: Implement it
         throw new NotImplementedException();
     }
-    
+
     private string ExtractFileNameFromUrl(string url)
     {
         return Path.GetFileName(new Uri(url).AbsolutePath);
