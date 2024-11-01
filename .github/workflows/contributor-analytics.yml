@@ -1,114 +1,119 @@
-name: Contributor Analytics
+name: Contributor Analytics with Visualizations
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
-  workflow_dispatch:  # Allows for manual triggering
+    - cron: '0 0 * * 1'  # Weekly on Mondays at midnight
+  workflow_dispatch:       # Allows manual triggering
 
 jobs:
-  contributor_analytics:
+  gather_contributor_data:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up Python environment
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
 
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install pandas matplotlib requests
+    - name: Install Python libraries
+      run: |
+        python -m pip install requests pandas matplotlib
 
-      - name: Fetch Contributor Data
-        env:
-          GITHUB_TOKEN: ${{ secrets.Token_Test }}
-        run: |
-          python3 -c "
-import requests
-import json
-from datetime import datetime
+    - name: Fetch contributor data
+      id: fetch_data
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        import json
+        import requests
+        from datetime import datetime
 
-# Set up GitHub API endpoint and headers
-url = 'https://api.github.com/repos/YOUR_ORG/YOUR_REPO/stats/contributors'
-headers = {'Authorization': f'Bearer {GITHUB_TOKEN}'}
-response = requests.get(url, headers=headers)
+        repo = '${{ github.repository }}'  # Uses the current repository automatically
+        headers = {'Authorization': f'token {GITHUB_TOKEN}'}
 
-# Check if response is valid
-if response.status_code != 200:
-    raise Exception(f'Error fetching data: {response.status_code}')
+        def fetch_data(url):
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.json()
 
-data = response.json()
+        commits = fetch_data(f'https://api.github.com/repos/{repo}/commits')
+        issues = fetch_data(f'https://api.github.com/repos/{repo}/issues')
+        pulls = fetch_data(f'https://api.github.com/repos/{repo}/pulls?state=all')
 
-# Process data for easier analytics
-analytics_data = {'timestamp': datetime.utcnow().isoformat(), 'data': {}}
-for contributor in data:
-    user = contributor['author']['login']
-    analytics_data['data'][user] = {
-        'commits': contributor['total'],
-        'issues': 0,  # Replace with actual data if available
-        'pull_requests': 0  # Replace with actual data if available
-    }
+        contributor_data = {}
+        def add_contribution(user, type):
+            if user not in contributor_data:
+                contributor_data[user] = {'commits': 0, 'issues': 0, 'pull_requests': 0}
+            contributor_data[user][type] += 1
 
-# Save data to file
-with open('contributor_analytics.json', 'w') as f:
-    json.dump([analytics_data], f)
-"
+        for commit in commits:
+            if commit.get('author'):
+                add_contribution(commit['author']['login'], 'commits')
+        for issue in issues:
+            add_contribution(issue['user']['login'], 'issues')
+        for pull in pulls:
+            add_contribution(pull['user']['login'], 'pull_requests')
 
-      - name: Generate visualizations
-        run: |
-          python3 -c "
-import matplotlib
-matplotlib.use('Agg')  # Use a non-interactive backend suitable for headless environments
+        try:
+            with open('contributor_analytics.json', 'r') as f:
+                all_data = json.load(f)
+        except FileNotFoundError:
+            all_data = []
 
-import json
-import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import datetime
+        all_data.append({
+            'timestamp': datetime.now().isoformat(),
+            'data': contributor_data
+        })
 
-# Load and process the data
-with open('contributor_analytics.json', 'r') as f:
-    all_data = json.load(f)
+        with open('contributor_analytics.json', 'w') as f:
+            json.dump(all_data, f, indent=2)
 
-records = []
-for entry in all_data:
-    for user, contributions in entry['data'].items():
-        record = {
-            'timestamp': entry['timestamp'],
-            'user': user,
-            'commits': contributions['commits'],
-            'issues': contributions['issues'],
-            'pull_requests': contributions['pull_requests']
-        }
-        records.append(record)
+    - name: Generate visualizations
+      run: |
+        import json
+        import pandas as pd
+        import matplotlib.pyplot as plt
+        from datetime import datetime
 
-df = pd.DataFrame(records)
-df['timestamp'] = pd.to_datetime(df['timestamp'])
+        with open('contributor_analytics.json', 'r') as f:
+            all_data = json.load(f)
 
-# Generate total contributions over time chart
-total_contributions = df.groupby('timestamp')[['commits', 'issues', 'pull_requests']].sum()
-total_contributions.plot(kind='line', figsize=(10, 5))
-plt.title('Total Contributions Over Time')
-plt.xlabel('Date')
-plt.ylabel('Number of Contributions')
-plt.savefig('total_contributions.png')
+        records = []
+        for entry in all_data:
+            for user, contributions in entry['data'].items():
+                record = {
+                    'timestamp': entry['timestamp'],
+                    'user': user,
+                    'commits': contributions['commits'],
+                    'issues': contributions['issues'],
+                    'pull_requests': contributions['pull_requests']
+                }
+                records.append(record)
 
-# Generate contributions by user chart
-user_contributions = df.groupby('user')[['commits', 'issues', 'pull_requests']].sum()
-user_contributions.plot(kind='bar', stacked=True, figsize=(10, 5))
-plt.title('Contributions by User')
-plt.xlabel('User')
-plt.ylabel('Number of Contributions')
-plt.savefig('contributions_by_user.png')
-"
+        df = pd.DataFrame(records)
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
 
-      - name: Upload visualizations as artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: contributor-analytics-visualizations
-          path: |
-            total_contributions.png
-            contributions_by_user.png
+        total_contributions = df.groupby('timestamp')[['commits', 'issues', 'pull_requests']].sum()
+        total_contributions.plot(kind='line', figsize=(10, 5))
+        plt.title('Total Contributions Over Time')
+        plt.xlabel('Date')
+        plt.ylabel('Number of Contributions')
+        plt.savefig('total_contributions.png')
+
+        user_contributions = df.groupby('user')[['commits', 'issues', 'pull_requests']].sum()
+        user_contributions.plot(kind='bar', stacked=True, figsize=(10, 5))
+        plt.title('Contributions by User')
+        plt.xlabel('User')
+        plt.ylabel('Number of Contributions')
+        plt.savefig('contributions_by_user.png')
+
+    - name: Commit and Push Updated Data and Charts
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add contributor_analytics.json total_contributions.png contributions_by_user.png
+        git commit -m "Update contributor analytics and charts"
+        git push
