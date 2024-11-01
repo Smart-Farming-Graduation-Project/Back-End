@@ -83,7 +83,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-with open('contributor_analytics.json', 'r') as f:
+with open('contributor_analytics.json', 'r') as f):
     all_data = json.load(f)
 
 records = []
@@ -118,7 +118,7 @@ EOF
 
       - name: Commit and Push Updated Data and Charts
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.Token_Test }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
