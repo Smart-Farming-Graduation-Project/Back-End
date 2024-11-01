@@ -1,10 +1,9 @@
 name: Contributor Analytics with Visualizations
 
-on:
-  schedule:
+schedule:
     - cron: '0 0 * * 1'  # Weekly on Mondays at midnight
-  workflow_dispatch:       # Allows manual triggering
-
+workflow_dispatch:       # Allows manual triggering
+  
 jobs:
   gather_contributor_data:
     runs-on: ubuntu-latest
