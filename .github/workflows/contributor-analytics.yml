@@ -32,8 +32,9 @@ jobs:
         import requests
         from datetime import datetime
 
-        repo = '${{ github.repository }}'  # Uses the current repository automatically
-        headers = {'Authorization': f'token {GITHUB_TOKEN}'}
+         repo = '${{ github.repository }}'  # Uses the current repository automatically
+         token = os.getenv('GITHUB_TOKEN')  # Fetch the GITHUB_TOKEN from environment
+         headers = {'Authorization': f'token {token}'}
 
         def fetch_data(url):
             response = requests.get(url, headers=headers)
