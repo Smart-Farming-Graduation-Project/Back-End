@@ -2,8 +2,8 @@ name: Contributor Analytics with Visualizations
 
 on:
   schedule:
-    # - cron: '0 0 * * 1'  # Weekly on Mondays at midnight
-   workflow_dispatch:       # Allows manual triggering
+    - cron: '0 0 * * 1'  # Weekly on Mondays at midnight
+  workflow_dispatch:       # Allows manual triggering
 
 jobs:
   gather_contributor_data:
@@ -27,98 +27,92 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.Token_Test }}
       run: |
-        echo "
-import json
-import requests
-from datetime import datetime
+        python <<EOF
+        import json
+        import requests
+        from datetime import datetime
 
-repo = '${{ github.repository }}'  # Uses the current repository automatically
-headers = {'Authorization': f'token ${GITHUB_TOKEN}'}
+        repo = '${{ github.repository }}'  # Uses the current repository automatically
+        headers = {'Authorization': f'token {GITHUB_TOKEN}'}
 
-def fetch_data(url):
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    return response.json()
+        def fetch_data(url):
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.json()
 
-commits = fetch_data(f'https://api.github.com/repos/{repo}/commits')
-issues = fetch_data(f'https://api.github.com/repos/{repo}/issues')
-pulls = fetch_data(f'https://api.github.com/repos/{repo}/pulls?state=all')
+        commits = fetch_data(f'https://api.github.com/repos/{repo}/commits')
+        issues = fetch_data(f'https://api.github.com/repos/{repo}/issues')
+        pulls = fetch_data(f'https://api.github.com/repos/{repo}/pulls?state=all')
 
-contributor_data = {}
-def add_contribution(user, type):
-    if user not in contributor_data:
-        contributor_data[user] = {'commits': 0, 'issues': 0, 'pull_requests': 0}
-    contributor_data[user][type] += 1
+        contributor_data = {}
+        def add_contribution(user, type):
+            if user not in contributor_data:
+                contributor_data[user] = {'commits': 0, 'issues': 0, 'pull_requests': 0}
+            contributor_data[user][type] += 1
 
-for commit in commits:
-    if commit.get('author'):
-        add_contribution(commit['author']['login'], 'commits')
-for issue in issues:
-    add_contribution(issue['user']['login'], 'issues')
-for pull in pulls:
-    add_contribution(pull['user']['login'], 'pull_requests')
+        for commit in commits:
+            if commit.get('author'):
+                add_contribution(commit['author']['login'], 'commits')
+        for issue in issues:
+            add_contribution(issue['user']['login'], 'issues')
+        for pull in pulls:
+            add_contribution(pull['user']['login'], 'pull_requests')
 
-try:
-    with open('contributor_analytics.json', 'r') as f:
-        all_data = json.load(f)
-except FileNotFoundError:
-    all_data = []
+        try:
+            with open('contributor_analytics.json', 'r') as f:
+                all_data = json.load(f)
+        except FileNotFoundError:
+            all_data = []
 
-all_data.append({
-    'timestamp': datetime.now().isoformat(),
-    'data': contributor_data
-})
+        all_data.append({
+            'timestamp': datetime.now().isoformat(),
+            'data': contributor_data
+        })
 
-with open('contributor_analytics.json', 'w') as f:
-    json.dump(all_data, f, indent=2)
-" > fetch_data.py
-        python fetch_data.py
+        with open('contributor_analytics.json', 'w') as f:
+            json.dump(all_data, f, indent=2)
+        EOF
 
     - name: Generate visualizations
       run: |
-        echo "
-import json
-import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import datetime
+        python <<EOF
+        import json
+        import pandas as pd
+        import matplotlib.pyplot as plt
+        from datetime import datetime
 
-# Set the non-interactive backend to avoid X server issues
-import matplotlib
-matplotlib.use('Agg')
+        with open('contributor_analytics.json', 'r') as f:
+            all_data = json.load(f)
 
-with open('contributor_analytics.json', 'r') as f:
-    all_data = json.load(f)
+        records = []
+        for entry in all_data:
+            for user, contributions in entry['data'].items():
+                record = {
+                    'timestamp': entry['timestamp'],
+                    'user': user,
+                    'commits': contributions['commits'],
+                    'issues': contributions['issues'],
+                    'pull_requests': contributions['pull_requests']
+                }
+                records.append(record)
 
-records = []
-for entry in all_data:
-    for user, contributions in entry['data'].items():
-        record = {
-            'timestamp': entry['timestamp'],
-            'user': user,
-            'commits': contributions['commits'],
-            'issues': contributions['issues'],
-            'pull_requests': contributions['pull_requests']
-        }
-        records.append(record)
+        df = pd.DataFrame(records)
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
 
-df = pd.DataFrame(records)
-df['timestamp'] = pd.to_datetime(df['timestamp'])
+        total_contributions = df.groupby('timestamp')[['commits', 'issues', 'pull_requests']].sum()
+        total_contributions.plot(kind='line', figsize=(10, 5))
+        plt.title('Total Contributions Over Time')
+        plt.xlabel('Date')
+        plt.ylabel('Number of Contributions')
+        plt.savefig('total_contributions.png')
 
-total_contributions = df.groupby('timestamp')[['commits', 'issues', 'pull_requests']].sum()
-total_contributions.plot(kind='line', figsize=(10, 5))
-plt.title('Total Contributions Over Time')
-plt.xlabel('Date')
-plt.ylabel('Number of Contributions')
-plt.savefig('total_contributions.png')
-
-user_contributions = df.groupby('user')[['commits', 'issues', 'pull_requests']].sum()
-user_contributions.plot(kind='bar', stacked=True, figsize=(10, 5))
-plt.title('Contributions by User')
-plt.xlabel('User')
-plt.ylabel('Number of Contributions')
-plt.savefig('contributions_by_user.png')
-" > generate_visualizations.py
-        python generate_visualizations.py
+        user_contributions = df.groupby('user')[['commits', 'issues', 'pull_requests']].sum()
+        user_contributions.plot(kind='bar', stacked=True, figsize=(10, 5))
+        plt.title('Contributions by User')
+        plt.xlabel('User')
+        plt.ylabel('Number of Contributions')
+        plt.savefig('contributions_by_user.png')
+        EOF
 
     - name: Commit and Push Updated Data and Charts
       run: |
