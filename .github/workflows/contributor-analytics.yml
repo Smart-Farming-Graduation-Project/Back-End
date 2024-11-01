@@ -78,6 +78,10 @@ jobs:
         import matplotlib.pyplot as plt
         from datetime import datetime
 
+        # Set the non-interactive backend
+        import matplotlib
+        matplotlib.use('Agg')
+
         with open('contributor_analytics.json', 'r') as f:
             all_data = json.load(f)
 
