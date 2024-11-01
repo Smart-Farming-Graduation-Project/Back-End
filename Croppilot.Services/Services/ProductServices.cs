@@ -17,6 +17,7 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
             ProductId = x.Id,
             ProductName = x.Name,
             CategoryName = x.Category.Name,
+            Description = x.Description,
             Price = x.Price,
             Availability = x.Availability.ToString()
         }).ToList();
@@ -24,15 +25,30 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
 
 
 
-    public async Task<Product?> GetById(int id, string? includeProperties = null,
-        CancellationToken cancellationToken = default)
+  public async Task<GEtProductDTO?> GetById(int id, string? includeProperties = null,
+    CancellationToken cancellationToken = default)
+{
+    var product = await unit.ProductRepository.GetAsync(
+        x => x.Id == id,
+        includeProperties: includeProperties,
+        cancellationToken: cancellationToken
+    );
+
+    if (product == null)
     {
-        return await unit.ProductRepository.GetAsync(x => x.Id == id, includeProperties: includeProperties,
-            cancellationToken: cancellationToken);
+        return null;
     }
 
-
-
+    return new GEtProductDTO
+    {
+        ProductId = product.Id,
+        ProductName = product.Name,
+        CategoryName = product.Category?.Name ?? "Unknown", 
+        Price = product.Price,
+        Availability = product.Availability.ToString(),
+        Images = product.ProductImages?.Select(x => x.ImageUrl).ToList() ?? new List<string>() // Safe null check for ProductImages
+    };
+}
     public async Task CreateAsync(CreateProductDTO productDto, CancellationToken cancellationToken = default)
     {
         var category = await categoryService.GetByNameAsync(productDto.CategoryName);
@@ -40,7 +56,8 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
         {
             await categoryService.CreateAsync(new Category
             {
-                Name = productDto.CategoryName
+                Name = productDto.CategoryName,
+                Description = productDto.CategoryName
             }, cancellationToken);
         }
         var imageUrls = await azureBlobStorage.UploadImagesAsync(productDto.Images, productDto.Name);
@@ -68,11 +85,9 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
         }
 
     }
-
-
     public async Task UpdateAsync(int id, UpdateProductDTO productDto, CancellationToken cancellationToken = default)
     {
-        var product = await GetById(id, includeProperties: "Category,ProductImages", cancellationToken: cancellationToken);
+        var product = await unit.ProductRepository.GetProductsById(id);
         if (product == null)
         {
             throw new KeyNotFoundException("Product not found");
@@ -91,23 +106,30 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
         product.UpdatedAt = DateTime.UtcNow;
 
         await unit.ProductRepository.UpdateAsync(product, cancellationToken);
+        
+
     }
 
     public async Task<bool> Delete(int id, CancellationToken cancellationToken = default)
     {
-        var product = await GetById(id, includeProperties: "ProductImages", cancellationToken: cancellationToken);
+        var product = await unit.ProductRepository.GetProductsById(id);
         if (product == null)
         {
             throw new KeyNotFoundException("Product not found");
         }
         foreach (var productImage in product.ProductImages)
         {
-            await azureBlobStorage.DeleteImageAsync(productImage.ImageUrl);
+            var filename= ExtractFileNameFromUrl(productImage.ImageUrl);
+            await azureBlobStorage.DeleteImageAsync(filename);
         }
         await unit.ProductRepository.DeleteAsync(product, cancellationToken);
         return true;
     }
 
+    
+    
+    
+    
     public IEnumerable<Product> GetByDate(int nights, DateOnly checkInDate)
     {
         //Todo: Implement it
@@ -118,5 +140,10 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
     {
         //Todo: Implement it
         throw new NotImplementedException();
+    }
+    
+    private string ExtractFileNameFromUrl(string url)
+    {
+        return Path.GetFileName(new Uri(url).AbsolutePath);
     }
 }

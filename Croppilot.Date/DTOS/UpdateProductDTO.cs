@@ -15,6 +15,7 @@ namespace Croppilot.Date.DTOS
 
         public Availability Availability { get; set; }
 
+        [ValidateNever]
         public List<IFormFile> Images { get; set; }
     }
 }

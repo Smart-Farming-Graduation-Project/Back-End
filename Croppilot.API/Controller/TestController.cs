@@ -33,4 +33,16 @@ public class TestController(IProductServices _productServices)
         await _productServices.CreateAsync(product, cancellationToken);
         return Ok();
     }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProduct(int id, UpdateProductDTO product, CancellationToken cancellationToken = default)
+    {
+        await _productServices.UpdateAsync(id, product, cancellationToken);
+        return Ok();
+    }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProduct(int id, CancellationToken cancellationToken = default)
+    {
+        await _productServices.Delete(id, cancellationToken);
+        return Ok();
+    }
 }

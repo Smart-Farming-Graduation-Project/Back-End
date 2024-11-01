@@ -8,7 +8,6 @@ namespace Croppilot.Services.Services
     public class AzureBlobStorageService(BlobServiceClient client) : IAzureBlobStorageService
     {
 
-        private readonly BlobServiceClient blobServiceClient;
         private readonly string containerName = "product-images";
 
 
@@ -39,7 +38,7 @@ namespace Croppilot.Services.Services
 
         public async Task<bool> DeleteImageAsync(string fileName)
         {
-            var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            var blobContainerClient = client.GetBlobContainerClient(containerName);
             var blobClient = blobContainerClient.GetBlobClient(fileName);
             await blobClient.DeleteIfExistsAsync();
             return true;
