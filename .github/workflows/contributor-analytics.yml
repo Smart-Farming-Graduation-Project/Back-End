@@ -10,24 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.x'
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
 
-    - name: Install Python libraries
-      run: |
-        python -m pip install requests pandas matplotlib
+      - name: Install Python libraries
+        run: |
+          python -m pip install requests pandas matplotlib
 
-    - name: Fetch contributor data
-      id: fetch_data
-      env:
-        GITHUB_TOKEN: ${{ secrets.Token_Test }}
-      run: |
-        python <<EOF
+      - name: Fetch contributor data
+        id: fetch_data
+        env:
+          GITHUB_TOKEN: ${{ secrets.Token_Test }}
+        run: |
+          python <<EOF
 import json
 import requests
 import os
@@ -75,9 +75,9 @@ with open('contributor_analytics.json', 'w') as f:
     json.dump(all_data, f, indent=2)
 EOF
 
-    - name: Generate visualizations
-      run: |
-        python <<EOF
+      - name: Generate visualizations
+        run: |
+          python <<EOF
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -116,10 +116,10 @@ plt.ylabel('Number of Contributions')
 plt.savefig('contributions_by_user.png')
 EOF
 
-    - name: Commit and Push Updated Data and Charts
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add contributor_analytics.json total_contributions.png contributions_by_user.png
-        git commit -m "Update contributor analytics and charts"
-        git push
+      - name: Commit and Push Updated Data and Charts
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add contributor_analytics.json total_contributions.png contributions_by_user.png
+          git commit -m "Update contributor analytics and charts"
+          git push
