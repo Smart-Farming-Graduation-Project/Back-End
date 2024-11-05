@@ -80,9 +80,9 @@ all_data.append({
     'data': ${{ steps.fetch_data.outputs.contributor_data }}
 })
 
-- name: Save contributor analytics
-  run: |
-    echo '${{ toJson(steps.fetch_data.outputs.all_data) }}' > contributor_analytics.json
+with open('contributor_analytics.json', 'w') as f:
+    json.dump(all_data, f, indent=2)
+EOF
 
 EOF
 
