@@ -27,12 +27,12 @@ public class TestController(IProductServices _productServices)
         }
         return Ok(product);
     }
-    [HttpPost]
-    public async Task<IActionResult> CreateProduct(CreateProductDTO product, CancellationToken cancellationToken = default)
-    {
-        await _productServices.CreateAsync(product, cancellationToken);
-        return Ok();
-    }
+    //[HttpPost]
+    //public async Task<IActionResult> CreateProduct(CreateProductDTO product, CancellationToken cancellationToken = default)
+    //{
+    //    await _productServices.CreateAsync(product, cancellationToken);
+    //    return Ok();
+    //}
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, UpdateProductDTO product, CancellationToken cancellationToken = default)
     {

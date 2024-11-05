@@ -16,8 +16,8 @@ namespace Croppilot.Core.Featuers.Product.Query.Handlers
     {
         public async Task<Response<List<GetAllProductResponse>>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
         {
-            var studentList = await productServices.GetAll(includeProperties: "Category,ProductImages", cancellationToken: cancellationToken);
-            var studentResult = studentList.Select(x => new GetAllProductResponse
+            var productList = await productServices.GetAll(includeProperties: "Category,ProductImages", cancellationToken: cancellationToken);
+            var producttResult = productList.Select(x => new GetAllProductResponse
             {
                 ProductId = x.Id,
                 ProductName = x.Name,
@@ -29,11 +29,11 @@ namespace Croppilot.Core.Featuers.Product.Query.Handlers
             }).ToList();
             //When you use Automapper Uncomment this code
 
-            // var studentListMapper = mapper.Map<List<GetAllProductResponse>>(studentList);
-            var result = Success(studentResult); //Fun In Response Handler
+            // var productListMapper = mapper.Map<List<GetAllProductResponse>>(productList);
+            var result = Success(producttResult); //Fun In Response Handler
             result.Meta = new
             {
-                Count = studentResult.Count()
+                Count = producttResult.Count()
             };
             return result;
         }

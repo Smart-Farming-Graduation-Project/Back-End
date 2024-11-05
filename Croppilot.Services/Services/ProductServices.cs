@@ -27,31 +27,35 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
 
         return product;
     }
-    public async Task CreateAsync(CreateProductDTO productDto, CancellationToken cancellationToken = default)
+    public async Task<string> CreateAsync(Product product, List<string> imageList, CancellationToken cancellationToken = default)
     {
-        var category = await categoryService.GetByNameAsync(productDto.CategoryName);
-        if (category == null)
-        {
-            await categoryService.CreateAsync(new Category
-            {
-                Name = productDto.CategoryName,
-                Description = productDto.CategoryName
-            }, cancellationToken);
-        }
-        var imageUrls = await azureBlobStorage.UploadImagesAsync(productDto.Images, productDto.Name);
-        var product = new Product
-        {
-            Name = productDto.Name,
-            Description = productDto.Description,
-            Price = productDto.Price,
-            Availability = productDto.Availability,
-            CategoryId = category.Id,
-            ProductImages = imageUrls.Select(url => new ProductImage { ImageUrl = url }).ToList(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+        //var category = await categoryService.GetByNameAsync(productDto.CategoryName);
+        //if (category == null)
+        //{
+        //    await categoryService.CreateAsync(new Category
+        //    {
+        //        Name = productDto.CategoryName,
+        //        Description = productDto.CategoryName
+        //    }, cancellationToken);
+        //}
+        //var imageUrls = await azureBlobStorage.UploadImagesAsync(productDto.Images, productDto.Name);
+        //var product = new Product
+        //{
+        //    Name = productDto.Name,
+        //    Description = productDto.Description,
+        //    Price = productDto.Price,
+        //    Availability = productDto.Availability,
+        //    CategoryId = category.Id,
+        //    ProductImages = imageUrls.Select(url => new ProductImage { ImageUrl = url }).ToList(),
+        //    CreatedAt = DateTime.UtcNow,
+        //    UpdatedAt = DateTime.UtcNow
+        //};
+        var productExist = await unit.ProductRepository.GetProductsById(product.Id);
+
+        if (productExist is not null)
+            return "Exist";
         await unit.ProductRepository.AddAsync(product, cancellationToken);
-        var productImages = imageUrls.Select(url => new ProductImage
+        var productImages = imageList.Select(url => new ProductImage
         {
             ImageUrl = url,
             ProductId = product.Id
@@ -61,7 +65,7 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
         {
             await unit.ProductImageRepository.AddAsync(productImage, cancellationToken);
         }
-
+        return "Success";
     }
     public async Task UpdateAsync(int id, UpdateProductDTO productDto, CancellationToken cancellationToken = default)
     {
@@ -93,7 +97,7 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
         var product = await unit.ProductRepository.GetProductsById(id);
         if (product == null)
         {
-            throw new KeyNotFoundException("Product not found");
+            return false;
         }
         foreach (var productImage in product.ProductImages)
         {
