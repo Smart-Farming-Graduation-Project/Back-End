@@ -2,8 +2,8 @@ name: Contributor Analytics with Visualizations
 
 on:
   schedule:
-    - cron: "0 0 * * 1" # Runs weekly on Mondays at midnight
-  workflow_dispatch: # Allows you to trigger the workflow manually
+    - cron: '0 0 * * 1'  # Weekly on Mondays at midnight
+  workflow_dispatch:       # Allows manual triggering
 
 jobs:
   gather_contributor_data:
@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
-          python-version: "3.x"
+          python-version: '3.x'
 
       - name: Install Python libraries
         run: |
@@ -25,104 +25,119 @@ jobs:
       - name: Fetch contributor data
         id: fetch_data
         env:
-          GITHUB_TOKEN: ${{ secrets.Token_Test }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          import json
-          import requests
-          from datetime import datetime
+          echo "${{ steps.fetch_data.outputs.python_script }}" | python
+        - import: json
+      - import: requests
+      - import: os
+      - from: datetime
+        import: datetime
 
-          # GitHub API and repository details
-          repo = '${{ github.repository }}'
-          headers = {'Authorization': f'token {GITHUB_TOKEN}'}
+repo: ${{ github.repository }}
+token: ${{ secrets.GITHUB_TOKEN }}
+headers:
+  Authorization: ${{ secrets.GITHUB_TOKEN }}
 
-          # Fetch data from GitHub API
-          def fetch_data(url):
-              response = requests.get(url, headers=headers)
-              response.raise_for_status()
-              return response.json()
+def fetch_data(url):
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
 
-          # Fetch commits, issues, and pull requests
-          commits = fetch_data(f'https://api.github.com/repos/{repo}/commits')
-          issues = fetch_data(f'https://api.github.com/repos/{repo}/issues')
-          pulls = fetch_data(f'https://api.github.com/repos/{repo}/pulls?state=all')
+commits: ${{ steps.fetch_data.outputs.commits }}
+issues: ${{ steps.fetch_data.outputs.issues }}
+pulls: ${{ steps.fetch_data.outputs.pulls }}
 
-          # Aggregate data by contributor
-          contributor_data = {}
-          def add_contribution(user, type):
-              if user not in contributor_data:
-                  contributor_data[user] = {'commits': 0, 'issues': 0, 'pull_requests': 0}
-              contributor_data[user][type] += 1
+contributor_data: {}
+def add_contribution(user, type):
+    if user not in contributor_data:
+        contributor_data[user] = {}
+    if type not in contributor_data[user]:
+        contributor_data[user][type] = 0
+    contributor_data[user][type] += 1
 
-          # Process data
-          for commit in commits:
-              if commit.get('author'):
-                  add_contribution(commit['author']['login'], 'commits')
-          for issue in issues:
-              add_contribution(issue['user']['login'], 'issues')
-          for pull in pulls:
-              add_contribution(pull['user']['login'], 'pull_requests')
+for commit in commits:
+    if 'author' in commit:
+        add_contribution(commit['author']['login'], 'commits')
+for issue in issues:
+    add_contribution(issue['user']['login'], 'issues')
+for pull in pulls:
+    add_contribution(pull['user']['login'], 'pull_requests')
 
-          # Load or initialize historical data file
-          try:
-              with open('contributor_analytics.json', 'r') as f:
-                  all_data = json.load(f)
-          except FileNotFoundError:
-              all_data = []
+- name: Load contributor analytics
+  run: |
+    all_data=$(cat contributor_analytics.json)
+    echo "::set-output name=all_data::$all_data"
 
-          # Add new data with timestamp
-          all_data.append({
-              'timestamp': datetime.now().isoformat(),
-              'data': contributor_data
-          })
+all_data = []
+try:
+    all_data = ${{ steps.fetch_data.outputs.all_data }}
+except:
+    pass
 
-          # Save updated data
-          with open('contributor_analytics.json', 'w') as f:
-              json.dump(all_data, f, indent=2)
+all_data.append({
+    'timestamp': ${{ steps.fetch_data.outputs.timestamp }},
+    'data': ${{ steps.fetch_data.outputs.contributor_data }}
+})
+
+- name: Save contributor analytics
+  run: |
+    echo '${{ toJson(steps.fetch_data.outputs.all_data) }}' > contributor_analytics.json
+
+EOF
 
       - name: Generate visualizations
         run: |
-          import matplotlib
-          matplotlib.use('Agg')  # Use a non-interactive backend suitable for headless environments
+- name: Load contributor analytics
+  run: |
+    all_data=$(cat contributor_analytics.json)
+    echo "::set-output name=all_data::$all_data"
+import pandas as pd
+import matplotlib.pyplot as plt
+from datetime import datetime
 
-          import json
-          import pandas as pd
-          import matplotlib.pyplot as plt
-          from datetime import datetime
+with open('contributor_analytics.json', 'r') as f):
+    all_data = json.load(f)
 
-          # Load and process the data as before
-          with open('contributor_analytics.json', 'r') as f:
-              all_data = json.load(f)
+records = []
+for entry in all_data:
+    for user, contributions in entry['data'].items():
+        record = {
+df: ${{ steps.generate_visualizations.outputs.df }}ntry['timestamp'],
+            'user': user,
+            'commits': contributions['commits'],
+total_contributions: ${{ steps.generate_visualizations.outputs.total_contributions }}
+            'pull_requests': contributions['pull_requests']
+        }
+        records.append(record)
 
-          records = []
-          for entry in all_data:
-              for user, contributions in entry['data'].items():
-                  record = {
-                      'timestamp': entry['timestamp'],
-                      'user': user,
-                      'commits': contributions['commits'],
-                      'issues': contributions['issues'],
-                      'pull_requests': contributions['pull_requests']
-                  }
-                  records.append(record)
-
-          df = pd.DataFrame(records)
-          df['timestamp'] = pd.to_datetime(df['timestamp'])
-
-          total_contributions = df.groupby('timestamp')[['commits', 'issues', 'pull_requests']].sum()
-          total_contributions.plot(kind='line', figsize=(10, 5))
-          plt.title('Total Contributions Over Time')
-          plt.xlabel('Date')
-          plt.ylabel('Number of Contributions')
-          plt.savefig('total_contributions.png')
-
-          user_contributions = df.groupby('user')[['commits', 'issues', 'pull_requests']].sum()
-          user_contributions.plot(kind='bar', stacked=True, figsize=(10, 5))
-          plt.title('Contributions by User')
-          plt.xlabel('User')
-          plt.ylabel('Number of Contributions')
-          plt.savefig('contributions_by_user.png')
+df = pd.DataFrame(records)
+df['timestamp'] = pd.to_datetime(df['timestamp'])
+user_contributions: ${{ steps.generate_visualizations.outputs.user_contributions }}
+total_contributions = df.groupby('timestamp')[['commits', 'issues', 'pull_requests']].sum()
+total_contributions.plot(kind='line', figsize=(10, 5))
+plt.title('Total Contributions Over Time')
+plt.xlabel('Date')
+plt.ylabel('Number of Contributions')
+plt.savefig('total_contributions.png')
 
       - name: Commit and Push Updated Data and Charts
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add contributor_analytics.json total_contributions.png contributions_by_user.png
+          git commit -m "Update contributor analytics and charts"
+          git pushissues', 'pull_requests']].sum()
+user_contributions.plot(kind='bar', stacked=True, figsize=(10, 5))
+plt.title('Contributions by User')
+plt.xlabel('User')
+plt.ylabel('Number of Contributions')
+plt.savefig('contributions_by_user.png')
+EOF
+
+      - name: Commit and Push Updated Data and Charts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
