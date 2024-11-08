@@ -1,4 +1,5 @@
-﻿using Croppilot.Infrastructure.Repositories.Interfaces;
+﻿using Croppilot.Date.Enum;
+using Croppilot.Infrastructure.Repositories.Interfaces;
 using Croppilot.Services.Abstract;
 
 namespace Croppilot.Services.Services;
@@ -19,14 +20,16 @@ public class CategoryService(IUnitOfWork unitOfWork) : ICategoryService
             cancellationToken: cancellationToken);
     }
 
-    public async Task CreateAsync(Category category, CancellationToken cancellationToken = default)
+    public async Task<string> CreateAsync(Category category, CancellationToken cancellationToken = default)
     {
         await unitOfWork.CategoryRepository.AddAsync(category, cancellationToken);
+        return "Success";
     }
 
-    public async Task UpdateAsync(Category category, CancellationToken cancellationToken = default)
+    public async Task<string> UpdateAsync(Category category, CancellationToken cancellationToken = default)
     {
         await unitOfWork.CategoryRepository.UpdateAsync(category, cancellationToken);
+        return "Success";
     }
 
     public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
@@ -45,6 +48,23 @@ public class CategoryService(IUnitOfWork unitOfWork) : ICategoryService
     public async Task<Category?> GetByNameAsync(string name)
     {
         return await unitOfWork.CategoryRepository.GetAsync(c => c.Name == name);
+
+    }
+
+    public async Task<IQueryable<Category>> FilterCategoryQueryable(CategoryOrderingEnum ordering, string? search)
+    {
+
+        var queryable = await unitOfWork.CategoryRepository.GetAllForPagnition(includeProperties: "Products");
+        if (!string.IsNullOrEmpty(search))
+            queryable = queryable.Where(x => x.Name.Contains(search));
+
+        queryable = ordering switch
+        {
+            CategoryOrderingEnum.Id => queryable.OrderBy(x => x.Id),
+            CategoryOrderingEnum.Name => queryable.OrderBy(x => x.Name),
+            _ => queryable
+        };
+        return queryable;
 
     }
 }

@@ -32,12 +32,12 @@ namespace Croppilot.API.Controller
             var response = await mediator.Send(command);
             return NewResult(response);
         }
-        //[HttpPut("Product/Update")]
-        //public async Task<IActionResult> Edit([FromBody] EditProductCommand command)
-        //{
-        //    var response = await mediator.Send(command);
-        //    return NewResult(response);
-        //}
+        [HttpPut("Product/Update")]
+        public async Task<IActionResult> Edit(/*[FromBody]*/ EditProductCommand command)
+        {
+            var response = await mediator.Send(command);
+            return NewResult(response);
+        }
         [HttpDelete("ProductDelete/{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {

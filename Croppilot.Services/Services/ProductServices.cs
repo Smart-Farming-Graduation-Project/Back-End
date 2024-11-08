@@ -1,11 +1,10 @@
-﻿using Croppilot.Date.DTOS;
-using Croppilot.Date.Enum;
+﻿using Croppilot.Date.Enum;
 using Croppilot.Infrastructure.Repositories.Interfaces;
 using Croppilot.Services.Abstract;
 
 namespace Croppilot.Services.Services;
 
-public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlobStorage, ICategoryService categoryService) : IProductServices
+public class ProductServices(IUnitOfWork unit, IProductImageServices imageServices, IAzureBlobStorageService azureBlobStorage, ICategoryService categoryService) : IProductServices
 {
     public async Task<IQueryable<Product>> GetAll(string? includeProperties = null,
         CancellationToken cancellationToken = default)
@@ -67,29 +66,27 @@ public class ProductServices(IUnitOfWork unit, IAzureBlobStorageService azureBlo
         }
         return "Success";
     }
-    public async Task UpdateAsync(int id, UpdateProductDTO productDto, CancellationToken cancellationToken = default)
+    public async Task<string> UpdateAsync(Product product, List<string> imageList, CancellationToken cancellationToken = default)
     {
-        var product = await unit.ProductRepository.GetProductsById(id);
-        if (product == null)
+        var existingImages = await imageServices.GetByProductIdAsync(product.Id, cancellationToken);
+
+        // Remove old images from the database and clear the tracked images in the context
+        if (existingImages.Any())
         {
-            throw new KeyNotFoundException("Product not found");
+            await unit.ProductImageRepository.DeleteRangeAsync(existingImages, cancellationToken);
+            product.ProductImages.Clear();
         }
 
-        product.Name = productDto.Name;
-        product.Description = productDto.Description;
-        product.Price = productDto.Price;
-        product.Availability = productDto.Availability;
-
-        if (productDto.Images != null && productDto.Images.Any())
+        // Add new images to the product
+        var newProductImages = imageList.Select(url => new ProductImage
         {
-            var imageUrls = await azureBlobStorage.UploadImagesAsync(productDto.Images, productDto.Name);
-            product.ProductImages = imageUrls.Select(url => new ProductImage { ImageUrl = url }).ToList();
-        }
-        product.UpdatedAt = DateTime.UtcNow;
+            ImageUrl = url,
+            ProductId = product.Id
+        }).ToList();
 
+        await unit.ProductImageRepository.AddRangeAsync(newProductImages, cancellationToken);
         await unit.ProductRepository.UpdateAsync(product, cancellationToken);
-
-
+        return "Success";
     }
 
     public async Task<bool> Delete(int id, CancellationToken cancellationToken = default)

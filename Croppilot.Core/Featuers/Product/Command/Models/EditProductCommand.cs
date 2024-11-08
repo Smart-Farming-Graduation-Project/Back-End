@@ -8,6 +8,7 @@ namespace Croppilot.Core.Featuers.Product.Command.Models
 {
     public class EditProductCommand : IRequest<Response<string>>
     {
+        public int Id { get; set; }
         public string Name { get; set; }
 
         public string Description { get; set; }
