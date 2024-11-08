@@ -16,7 +16,7 @@ namespace Croppilot.Core.Featuers.Product.Command.Handlers
             var category = await categoryService.GetByNameAsync(command.CategoryName);
             if (category == null)
             {
-                category = new Category
+                category = new Date.Models.Category
                 {
                     Name = command.CategoryName,
                     Description = command.CategoryName
@@ -37,21 +37,62 @@ namespace Croppilot.Core.Featuers.Product.Command.Handlers
                 UpdatedAt = DateTime.UtcNow
             };
             var result = await productServices.CreateAsync(product, imageUrls, cancellationToken);
-            if (result == "Success") return Created("Added Is Success");
-            return BadRequest<string>();
+            return result == "Success" ? Created("Product Added Successfully") : BadRequest<string>();
+
         }
 
-        public Task<Response<string>> Handle(EditProductCommand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(EditProductCommand command, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var product = await productServices.GetById(command.Id, includeProperties: "Category,ProductImages", cancellationToken: cancellationToken);
+            if (product == null)
+            {
+                return NotFound<string>("Product Not Found");
+            }
+
+            var category = await categoryService.GetByNameAsync(command.CategoryName);
+            if (category == null)
+            {
+                category = new Date.Models.Category
+                {
+                    Name = command.CategoryName,
+                    Description = "Description Is Empty"
+                };
+                await categoryService.CreateAsync(category, cancellationToken);
+            }
+
+            // Handle image updates
+            List<string> imageUrls = product.ProductImages.Select(pi => pi.ImageUrl).ToList();
+            if (command.Images != null && command.Images.Any())
+            {
+                // Delete old images from Azure storage if new images are provided
+                foreach (var productImage in product.ProductImages)
+                {
+                    var path = Path.GetFileName(new Uri(productImage.ImageUrl).AbsolutePath);
+                    await azureService.DeleteImageAsync(path);
+                }
+
+                // Upload new images
+                imageUrls = await azureService.UploadImagesAsync(command.Images, command.Name);
+            }
+            product.Name = command.Name;
+            product.Description = command.Description;
+            product.Price = command.Price;
+            product.Availability = command.Availability;
+            product.CategoryId = category.Id;
+            product.ProductImages = imageUrls.Select(url => new ProductImage { ImageUrl = url }).ToList();
+            product.UpdatedAt = DateTime.UtcNow;
+
+            var result = await productServices.UpdateAsync(product, imageUrls, cancellationToken);
+            return result == "Success" ? Success("Product Updated Successfully") : BadRequest<string>("Failed to Update Product");
+
         }
 
         public async Task<Response<string>> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
         {
 
             var result = await productServices.Delete(command.Id, cancellationToken);
-            if (result == true) return Deleted<string>($"Delete Is Successfully For Product {command.Id}");
-            return BadRequest<string>();
+            return result ? Deleted<string>($"Product {command.Id} Deleted Successfully") : BadRequest<string>("Product Not Found");
+
         }
     }
 }
