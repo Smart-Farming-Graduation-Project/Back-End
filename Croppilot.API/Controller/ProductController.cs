@@ -11,6 +11,8 @@ namespace Croppilot.API.Controller
         [HttpGet("ProductsList")]
         public async Task<IActionResult> GetProducts()
         {
+            throw new Exception("Test exception handler");
+            
             var response = await mediator.Send(new GetAllProductQuery());
             return Ok(response);
         }
