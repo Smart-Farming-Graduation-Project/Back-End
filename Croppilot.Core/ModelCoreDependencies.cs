@@ -3,20 +3,20 @@ using System.Reflection;
 
 namespace Croppilot.Core
 {
-    public static class ModelCoreDependencies
-    {
-        public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
-        {
-            service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+	public static class ModelCoreDependencies
+	{
+		public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
+		{
+			service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
-            //When you use Automapper Uncomment this code
+			//When you use Automapper Uncomment this code
 
-            //service.AddAutoMapper(Assembly.GetExecutingAssembly());
+			service.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            ////When you use Validators Uncomment this code
+			////When you use Validators Uncomment this code
 
-            //service.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            return service;
-        }
-    }
+			//service.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+			return service;
+		}
+	}
 }
