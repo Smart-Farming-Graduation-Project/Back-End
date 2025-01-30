@@ -1,0 +1,50 @@
+﻿using Croppilot.API.Bases;
+using Croppilot.Core.Featuers.Category.Command.Models;
+using Croppilot.Core.Featuers.Category.Query.Models;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Croppilot.API.Controller
+{
+
+    public class CategoryController(IMediator mediator) : AppControllerBase
+    {
+        [HttpGet("CategoryList")]
+        public async Task<IActionResult> GetAllCategory()
+        {
+            var response = await mediator.Send(new GetAllCategoryQuery());
+            return Ok(response);
+        }
+        [HttpGet("CategoryPaginatedList")]
+        public async Task<IActionResult> Paginated([FromQuery] GetCategoryPaginatedQuery query)
+        {
+            var response = await mediator.Send(query);
+            return Ok(response);
+        }
+        [HttpGet("Category/{id}")]
+        public async Task<IActionResult> GetCategoryById([FromRoute] int id)
+        {
+            var response = await mediator.Send(new GetCategoryByIdQuery(id));
+            return NewResult(response);
+        }
+        [HttpPost("Category/Create")]
+        public async Task<IActionResult> Create(/*[FromBody]*/ AddCategoryCommand command)
+        {
+            var response = await mediator.Send(command);
+            return NewResult(response);
+        }
+        [HttpPut("Category/Update")]
+        public async Task<IActionResult> Edit(/*[FromBody]*/ EditCategoryCommand command)
+        {
+            var response = await mediator.Send(command);
+            return NewResult(response);
+        }
+
+        [HttpDelete("CategoryDelete/{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var response = await mediator.Send(new DeleteCategoryCommand(id));
+            return NewResult(response);
+        }
+    }
+}

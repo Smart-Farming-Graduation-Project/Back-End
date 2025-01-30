@@ -12,10 +12,10 @@ public class TestController(IProductServices _productServices)
     [HttpGet("ProductList")]
     public async Task<IActionResult> GetProduct()
     {
-        var products = await _productServices.GetAll();
+        var products = await _productServices.GetAll(includeProperties: "Category", cancellationToken: default);
         return Ok(products);
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Product?>> GetProductById(int id, string? includeProperties = null, CancellationToken cancellationToken = default)
     {
@@ -25,5 +25,23 @@ public class TestController(IProductServices _productServices)
             return NotFound();
         }
         return Ok(product);
+    }
+    //[HttpPost]
+    //public async Task<IActionResult> CreateProduct(CreateProductDTO product, CancellationToken cancellationToken = default)
+    //{
+    //    await _productServices.CreateAsync(product, cancellationToken);
+    //    return Ok();
+    //}
+    //[HttpPut("{id}")]
+    //public async Task<IActionResult> UpdateProduct(int id, UpdateProductDTO product, CancellationToken cancellationToken = default)
+    //{
+    //    await _productServices.UpdateAsync(id, product, cancellationToken);
+    //    return Ok();
+    //}
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProduct(int id, CancellationToken cancellationToken = default)
+    {
+        await _productServices.Delete(id, cancellationToken);
+        return Ok();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Croppilot.Infrastructure.Generics.Implementation;
 
-public class GenericRepository<T> :IGenericRepository<T> where T : class
+public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
     private bool _disposed;
     protected readonly AppDbContext _context;
@@ -13,6 +13,8 @@ public class GenericRepository<T> :IGenericRepository<T> where T : class
         _context = context;
         _dbSet = _context.Set<T>();
     }
+
+
 
     public async Task<List<T>> GetAllAsync(
         Expression<Func<T, bool>>? filter = null,
@@ -110,7 +112,7 @@ public class GenericRepository<T> :IGenericRepository<T> where T : class
             throw new InvalidOperationException("An error occurred while saving the entities to the database.", ex);
         }
     }
-    
+
     public virtual async Task UpdateAsync(
         T entity, CancellationToken cancellationToken = default)
     {
@@ -167,7 +169,32 @@ public class GenericRepository<T> :IGenericRepository<T> where T : class
             throw new InvalidOperationException("An error occurred while deleting the entities from the database.", ex);
         }
     }
-    
+    public async Task<IQueryable<T>> GetAllForPagnition(
+        Expression<Func<T, bool>>? filter = null,
+        string? includeProperties = null,
+        bool tracked = false)
+    {
+        IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        if (!string.IsNullOrWhiteSpace(includeProperties))
+        {
+            var properties = includeProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(p => p.Trim());
+
+            foreach (var property in properties)
+            {
+                query = query.Include(property);
+            }
+        }
+
+        return query;
+    }
+
     public IDbContextTransaction BeginTransaction()
     {
         return _context.Database.BeginTransaction();
@@ -182,7 +209,7 @@ public class GenericRepository<T> :IGenericRepository<T> where T : class
     {
         _context.Database.RollbackTransaction();
     }
-    
+
     public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter,
         CancellationToken cancellationToken = default)
     {

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Croppilot.Services.Abstract
 {
-    internal class IAzureBlobStorageService
+    public interface IAzureBlobStorageService
     {
+        Task<List<string>> UploadImagesAsync(List<IFormFile> files, string? fileName);
+        Task<bool> DeleteImageAsync(string filaName);
     }
 }
