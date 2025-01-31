@@ -1,7 +1,7 @@
 ﻿using Croppilot.Date.Enum;
 using Microsoft.AspNetCore.Http;
 
-namespace Croppilot.Date.DTOS
+namespace Croppilot.Date.DTOS.Product
 {
     public class CreateProductDTO
     {
