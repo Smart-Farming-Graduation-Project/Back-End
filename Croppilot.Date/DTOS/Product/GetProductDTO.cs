@@ -1,4 +1,4 @@
-namespace Croppilot.Date.DTOS;
+namespace Croppilot.Date.DTOS.Product;
 
 public class GEtProductDTO
 {
