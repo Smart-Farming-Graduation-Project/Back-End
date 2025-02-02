@@ -19,6 +19,7 @@ namespace Croppilot.Infrastructure
 			service.AddTransient<IProductRepository, ProductRepository>();
 			service.AddTransient<ICategoryRepository, CategoryRepository>();
 			service.AddTransient<IUnitOfWork, UnitOfWork>();
+			service.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
 
 			#region Identity Service
 			service.AddIdentityCore<ApplicationUser>(options =>
@@ -65,6 +66,7 @@ namespace Croppilot.Infrastructure
 				   ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
 				   IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Key)),
 				   ValidateAudience = jwtSettings.ValidateAudience,
+				   ClockSkew = TimeSpan.Zero
 			   };
 		   });
 			#endregion

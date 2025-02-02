@@ -26,6 +26,22 @@ namespace Croppilot.API.Controller
 		public async Task<IActionResult> SignIn(SignInCommand command)
 		{
 			return NewResult(await _mediator.Send(command));
+			//var response = await _mediator.Send(command);
+			//if (response.Succeeded)
+			//	SetRefreshTokenInCookie(response.Data.Tokens.RefreshToken, response.Data.Tokens.RefreshTokenExpiration);
+			//return NewResult(response);
+		}
+
+		[HttpPost("RefreshToken")]
+		public async Task<IActionResult> RefreshToken(RefreshTokenCommand command)
+		{
+			return NewResult(await _mediator.Send(command));
+		}
+
+		[HttpPost("RevokeToken")]
+		public async Task<IActionResult> RevokeToken(RevokeRefreshTokenCommand command)
+		{
+			return NewResult(await _mediator.Send(command));
 		}
 
 		[HttpGet("GetUsers")]
@@ -65,5 +81,15 @@ namespace Croppilot.API.Controller
 		{
 			return NewResult(await _mediator.Send(command));
 		}
+
+		//private void SetRefreshTokenInCookie(string refreshToken, DateTime expireDate)
+		//{
+		//	var cookieOptions = new CookieOptions()
+		//	{
+		//		HttpOnly = true,
+		//		Expires = expireDate.ToLocalTime()
+		//	};
+		//	Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
+		//}
 	}
 }
