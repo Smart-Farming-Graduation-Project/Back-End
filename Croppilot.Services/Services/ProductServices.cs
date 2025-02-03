@@ -4,7 +4,11 @@ using Croppilot.Services.Abstract;
 
 namespace Croppilot.Services.Services;
 
-public class ProductServices(IUnitOfWork unit, IProductImageServices imageServices, IAzureBlobStorageService azureBlobStorage, ICategoryService categoryService) : IProductServices
+public class ProductServices(
+    IUnitOfWork unit,
+    IProductImageServices imageServices,
+    IAzureBlobStorageService azureBlobStorage,
+    ICategoryService categoryService) : IProductServices
 {
     public async Task<IQueryable<Product>> GetAll(string? includeProperties = null,
         CancellationToken cancellationToken = default)
@@ -14,9 +18,8 @@ public class ProductServices(IUnitOfWork unit, IProductImageServices imageServic
     }
 
 
-
     public async Task<Product?> GetById(int id, string? includeProperties = null,
-      CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
         var product = await unit.ProductRepository.GetAsync(
             x => x.Id == id,
@@ -26,7 +29,9 @@ public class ProductServices(IUnitOfWork unit, IProductImageServices imageServic
 
         return product;
     }
-    public async Task<string> CreateAsync(Product product, List<string> imageList, CancellationToken cancellationToken = default)
+
+    public async Task<OperationResult> CreateAsync(Product product, List<string> imageList,
+        CancellationToken cancellationToken = default)
     {
         //var category = await categoryService.GetByNameAsync(productDto.CategoryName);
         //if (category == null)
@@ -52,7 +57,8 @@ public class ProductServices(IUnitOfWork unit, IProductImageServices imageServic
         var productExist = await unit.ProductRepository.GetProductsById(product.Id);
 
         if (productExist is not null)
-            return "Exist";
+            return OperationResult.NotFound;
+
         await unit.ProductRepository.AddAsync(product, cancellationToken);
         var productImages = imageList.Select(url => new ProductImage
         {
@@ -64,9 +70,12 @@ public class ProductServices(IUnitOfWork unit, IProductImageServices imageServic
         {
             await unit.ProductImageRepository.AddAsync(productImage, cancellationToken);
         }
-        return "Success";
+
+        return OperationResult.Success;
     }
-    public async Task<string> UpdateAsync(Product product, List<string> imageList, CancellationToken cancellationToken = default)
+
+    public async Task<OperationResult> UpdateAsync(Product product, List<string> imageList,
+        CancellationToken cancellationToken = default)
     {
         var existingImages = await imageServices.GetByProductIdAsync(product.Id, cancellationToken);
 
@@ -86,7 +95,8 @@ public class ProductServices(IUnitOfWork unit, IProductImageServices imageServic
 
         await unit.ProductImageRepository.AddRangeAsync(newProductImages, cancellationToken);
         await unit.ProductRepository.UpdateAsync(product, cancellationToken);
-        return "Success";
+
+        return OperationResult.Success;
     }
 
     public async Task<bool> Delete(int id, CancellationToken cancellationToken = default)
@@ -96,11 +106,13 @@ public class ProductServices(IUnitOfWork unit, IProductImageServices imageServic
         {
             return false;
         }
+
         foreach (var productImage in product.ProductImages)
         {
             var filename = ExtractFileNameFromUrl(productImage.ImageUrl);
             await azureBlobStorage.DeleteImageAsync(filename);
         }
+
         await unit.ProductRepository.DeleteAsync(product, cancellationToken);
         return true;
     }
@@ -124,7 +136,6 @@ public class ProductServices(IUnitOfWork unit, IProductImageServices imageServic
         };
         return queryable;
     }
-
 
 
     public IEnumerable<Product> GetByDate(int nights, DateOnly checkInDate)

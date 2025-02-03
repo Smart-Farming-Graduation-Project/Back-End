@@ -1,2 +1,9 @@
 ﻿global using Microsoft.Extensions.Logging;
 global using Microsoft.AspNetCore.Mvc;
+global using FluentValidation;
+global using MediatR;
+global using Croppilot.Date.Enum;
+global using Croppilot.Core.Bases;
+global using Microsoft.AspNetCore.Http;
+global using Croppilot.Core.Features.Product.Command.Models;
+global using Mapster;

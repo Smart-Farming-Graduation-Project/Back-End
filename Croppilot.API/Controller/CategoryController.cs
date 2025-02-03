@@ -1,6 +1,6 @@
 ﻿using Croppilot.API.Bases;
-using Croppilot.Core.Featuers.Category.Command.Models;
-using Croppilot.Core.Featuers.Category.Query.Models;
+using Croppilot.Core.Features.Category.Command.Models;
+using Croppilot.Core.Features.Category.Query.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

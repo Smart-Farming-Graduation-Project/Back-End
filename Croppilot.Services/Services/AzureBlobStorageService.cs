@@ -12,7 +12,7 @@ namespace Croppilot.Services.Services
 
 
 
-        public async Task<List<string>> UploadImagesAsync(List<IFormFile> files, string? imageNamePrefix)
+        public async Task<List<string>> UploadImagesAsync(IFormFileCollection files, string? imageNamePrefix)
         {
             var uploadedUrls = new List<string>();
             var container = client.GetBlobContainerClient(containerName);

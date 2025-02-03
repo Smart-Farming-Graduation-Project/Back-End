@@ -1,10 +1,4 @@
-﻿using Croppilot.Core.Bases;
-using Croppilot.Date.Enum;
-using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-
-namespace Croppilot.Core.Features.Product.Command.Models;
+﻿namespace Croppilot.Core.Features.Product.Command.Models;
 
 public class AddProductCommand : IRequest<Response<string>>
 {
