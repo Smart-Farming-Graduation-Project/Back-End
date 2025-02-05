@@ -1,6 +1,6 @@
 ﻿using Croppilot.API.Bases;
-using Croppilot.Core.Featuers.Authentication.Commands.Models;
-using Croppilot.Core.Featuers.Authentication.Queries.Models;
+using Croppilot.Core.Features.Authentication.Commands.Models;
+using Croppilot.Core.Features.Authentication.Queries.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

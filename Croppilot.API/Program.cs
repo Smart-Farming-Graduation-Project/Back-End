@@ -22,8 +22,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-//todo: authentication should add after cors remove this after implement authentication
 app.UseCors();
 
 app.UseExceptionHandler();

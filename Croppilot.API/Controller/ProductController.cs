@@ -1,6 +1,6 @@
 ﻿using Croppilot.API.Bases;
-using Croppilot.Core.Featuers.Product.Command.Models;
-using Croppilot.Core.Featuers.Product.Query.Models;
+using Croppilot.Core.Features.Product.Command.Models;
+using Croppilot.Core.Features.Product.Query.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +11,6 @@ namespace Croppilot.API.Controller
         [HttpGet("ProductsList")]
         public async Task<IActionResult> GetProducts()
         {
-            throw new Exception("Test exception handler");
-            
             var response = await mediator.Send(new GetAllProductQuery());
             return Ok(response);
         }
@@ -25,7 +23,7 @@ namespace Croppilot.API.Controller
         [HttpGet("product/{id}")]
         public async Task<IActionResult> GetProductById([FromRoute] int id)
         {
-            var response = await mediator.Send(new GetProductByIdQueryy(id));
+            var response = await mediator.Send(new GetProductByIdQuery(id));
             return NewResult(response);
         }
         [HttpPost("Product/Create")]

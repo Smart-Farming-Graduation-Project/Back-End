@@ -1,26 +1,44 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Croppilot.Core.Exceptions;
+using FluentValidation.AspNetCore;
+using MapsterMapper;
 
-namespace Croppilot.Core
+namespace Croppilot.Core;
+
+public static class ModelCoreDependencies
 {
-	public static class ModelCoreDependencies
-	{
-		public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
-		{
-			service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+    public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
+    {
+        service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
-			service.AddExceptionHandler<GlobalExceptionHandler>();
-            service.AddProblemDetails();
-            
-            //When you use Automapper Uncomment this code
+        service.AddFluentValidationServices().AddMapsterServices().AddGlobalExceptionHandlingServices();
+        
+        return service;
+    }
 
-			service.AddAutoMapper(Assembly.GetExecutingAssembly());
+    private static IServiceCollection AddFluentValidationServices(this IServiceCollection service)
+    {
+        service.AddValidatorsFromAssemblies([Assembly.GetExecutingAssembly()]);
+        service.AddFluentValidationAutoValidation();
 
-			////When you use Validators Uncomment this code
+        return service;
+    }
 
-			//service.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-			return service;
-		}
-	}
+    private static IServiceCollection AddMapsterServices(this IServiceCollection service)
+    {
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(Assembly.GetExecutingAssembly());
+        service.AddSingleton<IMapper>(new Mapper(config));
+
+        return service;
+    }
+
+    private static IServiceCollection AddGlobalExceptionHandlingServices(this IServiceCollection service)
+    {
+        service.AddExceptionHandler<GlobalExceptionHandler>();
+        service.AddProblemDetails();
+
+        return service;
+    }
 }

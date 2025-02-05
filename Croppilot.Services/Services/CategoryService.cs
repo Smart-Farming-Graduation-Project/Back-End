@@ -20,16 +20,16 @@ public class CategoryService(IUnitOfWork unitOfWork) : ICategoryService
             cancellationToken: cancellationToken);
     }
 
-    public async Task<string> CreateAsync(Category category, CancellationToken cancellationToken = default)
+    public async Task<OperationResult> CreateAsync(Category category, CancellationToken cancellationToken = default)
     {
         await unitOfWork.CategoryRepository.AddAsync(category, cancellationToken);
-        return "Success";
+        return OperationResult.Success;
     }
 
-    public async Task<string> UpdateAsync(Category category, CancellationToken cancellationToken = default)
+    public async Task<OperationResult> UpdateAsync(Category category, CancellationToken cancellationToken = default)
     {
         await unitOfWork.CategoryRepository.UpdateAsync(category, cancellationToken);
-        return "Success";
+        return OperationResult.Success;
     }
 
     public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
@@ -45,15 +45,13 @@ public class CategoryService(IUnitOfWork unitOfWork) : ICategoryService
         return true;
     }
 
-    public async Task<Category?> GetByNameAsync(string name)
+    public async Task<Category?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        return await unitOfWork.CategoryRepository.GetAsync(c => c.Name == name);
-
+        return await unitOfWork.CategoryRepository.GetAsync(c => c.Name == name, cancellationToken: cancellationToken);
     }
 
     public async Task<IQueryable<Category>> FilterCategoryQueryable(CategoryOrderingEnum ordering, string? search)
     {
-
         var queryable = await unitOfWork.CategoryRepository.GetAllForPagnition(includeProperties: "Products");
         if (!string.IsNullOrEmpty(search))
             queryable = queryable.Where(x => x.Name.Contains(search));
@@ -65,6 +63,5 @@ public class CategoryService(IUnitOfWork unitOfWork) : ICategoryService
             _ => queryable
         };
         return queryable;
-
     }
 }

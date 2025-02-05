@@ -25,6 +25,7 @@ public class Product
     [Required(ErrorMessage = "Update date is required")]
     [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    // todo : change to nullable update date should be null firstly when product is created and when it added it should be updated
 
     public int CategoryId { get; set; }
     [ForeignKey("CategoryId")]
