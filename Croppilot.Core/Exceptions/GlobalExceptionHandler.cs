@@ -61,7 +61,6 @@ public class GlobalExceptionHandler(
             Status = statusCode,
             Title = GetTitle(exception),
             Type = "https://tools.ietf.org/html/rfc7231#" + statusCode,
-            Detail = environment.IsDevelopment() ? exception.Message : null,
             Instance = httpContext.Request.Path,
             Extensions =
             {

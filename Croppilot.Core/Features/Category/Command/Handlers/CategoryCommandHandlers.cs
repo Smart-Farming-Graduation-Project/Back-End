@@ -1,7 +1,5 @@
-﻿using Croppilot.Core.Bases;
-using Croppilot.Core.Features.Category.Command.Models;
+﻿using Croppilot.Core.Features.Category.Command.Models;
 using Croppilot.Services.Abstract;
-using MediatR;
 
 namespace Croppilot.Core.Features.Category.Command.Handlers
 {
