@@ -1,7 +1,4 @@
-﻿using Mapster;
-using Croppilot.Core.Features.Product.Query.Result;
-
-namespace Croppilot.Core.Mapping.Product;
+﻿namespace Croppilot.Core.Mapping.Product;
 
 public class ProductQueryMapping : IRegister
 {

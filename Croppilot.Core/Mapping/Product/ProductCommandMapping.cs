@@ -1,6 +1,4 @@
-﻿using Mapster;
-
-namespace Croppilot.Core.Mapping.Product;
+﻿namespace Croppilot.Core.Mapping.Product;
 
 public class ProductCommandMapping : IRegister
 {
