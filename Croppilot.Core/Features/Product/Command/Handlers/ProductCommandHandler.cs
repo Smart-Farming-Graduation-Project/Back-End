@@ -34,7 +34,7 @@ public class ProductCommandHandler(
 
     public async Task<Response<string>> Handle(EditProductCommand command, CancellationToken cancellationToken)
     {
-        var product = await productServices.GetById(command.Id, "Category,ProductImages", cancellationToken);
+        var product = await productServices.GetById(command.Id, ["Category", "ProductImages"], cancellationToken);
         if (product == null)
             return NotFound<string>("Product Not Found");
 
@@ -58,7 +58,7 @@ public class ProductCommandHandler(
         var product = command.Adapt<Date.Models.Product>();
 
         var existingProduct =
-            await productServices.GetById(product.Id, includeProperties: "ProductImages", cancellationToken);
+            await productServices.GetById(product.Id, includeProperties: ["ProductImages"], cancellationToken);
 
         if (existingProduct is null)
             return NotFound<string>($"Product {product.Id} not found");

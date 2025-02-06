@@ -10,15 +10,15 @@ public class ProductServices(
     IAzureBlobStorageService azureBlobStorage,
     ICategoryService categoryService) : IProductServices
 {
-    public async Task<IQueryable<Product>> GetAll(string? includeProperties = null,
+    public async Task<IQueryable<Product>> GetAll(string[]? includeProperties = null,
         CancellationToken cancellationToken = default)
     {
-        var products = await unit.ProductRepository.GetAllForPagnition(includeProperties: includeProperties);
+        var products = await unit.ProductRepository.GetForPaginationAsync(includeProperties: includeProperties);
         return products;
     }
 
 
-    public async Task<Product?> GetById(int id, string? includeProperties = null,
+    public async Task<Product?> GetById(int id, string[]? includeProperties = null,
         CancellationToken cancellationToken = default)
     {
         var product = await unit.ProductRepository.GetAsync(
@@ -119,7 +119,9 @@ public class ProductServices(
 
     public async Task<IQueryable<Product>> FilterProductQueryable(ProductOrderingEnum ordering, string? search)
     {
-        var queryable = await unit.ProductRepository.GetAllForPagnition(includeProperties: "Category,ProductImages");
+        var queryable = await unit.ProductRepository
+            .GetForPaginationAsync(includeProperties: ["Category", "ProductImages"]);
+
         if (!string.IsNullOrEmpty(search))
             queryable = queryable.Where(x => x.Name.Contains(search) || x.Category.Name.Contains(search));
 

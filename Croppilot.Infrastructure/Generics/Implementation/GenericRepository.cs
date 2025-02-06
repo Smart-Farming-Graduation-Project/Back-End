@@ -1,5 +1,6 @@
 ﻿using Croppilot.Infrastructure.Generics.Interfaces;
 
+
 namespace Croppilot.Infrastructure.Generics.Implementation;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -14,76 +15,73 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _dbSet = _context.Set<T>();
     }
 
-
-
     public async Task<List<T>> GetAllAsync(
         Expression<Func<T, bool>>? filter = null,
-        string? includeProperties = null,
-        bool tracked = false
-        , CancellationToken cancellationToken = default)
+        string[]? includeProperties = null,
+        bool tracked = false,
+        CancellationToken cancellationToken = default)
     {
-        IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
+        var query = tracked ? _dbSet : _dbSet.AsNoTracking();
 
         if (filter != null)
-        {
             query = query.Where(filter);
-        }
 
-        if (!string.IsNullOrWhiteSpace(includeProperties))
-        {
-            var properties =
-                includeProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(p => p.Trim());
+        if (includeProperties == null || includeProperties.Length == 0)
+            return await query.ToListAsync(cancellationToken);
 
-            foreach (var property in properties)
-            {
-                query = query.Include(property);
-            }
-        }
+        foreach (var property in includeProperties)
+            query = query.Include(property.Trim());
 
         return await query.ToListAsync(cancellationToken);
     }
 
     public async Task<T?> GetAsync(
         Expression<Func<T, bool>>? filter = null,
-        string? includeProperties = null,
+        string[]? includeProperties = null,
         bool tracked = false,
         CancellationToken cancellationToken = default)
     {
-        IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
+        var query = tracked ? _dbSet : _dbSet.AsNoTracking();
 
         if (filter != null)
-        {
             query = query.Where(filter);
-        }
 
-        if (!string.IsNullOrWhiteSpace(includeProperties))
-        {
-            var properties = includeProperties
-                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(p => p.Trim());
+        if (includeProperties == null || includeProperties.Length == 0)
+            return await query.FirstOrDefaultAsync(cancellationToken);
 
-            foreach (var property in properties)
-            {
-                query = query.Include(property);
-            }
-        }
+        foreach (var property in includeProperties)
+            query = query.Include(property.Trim());
 
         return await query.FirstOrDefaultAsync(cancellationToken);
     }
 
-    public virtual async Task<T> AddAsync(
-        T entity, CancellationToken cancellationToken = default)
+    public async Task<IQueryable<T>> GetForPaginationAsync(
+        Expression<Func<T, bool>>? filter = null,
+        string[]? includeProperties = null,
+        bool tracked = false)
+    {
+        var query = tracked ? _dbSet : _dbSet.AsNoTracking();
+
+        if (filter != null)
+            query = query.Where(filter);
+
+        if (includeProperties == null || includeProperties.Length == 0)
+            return query;
+
+        foreach (var property in includeProperties)
+            query = query.Include(property.Trim());
+
+        return query;
+    }
+
+    public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
-        {
             throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
-        }
 
         try
         {
             await _dbSet.AddAsync(entity, cancellationToken);
-
             await _context.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException ex)
@@ -94,13 +92,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return entity;
     }
 
-    public virtual async Task AddRangeAsync(
-        IEnumerable<T> entities, CancellationToken cancellationToken = default)
+    public async Task AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
     {
         if (entities == null)
-        {
             throw new ArgumentNullException(nameof(entities), "Entities collection cannot be null.");
-        }
 
         try
         {
@@ -113,13 +108,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         }
     }
 
-    public virtual async Task UpdateAsync(
-        T entity, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
-        {
             throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
-        }
 
         try
         {
@@ -132,12 +124,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         }
     }
 
-    public virtual async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
-        {
             throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
-        }
 
         try
         {
@@ -150,14 +140,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         }
     }
 
-    public virtual async Task DeleteRangeAsync(
-        IEnumerable<T> entities, CancellationToken cancellationToken = default
-    )
+    public async Task DeleteRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
     {
         if (entities == null)
-        {
             throw new ArgumentNullException(nameof(entities), "Entities collection cannot be null.");
-        }
 
         try
         {
@@ -169,51 +155,25 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             throw new InvalidOperationException("An error occurred while deleting the entities from the database.", ex);
         }
     }
-    public async Task<IQueryable<T>> GetAllForPagnition(
-        Expression<Func<T, bool>>? filter = null,
-        string? includeProperties = null,
-        bool tracked = false)
-    {
-        IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
 
-        if (filter != null)
-        {
-            query = query.Where(filter);
-        }
-
-        if (!string.IsNullOrWhiteSpace(includeProperties))
-        {
-            var properties = includeProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(p => p.Trim());
-
-            foreach (var property in properties)
-            {
-                query = query.Include(property);
-            }
-        }
-
-        return query;
-    }
-
-    public IDbContextTransaction BeginTransaction()
-    {
-        return _context.Database.BeginTransaction();
-    }
-
-    public void CommitTransaction()
-    {
-        _context.Database.CommitTransaction();
-    }
-
-    public void RollbackTransaction()
-    {
-        _context.Database.RollbackTransaction();
-    }
-
-    public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter,
-        CancellationToken cancellationToken = default)
+    public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default)
     {
         return await _dbSet.AnyAsync(filter, cancellationToken);
+    }
+
+    public Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        return _context.Database.BeginTransactionAsync();
+    }
+
+    public Task CommitTransactionAsync()
+    {
+        return _context.Database.CommitTransactionAsync();
+    }
+
+    public Task RollbackTransactionAsync()
+    {
+        return _context.Database.RollbackTransactionAsync();
     }
 
     public void Dispose()
@@ -224,9 +184,12 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
     private void Dispose(bool disposing)
     {
-        if (!_disposed)
-            if (disposing)
-                _context.Dispose();
+        if (_disposed)
+            return;
+
+        if (disposing)
+            _context.Dispose();
+
         _disposed = true;
     }
 }

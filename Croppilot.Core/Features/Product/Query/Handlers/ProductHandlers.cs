@@ -15,9 +15,9 @@ public class ProductHandlers(IProductServices productServices)
     public async Task<Response<List<GetAllProductResponse>>> Handle(GetAllProductQuery request,
         CancellationToken cancellationToken)
     {
-        var productList = await productServices.GetAll(includeProperties: "Category,ProductImages",
+        var productList = await productServices.GetAll(includeProperties: ["Category", "ProductImages"],
             cancellationToken: cancellationToken);
-        
+
         var productResult = productList.Adapt<List<GetAllProductResponse>>();
 
         var result = Success(productResult);
@@ -29,7 +29,7 @@ public class ProductHandlers(IProductServices productServices)
     public async Task<Response<GetProductByIdResponse>> Handle(GetProductByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var product = await productServices.GetById(request.Id, includeProperties: "Category,ProductImages",
+        var product = await productServices.GetById(request.Id, includeProperties:["Category", "ProductImages"],
             cancellationToken: cancellationToken);
 
         if (product is null)

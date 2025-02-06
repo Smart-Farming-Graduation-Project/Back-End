@@ -37,7 +37,7 @@ namespace Croppilot.Core.Features.Category.Query.Handlers
         public async Task<Response<GetCategoryByIdResponse>> Handle(GetCategoryByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var category = await categoryService.GetByIdAsync(request.Id, includeProperties: "Products",
+            var category = await categoryService.GetByIdAsync(request.Id, includeProperties: ["Products"],
                 cancellationToken: cancellationToken);
             if (category is null)
                 return NotFound<GetCategoryByIdResponse>("This category Is Not Found");
@@ -78,7 +78,7 @@ namespace Croppilot.Core.Features.Category.Query.Handlers
                         }).ToList()
                 );
             var categoryList =
-                await categoryService.GetAllAsync(includeProperties: "Products", cancellationToken: cancellationToken);
+                await categoryService.GetAllAsync(includeProperties: ["Products"], cancellationToken: cancellationToken);
 
             var filterQueryable = await categoryService.FilterCategoryQueryable(request.OrderBy, request.Search);
 
