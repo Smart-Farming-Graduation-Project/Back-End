@@ -10,7 +10,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Property(o => o.ShippingAddress)
             .IsRequired()
-            .HasMaxLength(200); 
+            .HasMaxLength(200);
 
         builder.Property(o => o.OrderDate)
             .IsRequired();
@@ -21,6 +21,13 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.TotalAmount)
             .IsRequired()
             .HasColumnType("decimal(18,2)");
+
+        builder.Property(o => o.CreatedAt)
+            .IsRequired()
+            .HasDefaultValueSql("GETDATE()");
+
+        builder.Property(o => o.UpdatedAt)
+            .IsRequired(false);
 
         builder.HasMany(o => o.OrderItems)
             .WithOne(oi => oi.Order)
