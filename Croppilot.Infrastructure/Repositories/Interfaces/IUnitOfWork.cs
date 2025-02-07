@@ -1,6 +1,4 @@
-﻿using Croppilot.Infrastructure.Generics.Interfaces;
-
-namespace Croppilot.Infrastructure.Repositories.Interfaces
+﻿namespace Croppilot.Infrastructure.Repositories.Interfaces
 {
 	public interface IUnitOfWork : IDisposable
 	{
@@ -10,5 +8,7 @@ namespace Croppilot.Infrastructure.Repositories.Interfaces
 		IProductImageRepository ProductImageRepository { get; }
 		ILeasingRepository LeasingRepository { get; }
 		IRefreshTokenRepository RefreshTokenRepository { get; }
+		IOrderRepository OrderRepository { get; }
+		IOrderItemRepository OrderItemRepository { get; }
 	}
 }

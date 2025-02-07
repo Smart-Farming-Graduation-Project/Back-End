@@ -6,7 +6,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.ToTable("Orders");
 
-        builder.HasKey(o => o.OrderId);
+        builder.HasKey(o => o.Id);
 
         builder.Property(o => o.ShippingAddress)
             .IsRequired()
