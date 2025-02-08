@@ -35,22 +35,22 @@ namespace Croppilot.Core.Features.Leasing.Query.Handlers
 
         public async Task<Response<GetAllActiveLeasingResult?>> Handle(GetLeasingByIdQuery request, CancellationToken cancellationToken)
         {
-            var product = await leasingService.GetLeasingByIdAsync(request.Id);
-            if (product is null)
-                return NotFound<GetAllActiveLeasingResult>("This Product Is Not Found");
+            var lease = await leasingService.GetLeasingByIdAsync(request.Id);
+            if (lease is null)
+                return NotFound<GetAllActiveLeasingResult>("Leasing record not found");
 
-            var Result = product.Adapt<GetAllActiveLeasingResult>();
+            var Result = lease.Adapt<GetAllActiveLeasingResult>();
 
             return Success(Result);
         }
 
         public async Task<Response<IEnumerable<GetAllActiveLeasingResult>>> Handle(GetActiveLeasesQuery request, CancellationToken cancellationToken)
         {
-            var product = await leasingService.GetActiveLeasesAsync();
-            if (product is null)
-                return NotFound<IEnumerable<GetAllActiveLeasingResult>>("This Product Is Not Found");
+            var activeLeases = await leasingService.GetActiveLeasesAsync();
+            if (activeLeases is null)
+                return NotFound<IEnumerable<GetAllActiveLeasingResult>>("No active leases found");
 
-            var Result = product.Adapt<IEnumerable<GetAllActiveLeasingResult>>();
+            var Result = activeLeases.Adapt<IEnumerable<GetAllActiveLeasingResult>>();
 
             return Success(Result);
         }

@@ -54,18 +54,27 @@ namespace Croppilot.Services.Services
 
         public async Task<OperationResult> LeaseProductAsync(int productId, DateTime startDate, DateTime endDate, string leasingDetails)
         {
-            var product = unit.ProductRepository.GetAsync(x => x.Id == productId);
-            if (product == null) return OperationResult.NotFound;
-            ;
-            if (product.Result!.Availability != Availability.Lease)
-                throw new Exception("This product is not available for leasing.");
-            //  Check if an active lease exists
-            var activeLease = await unit.LeasingRepository.GetAsync(x => x.ProductId == productId && x.EndDate == null);
-            if (activeLease != null)
-                throw new Exception("This product is already leased and cannot be leased again for now.");
-            //  Validate that EndDate is in the future
+
+            var product = await unit.ProductRepository.GetAsync(x => x.Id == productId);
+            if (product is null)
+                return OperationResult.NotFound;
+
+            // Ensure the product is available for leasing
+            if (product.Availability != Availability.Lease)
+                return OperationResult.NotAvailable;
+
+            // Ensure EndDate is after StartDate
             if (endDate <= startDate)
-                throw new Exception("End date must be after the start date.");
+                return OperationResult.InvalidDate;
+
+            // Check if an active lease exists (product is already leased)
+            var activeLease = await unit.LeasingRepository.GetAsync(x =>
+                x.ProductId == productId && x.EndDate >= DateTime.UtcNow
+            );
+
+            if (activeLease is not null)
+                return OperationResult.AlreadyLeased;
+
             var lease = new Leasing
             {
                 ProductId = productId,
@@ -73,18 +82,20 @@ namespace Croppilot.Services.Services
                 EndDate = endDate,
                 LeasingDetails = leasingDetails
             };
-            var addedLease = await unit.LeasingRepository.AddAsync(lease);
+
+            await unit.LeasingRepository.AddAsync(lease);
             return OperationResult.Success;
         }
+
 
         public async Task<OperationResult> EndLeaseAsync(int leasingId)
         {
             var lease = await unit.LeasingRepository.GetAsync(x => x.Id == leasingId);
             if (lease == null)
-                return OperationResult.NotFound; // Lease not found
+                return OperationResult.NotFound;
 
             if (lease.EndDate.HasValue)
-                throw new Exception("Lease is already ended.");
+                return OperationResult.AlreadyEnded;
 
             lease.EndDate = DateTime.UtcNow;
             await unit.LeasingRepository.UpdateAsync(lease);

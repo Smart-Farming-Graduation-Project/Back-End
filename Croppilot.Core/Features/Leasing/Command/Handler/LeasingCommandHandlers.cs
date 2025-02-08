@@ -12,27 +12,41 @@ namespace Croppilot.Core.Features.Leasing.Command.Handler
         {
             var result =
                 await leasingService.LeaseProductAsync(request.ProductId, request.StartingDate, request.EndDate, request.LeasingDetails);
-            return result is OperationResult.Success
-                ? Created("Leasing Product Added Successfully")
-                : BadRequest<string>("Leasing Product creation failed");
+            return result switch
+            {
+                OperationResult.Success => Created("Leasing Product added successfully."),
+                OperationResult.NotFound => NotFound<string>("Product not found."),
+                OperationResult.NotAvailable => BadRequest<string>("Product is not available for leasing."),
+                OperationResult.AlreadyLeased => Conflict<string>("Product is already leased."),
+                OperationResult.InvalidDate => BadRequest<string>("Invalid leasing period."),
+                _ => BadRequest<string>("Leasing Product creation failed.")
+            };
+
         }
 
         public async Task<Response<string>> Handle(EndLeaseCommand request, CancellationToken cancellationToken)
         {
             var result =
                 await leasingService.EndLeaseAsync(request.Id);
-            return result is OperationResult.Success
-                ? Created($"Leasing Product{request.Id} End Successfully")
-                : BadRequest<string>("Leasing Product End failed");
+            return result switch
+            {
+                OperationResult.Success => Success($"Leasing Product {request.Id} ended successfully."),
+                OperationResult.NotFound => NotFound<string>("Leasing Product not found."),
+                OperationResult.AlreadyEnded => Conflict<string>("Leasing has already ended."),
+                _ => BadRequest<string>("Leasing Product end failed.")
+            };
         }
 
         public async Task<Response<string>> Handle(DeleteLeaseCommand request, CancellationToken cancellationToken)
         {
             var result =
                 await leasingService.DeleteLeasingAsync(request.Id);
-            return result is OperationResult.Success
-                ? Deleted<string>($"Product {request.Id} Deleted Successfully")
-                : BadRequest<string>("Deletion failed");
+            return result switch
+            {
+                OperationResult.Success => Deleted<string>($"Leasing Product {request.Id} deleted successfully."),
+                OperationResult.NotFound => NotFound<string>("Leasing Product not found."),
+                _ => BadRequest<string>("Leasing Product deletion failed.")
+            };
         }
     }
 }
