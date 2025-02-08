@@ -57,6 +57,11 @@ namespace Croppilot.Services.Services
             ;
             if (product.Result!.Availability != Availability.Lease)
                 throw new Exception("This product is not available for leasing.");
+            //  Check if an active lease exists
+            var activeLease = await unit.LeasingRepository.GetAsync(x => x.ProductId == productId && x.EndDate == null);
+            if (activeLease != null)
+                throw new Exception("This product is already leased and cannot be leased again for now.");
+
             var lease = new Leasing
             {
                 ProductId = productId,
