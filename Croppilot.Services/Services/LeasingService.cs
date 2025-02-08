@@ -36,9 +36,9 @@ namespace Croppilot.Services.Services
             return await unit.LeasingRepository.GetAllAsync(includeProperties: ["Product"]);
         }
 
-        public async Task<IEnumerable<Leasing>> GetLeasingsByProductIdAsync(int productId)
+        public async Task<Leasing?> GetLeasingsByProductIdAsync(int productId)
         {
-            return await unit.LeasingRepository.GetAllAsync(x => x.ProductId == productId,
+            return await unit.LeasingRepository.GetAsync(x => x.ProductId == productId,
                 includeProperties: ["Product"]);
         }
 

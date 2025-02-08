@@ -1,5 +1,7 @@
-﻿namespace Croppilot.Core.Features.Leasing.Query.Models
+﻿using Croppilot.Core.Features.Leasing.Query.Result;
+
+namespace Croppilot.Core.Features.Leasing.Query.Models
 {
-    public record GetLeasingsByProductIdQuery(int ProductId) : IRequest<Response<IEnumerable<Date.Models.Leasing>>>;
+    public record GetLeasingsByProductIdQuery(int ProductId) : IRequest<Response<GetAllActiveLeasingResult>>;
 
 }
