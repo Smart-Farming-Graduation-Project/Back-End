@@ -1,4 +1,5 @@
 ﻿using Croppilot.API.Bases;
+using Croppilot.Core.Features.Leasing.Command.Model;
 using Croppilot.Core.Features.Leasing.Query.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -8,19 +9,20 @@ namespace Croppilot.API.Controller
 
     public class LeasingController(IMediator mediator) : AppControllerBase
     {
-        //[HttpPost("lease")]
-        //public async Task<IActionResult> LeaseProduct([FromBody] LeaseProductCommand command)
-        //{
-        //    var result = await mediator.Send(command);
-        //    return Ok(result);
-        //}
+        [HttpPost("Lease")]
+        public async Task<IActionResult> LeaseProduct([FromBody] LeaseProductCommand command)
+        {
+            var result = await mediator.Send(command);
+            return NewResult(result);
+        }
 
-        //[HttpPost("end/{id}")]
-        //public async Task<IActionResult> EndLease(int id, [FromBody] DateTime endDate)
-        //{
-        //    var result = await mediator.Send(new EndLeaseCommand(id, endDate));
-        //    return result == null ? NotFound() : Ok(result);
-        //}
+
+        [HttpPost("End/{id}")]
+        public async Task<IActionResult> EndLease(int id, [FromBody] DateTime endDate)
+        {
+            var result = await mediator.Send(new EndLeaseCommand(id, endDate));
+            return NewResult(result);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLeasingById(int id)
@@ -49,11 +51,11 @@ namespace Croppilot.API.Controller
             return NewResult(result);
         }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteLeasing(int id)
-        //{
-        //    var result = await mediator.Send(new DeleteLeaseCommand(id));
-        //    return result ? Ok() : NotFound();
-        //}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteLeasing(int id)
+        {
+            var result = await mediator.Send(new DeleteLeaseCommand(id));
+            return NewResult(result);
+        }
     }
 }
