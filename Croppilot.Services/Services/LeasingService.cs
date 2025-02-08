@@ -1,16 +1,17 @@
-﻿using Croppilot.Infrastructure.Repositories.Interfaces;
+﻿using Croppilot.Date.Enum;
+using Croppilot.Infrastructure.Repositories.Interfaces;
 using Croppilot.Services.Abstract;
 
 namespace Croppilot.Services.Services
 {
     public class LeasingService(IUnitOfWork unit) : ILeasingService
     {
-        public async Task<Leasing> CreateLeasingAsync(Leasing leasing)
-        {
-            leasing.StartingDate = DateTime.UtcNow;
-            return await unit.LeasingRepository.AddAsync(leasing);
-            ;
-        }
+        //public async Task<Leasing> CreateLeasingAsync(Leasing leasing)
+        //{
+        //    leasing.StartingDate = DateTime.UtcNow;
+        //    return await unit.LeasingRepository.AddAsync(leasing);
+        //    ;
+        //}
 
         public async Task<Leasing> UpdateLeasingAsync(int id, Leasing updatedLeasing)
         {
@@ -29,6 +30,7 @@ namespace Croppilot.Services.Services
             return await unit.LeasingRepository.GetAsync(x => x.Id == id, includeProperties: ["Product"]);
         }
 
+
         public async Task<IEnumerable<Leasing>> GetAllLeasingsAsync()
         {
             return await unit.LeasingRepository.GetAllAsync(includeProperties: ["Product"]);
@@ -46,6 +48,42 @@ namespace Croppilot.Services.Services
             if (leasing == null) return false;
             await unit.LeasingRepository.DeleteAsync(leasing);
             return true;
+        }
+
+        public async Task<Leasing> LeaseProductAsync(int productId, DateTime startDate, string leasingDetails)
+        {
+            var product = unit.ProductRepository.GetAsync(x => x.Id == productId);
+            if (product == null) throw new Exception("Product not found.");
+            ;
+            if (product.Result!.Availability != Availability.Lease)
+                throw new Exception("This product is not available for leasing.");
+            var lease = new Leasing
+            {
+                ProductId = productId,
+                StartingDate = startDate,
+                LeasingDetails = leasingDetails
+            };
+            var addedLease = await unit.LeasingRepository.AddAsync(lease);
+            return addedLease;
+        }
+
+        public async Task<bool> EndLeaseAsync(int leasingId)
+        {
+            var lease = await unit.LeasingRepository.GetAsync(x => x.Id == leasingId);
+            if (lease == null)
+                return false; // Lease not found
+
+            if (lease.EndDate.HasValue)
+                throw new Exception("Lease is already ended.");
+
+            lease.EndDate = DateTime.UtcNow;
+            await unit.LeasingRepository.UpdateAsync(lease);
+            return true;
+        }
+
+        public async Task<IEnumerable<Leasing>> GetActiveLeasesAsync()
+        {
+            return await unit.LeasingRepository.GetAllAsync(x => !x.EndDate.HasValue, includeProperties: ["Product"]);
         }
     }
 }
