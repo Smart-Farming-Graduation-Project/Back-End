@@ -50,7 +50,9 @@ namespace Croppilot.Services.Services
             return OperationResult.Success;
         }
 
-        public async Task<OperationResult> LeaseProductAsync(int productId, DateTime startDate, string leasingDetails)
+
+
+        public async Task<OperationResult> LeaseProductAsync(int productId, DateTime startDate, DateTime endDate, string leasingDetails)
         {
             var product = unit.ProductRepository.GetAsync(x => x.Id == productId);
             if (product == null) return OperationResult.NotFound;
@@ -61,11 +63,14 @@ namespace Croppilot.Services.Services
             var activeLease = await unit.LeasingRepository.GetAsync(x => x.ProductId == productId && x.EndDate == null);
             if (activeLease != null)
                 throw new Exception("This product is already leased and cannot be leased again for now.");
-
+            //  Validate that EndDate is in the future
+            if (endDate <= startDate)
+                throw new Exception("End date must be after the start date.");
             var lease = new Leasing
             {
                 ProductId = productId,
                 StartingDate = startDate,
+                EndDate = endDate,
                 LeasingDetails = leasingDetails
             };
             var addedLease = await unit.LeasingRepository.AddAsync(lease);

@@ -11,7 +11,7 @@ namespace Croppilot.Core.Features.Leasing.Command.Handler
         public async Task<Response<string>> Handle(LeaseProductCommand request, CancellationToken cancellationToken)
         {
             var result =
-                await leasingService.LeaseProductAsync(request.ProductId, request.StartingDate, request.LeasingDetails);
+                await leasingService.LeaseProductAsync(request.ProductId, request.StartingDate, request.EndDate, request.LeasingDetails);
             return result is OperationResult.Success
                 ? Created("Leasing Product Added Successfully")
                 : BadRequest<string>("Leasing Product creation failed");

@@ -12,7 +12,7 @@ namespace Croppilot.Services.Abstract
         Task<Leasing?> GetLeasingsByProductIdAsync(int productId);
         Task<OperationResult> DeleteLeasingAsync(int id);
 
-        Task<OperationResult> LeaseProductAsync(int productId, DateTime startDate, string leasingDetails);
+        Task<OperationResult> LeaseProductAsync(int productId, DateTime startDate, DateTime endDate, string leasingDetails);
         Task<OperationResult> EndLeaseAsync(int leasingId);
         Task<IEnumerable<Leasing>> GetActiveLeasesAsync();
     }
