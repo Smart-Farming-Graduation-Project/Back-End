@@ -1,6 +1,5 @@
 ﻿using Croppilot.Date.Identity;
 using Croppilot.Infrastructure.Configuration;
-using Croppilot.Infrastructure.Data.Extenstions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Croppilot.Infrastructure.Data
@@ -27,7 +26,9 @@ namespace Croppilot.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             modelBuilder.ApplyConfiguration(new LeasingConfiguration());
             modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
-            modelBuilder.SeedData();
+
+            //please do not uncomment this line to seed data for Now 
+            // modelBuilder.SeedData();
 
 
         }

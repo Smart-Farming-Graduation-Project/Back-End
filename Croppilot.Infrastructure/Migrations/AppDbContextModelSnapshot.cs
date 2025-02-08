@@ -132,7 +132,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Category", b =>
@@ -155,27 +155,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "High-quality seeds for farming",
-                            Name = "Seeds"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Organic and chemical fertilizers",
-                            Name = "Fertilizers"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Tractors, plows, and other farming tools",
-                            Name = "Farming Equipment"
-                        });
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Leasing", b =>
@@ -203,7 +183,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Leasings");
+                    b.ToTable("Leasings", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Order", b =>
@@ -238,7 +218,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.OrderItem", b =>
@@ -265,7 +245,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Product", b =>
@@ -305,42 +285,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Availability = 0,
-                            CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 2, 8, 15, 5, 14, 746, DateTimeKind.Utc).AddTicks(7172),
-                            Description = "High-yield wheat seeds suitable for all climates",
-                            Name = "Wheat Seeds",
-                            Price = 19.99m,
-                            UpdatedAt = new DateTime(2025, 2, 8, 15, 5, 14, 746, DateTimeKind.Utc).AddTicks(7172)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Availability = 0,
-                            CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 2, 8, 15, 5, 14, 746, DateTimeKind.Utc).AddTicks(7176),
-                            Description = "Natural compost-based fertilizer for better crop growth",
-                            Name = "Organic Fertilizer",
-                            Price = 49.99m,
-                            UpdatedAt = new DateTime(2025, 2, 8, 15, 5, 14, 746, DateTimeKind.Utc).AddTicks(7176)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Availability = 1,
-                            CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 2, 8, 15, 5, 14, 746, DateTimeKind.Utc).AddTicks(7179),
-                            Description = "Compact tractor for small to medium-sized farms",
-                            Name = "Mini Tractor",
-                            Price = 4999.99m,
-                            UpdatedAt = new DateTime(2025, 2, 8, 15, 5, 14, 746, DateTimeKind.Utc).AddTicks(7179)
-                        });
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.ProductImage", b =>
@@ -362,27 +307,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ImageUrl = "https://example.com/wheat-seeds.jpg",
-                            ProductId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ImageUrl = "https://example.com/organic-fertilizer.jpg",
-                            ProductId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ImageUrl = "https://example.com/mini-tractor.jpg",
-                            ProductId = 3
-                        });
+                    b.ToTable("ProductImages", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
