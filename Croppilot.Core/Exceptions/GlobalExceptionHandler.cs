@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 
 namespace Croppilot.Core.Exceptions;
 
@@ -16,20 +16,24 @@ public class GlobalExceptionHandler(
         CancellationToken cancellationToken)
     {
         var traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
-        logger.LogError(
-            exception,
-            "Unhandled exception occurred. Trace ID: {TraceId}, Request Path: {Path}",
-            traceId,
-            httpContext.Request.Path);
+        var request = httpContext.Request;
+
+        // Log error with detailed request information
+        logger.LogError(exception,
+            "Unhandled exception occurred. Trace ID: {TraceId}, Request: {Method} {Path} {Query}, Headers: {Headers}",
+            traceId, request.Method, request.Path, request.QueryString, request.Headers);
+
+        if (exception.InnerException != null)
+        {
+            logger.LogError("Inner Exception: {InnerException}", exception.InnerException);
+        }
 
         var statusCode = GetStatusCode(exception);
-        var problemDetails = CreateProblemDetails(
-            exception,
-            statusCode,
-            traceId,
-            httpContext);
+        var problemDetails = CreateProblemDetails(exception, statusCode, traceId, httpContext);
 
         httpContext.Response.StatusCode = statusCode;
+        httpContext.Response.ContentType = "application/json";
+
         await httpContext.Response.WriteAsJsonAsync(
             problemDetails,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase },
@@ -42,11 +46,13 @@ public class GlobalExceptionHandler(
     {
         BadHttpRequestException => StatusCodes.Status400BadRequest,
         ArgumentException => StatusCodes.Status400BadRequest,
+        ValidationException => StatusCodes.Status422UnprocessableEntity,
         UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
         KeyNotFoundException => StatusCodes.Status404NotFound,
         DbUpdateConcurrencyException => StatusCodes.Status409Conflict,
-        DbUpdateException => StatusCodes.Status500InternalServerError,
+        DbUpdateException => StatusCodes.Status400BadRequest,
         NotImplementedException => StatusCodes.Status501NotImplemented,
+        OperationCanceledException => StatusCodes.Status499ClientClosedRequest,
         _ => StatusCodes.Status500InternalServerError
     };
 
@@ -56,29 +62,48 @@ public class GlobalExceptionHandler(
         string traceId,
         HttpContext httpContext)
     {
-        return new ProblemDetails
+        var request = httpContext.Request;
+
+        var problemDetails = new ProblemDetails
         {
             Status = statusCode,
             Title = GetTitle(exception),
-            Type = "https://tools.ietf.org/html/rfc7231#" + statusCode,
-            Instance = httpContext.Request.Path,
+            Type = $"https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/{statusCode}",
+            Instance = request.Path,
             Extensions =
             {
                 ["traceId"] = traceId,
                 ["requestId"] = httpContext.Connection.Id,
-                ["timestamp"] = DateTimeOffset.UtcNow.ToString("O")
+                ["method"] = request.Method,
+                ["timestamp"] = DateTimeOffset.UtcNow.ToString("O"),
+                ["user"] = httpContext.User.Identity?.Name ?? "Anonymous"
             }
         };
+
+        if (environment.IsDevelopment())
+        {
+            problemDetails.Extensions["exception"] = new
+            {
+                message = exception.Message,
+                stackTrace = exception.StackTrace,
+                innerException = exception.InnerException?.Message
+            };
+        }
+
+        return problemDetails;
     }
 
     private static string GetTitle(Exception exception) => exception switch
     {
         BadHttpRequestException => "Invalid Request",
+        ArgumentException => "Invalid Argument",
+        ValidationException => "Validation Failed",
         UnauthorizedAccessException => "Unauthorized",
         KeyNotFoundException => "Resource Not Found",
         DbUpdateConcurrencyException => "Concurrency Conflict",
         DbUpdateException => "Database Error",
         NotImplementedException => "Not Implemented",
+        OperationCanceledException => "Request Cancelled",
         _ => "Internal Server Error"
     };
 }
