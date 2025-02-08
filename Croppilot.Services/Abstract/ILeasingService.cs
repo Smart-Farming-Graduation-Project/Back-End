@@ -1,4 +1,6 @@
-﻿namespace Croppilot.Services.Abstract
+﻿using Croppilot.Date.Enum;
+
+namespace Croppilot.Services.Abstract
 {
     public interface ILeasingService
     {
@@ -8,10 +10,10 @@
         Task<Leasing?> GetLeasingByIdAsync(int id);
         Task<IEnumerable<Leasing>> GetAllLeasingsAsync();
         Task<IEnumerable<Leasing>> GetLeasingsByProductIdAsync(int productId);
-        Task<bool> DeleteLeasingAsync(int id);
+        Task<OperationResult> DeleteLeasingAsync(int id);
 
-        Task<Leasing> LeaseProductAsync(int productId, DateTime startDate, string leasingDetails);
-        Task<bool> EndLeaseAsync(int leasingId);
+        Task<OperationResult> LeaseProductAsync(int productId, DateTime startDate, string leasingDetails);
+        Task<OperationResult> EndLeaseAsync(int leasingId);
         Task<IEnumerable<Leasing>> GetActiveLeasesAsync();
     }
 }

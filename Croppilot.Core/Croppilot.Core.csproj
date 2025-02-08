@@ -19,8 +19,4 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Leasing\Command\" />
-  </ItemGroup>
-
 </Project>
