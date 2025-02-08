@@ -140,7 +140,7 @@ public class ProductServices(
     }
 
 
-    public IEnumerable<Product> GetByDate(int nights, DateOnly checkInDate)
+    public IEnumerable<Product> GetByDate(int tt, DateOnly checkInDate)
     {
         //Todo: Implement it
         throw new NotImplementedException();
