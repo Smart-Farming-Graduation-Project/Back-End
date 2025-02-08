@@ -4,10 +4,11 @@ namespace Croppilot.Services.Abstract
 {
     public interface IProductServices
     {
-        Task<IQueryable<Product>> GetAll(string? includeProperties = null,
+        Task<IQueryable<Product>> GetAll(string[]? includeProperties = null,
             CancellationToken cancellationToken = default);
 
-        Task<Product?> GetById(int id, string? includeProperties = null, CancellationToken cancellationToken = default);
+        Task<Product?> GetById(int id, string[]? includeProperties = null,
+            CancellationToken cancellationToken = default);
 
         Task<OperationResult> CreateAsync(Product product, List<string> iamgeList,
             CancellationToken cancellationToken = default);

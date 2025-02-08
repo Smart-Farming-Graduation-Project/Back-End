@@ -8,7 +8,8 @@ namespace Croppilot.Services.Services
         public async Task<Leasing> CreateLeasingAsync(Leasing leasing)
         {
             leasing.StartingDate = DateTime.UtcNow;
-            return await unit.LeasingRepository.AddAsync(leasing); ;
+            return await unit.LeasingRepository.AddAsync(leasing);
+            ;
         }
 
         public async Task<Leasing> UpdateLeasingAsync(int id, Leasing updatedLeasing)
@@ -25,17 +26,18 @@ namespace Croppilot.Services.Services
 
         public async Task<Leasing?> GetLeasingByIdAsync(int id)
         {
-            return await unit.LeasingRepository.GetAsync(x => x.Id == id, includeProperties: "Product");
+            return await unit.LeasingRepository.GetAsync(x => x.Id == id, includeProperties: ["Product"]);
         }
 
         public async Task<IEnumerable<Leasing>> GetAllLeasingsAsync()
         {
-            return await unit.LeasingRepository.GetAllAsync(includeProperties: "Product");
+            return await unit.LeasingRepository.GetAllAsync(includeProperties: ["Product"]);
         }
 
         public async Task<IEnumerable<Leasing>> GetLeasingsByProductIdAsync(int productId)
         {
-            return await unit.LeasingRepository.GetAllAsync(x => x.ProductId == productId, includeProperties: "Product");
+            return await unit.LeasingRepository.GetAllAsync(x => x.ProductId == productId,
+                includeProperties: ["Product"]);
         }
 
         public async Task<bool> DeleteLeasingAsync(int id)

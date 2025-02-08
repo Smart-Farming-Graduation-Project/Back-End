@@ -12,12 +12,12 @@ public class TestController(IProductServices _productServices, IAuthenticationSe
 	[HttpGet("ProductList")]
 	public async Task<IActionResult> GetProduct()
 	{
-		var products = await _productServices.GetAll(includeProperties: "Category", cancellationToken: default);
+		var products = await _productServices.GetAll(includeProperties: ["Category"], cancellationToken: default);
 		return Ok(products);
 	}
 
 	[HttpGet("{id}")]
-	public async Task<ActionResult<Product?>> GetProductById(int id, string? includeProperties = null, CancellationToken cancellationToken = default)
+	public async Task<ActionResult<Product?>> GetProductById(int id, string[]? includeProperties = null, CancellationToken cancellationToken = default)
 	{
 		var product = await _productServices.GetById(id, includeProperties, cancellationToken);
 		if (product == null)

@@ -15,7 +15,9 @@ namespace Croppilot.Infrastructure.Data
 		public DbSet<Leasing> Leasings { get; set; }
 		public DbSet<ProductImage> ProductImages { get; set; }
 		public DbSet<RefreshToken> RefreshTokens { get; set; }
-
+		public DbSet<Order> Orders { get; set; }
+		public DbSet<OrderItem> OrderItems { get; set; }
+		
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
