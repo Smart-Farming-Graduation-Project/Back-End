@@ -132,7 +132,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Category", b =>
@@ -155,7 +155,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Leasing", b =>
@@ -183,7 +183,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Leasings");
+                    b.ToTable("Leasings", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Order", b =>
@@ -218,7 +218,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.OrderItem", b =>
@@ -245,7 +245,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Product", b =>
@@ -285,7 +285,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.ProductImage", b =>
@@ -307,7 +307,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages");
+                    b.ToTable("ProductImages", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
