@@ -4,10 +4,10 @@ namespace Croppilot.Services.Abstract
 {
     public interface ICategoryService
     {
-        Task<List<Category>> GetAllAsync(string? includeProperties = null,
+        Task<List<Category>> GetAllAsync(string[]? includeProperties = null,
             CancellationToken cancellationToken = default);
 
-        Task<Category?> GetByIdAsync(int id, string? includeProperties = null,
+        Task<Category?> GetByIdAsync(int id, string[]? includeProperties = null,
             CancellationToken cancellationToken = default);
 
         Task<OperationResult> CreateAsync(Category category, CancellationToken cancellationToken = default);

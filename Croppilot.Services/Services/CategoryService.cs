@@ -6,17 +6,17 @@ namespace Croppilot.Services.Services;
 
 public class CategoryService(IUnitOfWork unitOfWork) : ICategoryService
 {
-    public async Task<List<Category>> GetAllAsync(string? includeProperties = null,
+    public async Task<List<Category>> GetAllAsync(string[]? includeProperties = null,
         CancellationToken cancellationToken = default)
     {
         return await unitOfWork.CategoryRepository.GetAllAsync(includeProperties: includeProperties,
             cancellationToken: cancellationToken);
     }
 
-    public async Task<Category?> GetByIdAsync(int id, string? includeProp = null,
+    public async Task<Category?> GetByIdAsync(int id, string[]? includeProperties = null,
         CancellationToken cancellationToken = default)
     {
-        return await unitOfWork.CategoryRepository.GetAsync(c => c.Id == id, includeProperties: includeProp,
+        return await unitOfWork.CategoryRepository.GetAsync(c => c.Id == id, includeProperties: includeProperties,
             cancellationToken: cancellationToken);
     }
 
@@ -52,7 +52,7 @@ public class CategoryService(IUnitOfWork unitOfWork) : ICategoryService
 
     public async Task<IQueryable<Category>> FilterCategoryQueryable(CategoryOrderingEnum ordering, string? search)
     {
-        var queryable = await unitOfWork.CategoryRepository.GetAllForPagnition(includeProperties: "Products");
+        var queryable = await unitOfWork.CategoryRepository.GetForPaginationAsync(includeProperties: ["Products"]);
         if (!string.IsNullOrEmpty(search))
             queryable = queryable.Where(x => x.Name.Contains(search));
 

@@ -4,5 +4,9 @@ public enum OperationResult
 {
     Success,
     NotFound,
-    Failure
+    Failure,
+    AlreadyLeased,
+    NotAvailable,
+    InvalidDate,
+    AlreadyEnded,
 }
