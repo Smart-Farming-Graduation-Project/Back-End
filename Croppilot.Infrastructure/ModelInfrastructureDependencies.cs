@@ -2,7 +2,6 @@
 using Croppilot.Date.Identity;
 using Croppilot.Infrastructure.Repositories.Implementation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -41,7 +40,7 @@ namespace Croppilot.Infrastructure
 				"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 				options.User.RequireUniqueEmail = true;
 
-			}).AddRoles<IdentityRole>()
+			}).AddRoles<ApplicationRole>()
 		   .AddEntityFrameworkStores<AppDbContext>();
 			#endregion
 

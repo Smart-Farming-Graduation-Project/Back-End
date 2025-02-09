@@ -18,6 +18,8 @@ namespace Croppilot.Services
 			service.AddScoped<IProductImageServices, ProductImageServices>();
 			service.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
 			service.AddScoped<IAuthenticationService, AuthenticationService>();
+			service.AddScoped<IUserService, UserService>();
+			service.AddScoped<IAuthorizationService, AuthorizationService>();
 			return service;
 		}
 	}
