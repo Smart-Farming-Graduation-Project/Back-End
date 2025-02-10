@@ -1,9 +1,9 @@
-﻿using Croppilot.Date.Helpers;
+﻿using Croppilot.Date.Enum;
+using Croppilot.Date.Helpers;
 using Croppilot.Date.Identity;
 using Croppilot.Infrastructure.Repositories.Interfaces;
 using Croppilot.Services.Abstract;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -36,13 +36,11 @@ namespace Croppilot.Services.Services
 
 		public async Task<IdentityResult> CreateUserAsync(ApplicationUser user, string password)
 		{
-			return await _userManager.CreateAsync(user, password);
+			var result = await _userManager.CreateAsync(user, password);
+			if (!result.Succeeded) return result;
+			return await _userManager.AddToRoleAsync(user, UserRoleEnum.User.ToString());
 		}
 
-		public async Task<IdentityResult> DeleteUserAsync(ApplicationUser user)
-		{
-			return await _userManager.DeleteAsync(user);
-		}
 
 		public async Task<TokenResponse> GetJWTtoken(ApplicationUser user)
 		{
@@ -76,10 +74,15 @@ namespace Croppilot.Services.Services
 		{
 			var claims = new List<Claim>
 				{
-					new Claim(ClaimTypes.NameIdentifier,user.UserName ?? string.Empty),
-					new Claim(ClaimTypes.Name,$"{user.FirstName} {user.LastName}"),
-					new Claim(ClaimTypes.Email,user.Email ?? string.Empty)
+					new Claim(nameof(ClaimTypes.NameIdentifier),user.UserName ?? string.Empty),
+					new Claim(nameof(ClaimTypes.Name),$"{user.FirstName} {user.LastName}"),
+					new Claim(nameof(ClaimTypes.Email),user.Email ?? string.Empty)
 				};
+			var roles = await _userManager.GetRolesAsync(user);
+			foreach (var role in roles)
+			{
+				claims.Add(new Claim(nameof(ClaimTypes.Role), role));
+			}
 			return await Task.FromResult(claims);
 		}
 
@@ -153,33 +156,13 @@ namespace Croppilot.Services.Services
 			return await Task.FromResult(true);
 		}
 
-		public async Task<ApplicationUser> GetUserByEmail(string email)
-		{
-			return await _userManager.FindByEmailAsync(email);
-		}
-
-		public async Task<ApplicationUser> GetUserById(string id)
-		{
-			return await _userManager.FindByIdAsync(id);
-		}
-
-		public async Task<ApplicationUser> GetUserByUserName(string userName)
-		{
-			return await _userManager.Users.Include(u => u.RefreshTokens).Where(u => u.UserName.Equals(userName)).FirstOrDefaultAsync();
-			//return await _userManager.FindByNameAsync(userName);
-		}
-
-		public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
-		{
-			return await _userManager.UpdateAsync(user);
-		}
-
 
 
 		//private async Task<List<RefreshToken>> GetRefreshTokensBelongToUserAsync(string userId)
 		//{
 		//	return await _unitOfWork.RefreshTokenRepository.GetAllAsync(r => r.UserId.Equals(userId));
 		//}
+
 
 		public async Task<List<RefreshToken>> GetRefreshTokens()
 		{
