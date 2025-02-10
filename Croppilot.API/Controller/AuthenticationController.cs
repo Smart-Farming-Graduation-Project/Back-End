@@ -5,61 +5,67 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Croppilot.API.Controller
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class AuthenticationController : AppControllerBase
-	{
-		private readonly IMediator _mediator;
-		public AuthenticationController(IMediator mediator)
-		{
-			_mediator = mediator;
-		}
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthenticationController : AppControllerBase
+    {
+        private readonly IMediator _mediator;
+        public AuthenticationController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
 
-		[HttpPost("Register")]
-		public async Task<IActionResult> Register(AddUserCommand command)
-		{
-			return NewResult(await _mediator.Send(command));
-		}
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register(AddUserCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
 
-		[HttpPost("SignIn")]
-		public async Task<IActionResult> SignIn(SignInCommand command)
-		{
-			return NewResult(await _mediator.Send(command));
-			//var response = await _mediator.Send(command);
-			//if (response.Succeeded)
-			//	SetRefreshTokenInCookie(response.Data.Tokens.RefreshToken, response.Data.Tokens.RefreshTokenExpiration);
-			//return NewResult(response);
-		}
+        [HttpPost("SignIn")]
+        public async Task<IActionResult> SignIn(SignInCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+            //var response = await _mediator.Send(command);
+            //if (response.Succeeded)
+            //	SetRefreshTokenInCookie(response.Data.Tokens.RefreshToken, response.Data.Tokens.RefreshTokenExpiration);
+            //return NewResult(response);
+        }
 
-		[HttpPost("RefreshToken")]
-		public async Task<IActionResult> RefreshToken(RefreshTokenCommand command)
-		{
-			return NewResult(await _mediator.Send(command));
-		}
+        [HttpPost("RefreshToken")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
 
-		[HttpPost("RevokeToken")]
-		public async Task<IActionResult> RevokeToken(RevokeRefreshTokenCommand command)
-		{
-			return NewResult(await _mediator.Send(command));
-		}
-
-
-
-		[HttpPut("ChangePassword")]
-		public async Task<IActionResult> ChangePassword(ChangeUserPasswordCommand command)
-		{
-			return NewResult(await _mediator.Send(command));
-		}
+        [HttpPost("RevokeToken")]
+        public async Task<IActionResult> RevokeToken(RevokeRefreshTokenCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
 
 
-		//private void SetRefreshTokenInCookie(string refreshToken, DateTime expireDate)
-		//{
-		//	var cookieOptions = new CookieOptions()
-		//	{
-		//		HttpOnly = true,
-		//		Expires = expireDate.ToLocalTime()
-		//	};
-		//	Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
-		//}
-	}
+        [HttpPut("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
+
+
+        [HttpPut("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(ChangeUserPasswordCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
+
+
+        //private void SetRefreshTokenInCookie(string refreshToken, DateTime expireDate)
+        //{
+        //	var cookieOptions = new CookieOptions()
+        //	{
+        //		HttpOnly = true,
+        //		Expires = expireDate.ToLocalTime()
+        //	};
+        //	Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
+        //}
+    }
 }
