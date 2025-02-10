@@ -1,0 +1,12 @@
+﻿using Croppilot.Date.DTOS;
+using Croppilot.Date.Identity;
+
+namespace Croppilot.Services.Abstract
+{
+    public interface IEmailService
+    {
+        Task<bool> SendEmailAsync(EmailSendDto sendEmail);
+        Task<bool> SendConfirmEMailAsync(ApplicationUser user);
+        Task<bool> SendForgotUsernameOrPasswordEmail(ApplicationUser user);
+    }
+}

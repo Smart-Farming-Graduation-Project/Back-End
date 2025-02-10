@@ -19,8 +19,9 @@ namespace Croppilot.Services
             service.AddScoped<IProductImageServices, ProductImageServices>();
             service.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
             service.AddScoped<IAuthenticationService, AuthenticationService>();
+            service.AddScoped<IEmailService, EmailService>();
             service.AddScoped<IUserService, UserService>();
-			service.AddScoped<IAuthorizationService, AuthorizationService>();service.AddScoped<IOrderService, OrderService>();
+            service.AddScoped<IAuthorizationService, AuthorizationService>();service.AddScoped<IOrderService, OrderService>();
             service.AddScoped<ICartService, CartService>();
 
             return service;
