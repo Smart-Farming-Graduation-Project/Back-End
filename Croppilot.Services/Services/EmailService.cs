@@ -97,5 +97,22 @@ namespace Croppilot.Services.Services
             return emailSent ? "Success" : "FailedToSendEmail";
         }
 
+        public async Task<string> ResetPasswordUsingOTP(string code, string email)
+        {
+            var user = await userManager.FindByEmailAsync(email).ConfigureAwait(false);
+            if (user is null) return "NotFound";
+
+            if (user.OTPCode == code)
+            {
+                // Clear OTP after successful validation
+                user.OTPCode = null;
+                var updateResult = await userManager.UpdateAsync(user).ConfigureAwait(false);
+
+                return updateResult.Succeeded ? "Success" : "FailedToUpdate";
+            }
+
+            return "Failed";
+        }
+
     }
 }
