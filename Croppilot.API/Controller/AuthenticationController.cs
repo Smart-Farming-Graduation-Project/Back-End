@@ -56,7 +56,7 @@ namespace Croppilot.API.Controller
         }
 
 
-        [HttpPost("forgot-username-or-password/")]
+        [HttpPost("forgot-username-or-password")]
         public async Task<IActionResult> ForgotUsernameOrPassword(ForgetPasswordCommand command)
         {
             return NewResult(await _mediator.Send(command));
@@ -69,6 +69,12 @@ namespace Croppilot.API.Controller
         }
         [HttpPut("ChangePassword")]
         public async Task<IActionResult> ChangePassword(ChangeUserPasswordCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
+
+        [HttpPost("forgot-username-or-password-using-OTP")]
+        public async Task<IActionResult> ForgotUsernameOrPasswordUsingOtpCode(ForgetPasswordUsingOTPCommand command)
         {
             return NewResult(await _mediator.Send(command));
         }
