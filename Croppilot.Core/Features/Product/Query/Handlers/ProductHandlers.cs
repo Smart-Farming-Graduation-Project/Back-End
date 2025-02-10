@@ -29,7 +29,7 @@ public class ProductHandlers(IProductServices productServices)
     public async Task<Response<GetProductByIdResponse>> Handle(GetProductByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var product = await productServices.GetById(request.Id, includeProperties:["Category", "ProductImages"],
+        var product = await productServices.GetByIdAsync(request.Id, includeProperties:["Category", "ProductImages"],
             cancellationToken: cancellationToken);
 
         if (product is null)

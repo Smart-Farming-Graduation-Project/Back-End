@@ -4,22 +4,51 @@ using Croppilot.Services.Abstract;
 
 namespace Croppilot.Core.Features.Authentication.Commands.Handlers
 {
-	internal class SignInCommandHandler(IAuthenticationService service, IUserService _userService)
-		: ResponseHandler, IRequestHandler<SignInCommand, Response<SignInResponse>>
-	{
-		public async Task<Response<SignInResponse>> Handle(SignInCommand request, CancellationToken cancellationToken)
-		{
-			var user = await _userService.GetUserByUserName(request.UserName);
-			if (user is null || await service.CheckPasswordAsync(user, request.Password) == false)
-				return BadRequest<SignInResponse>("Username or Password are wrong");
-			var tokens = await service.GetJWTtoken(user);
-			var response = new SignInResponse()
-			{
-				UserName = request.UserName,
-				IsAuthenticated = true,
-				Tokens = tokens
-			};
-			return Success(response);
-		}
-	}
+    public class SignInCommandHandler(
+        IAuthenticationService service,
+        IUserService userService)
+        : ResponseHandler, IRequestHandler<SignInCommand, Response<SignInResponse>>
+    {
+        public async Task<Response<SignInResponse>> Handle(SignInCommand request, CancellationToken cancellationToken)
+        {
+
+            var user = await userService.GetUserByUserName(request.UserName);
+            if (user is null)
+                return BadRequest<SignInResponse>("Username or Password are wrong");
+
+
+            // Ensure email is confirmed before allowing login
+            if (!user.EmailConfirmed) return BadRequest<SignInResponse>("Please confirm your email before signing in.");
+
+            // Check if user is locked out
+            var lockoutMessage = await service.CheckAndHandleLockoutAsync(user);
+            if (!string.IsNullOrEmpty(lockoutMessage))
+            {
+                return BadRequest<SignInResponse>(lockoutMessage);
+            }
+            var signInResult = await service.CheckPasswordAsync(user, request.Password);
+            // Validate password
+            if (!signInResult == true)
+            {
+                await service.HandleFailedLoginAsync(user);
+                return BadRequest<SignInResponse>("Invalid username or password.");
+            }
+            // Successful login
+            await service.ResetFailedAttemptsAsync(user);
+
+
+            var tokens = await service.GetJWTtoken(user);
+
+
+            return Success(new SignInResponse
+            {
+                UserName = user.UserName,
+                IsAuthenticated = true,
+                Tokens = tokens
+            });
+        }
+
+    }
 }
+
+

@@ -17,6 +17,8 @@ namespace Croppilot.Infrastructure.Data
 		public DbSet<RefreshToken> RefreshTokens { get; set; }
 		public DbSet<Order> Orders { get; set; }
 		public DbSet<OrderItem> OrderItems { get; set; }
+		public DbSet<Cart> Carts { get; set; }
+		public DbSet<CartItem> CartItems { get; set; }
 
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,6 +28,10 @@ namespace Croppilot.Infrastructure.Data
 			modelBuilder.ApplyConfiguration(new CategoryConfiguration());
 			modelBuilder.ApplyConfiguration(new LeasingConfiguration());
 			modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
+			modelBuilder.ApplyConfiguration(new OrderConfiguration());
+			modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+			modelBuilder.ApplyConfiguration(new CartConfiguration());
+			modelBuilder.ApplyConfiguration(new CartItemConfiguration());
 
 			//please do not uncomment this line to seed data for Now 
 			// modelBuilder.SeedData();

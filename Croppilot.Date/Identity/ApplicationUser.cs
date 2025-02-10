@@ -2,12 +2,13 @@
 
 namespace Croppilot.Date.Identity
 {
-	public class ApplicationUser : IdentityUser
-	{
-		public string FirstName { get; set; } = null!;
-		public string LastName { get; set; } = null!;
-		public string Address { get; set; } = null!;
-		public string Phone { get; set; } = null!;
-		public List<RefreshToken>? RefreshTokens { get; set; }
-	}
+    public class ApplicationUser : IdentityUser
+    {
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public string Address { get; set; } = null!;
+        public string Phone { get; set; } = null!;
+        public string? OTPCode { get; set; } = null;
+        public List<RefreshToken>? RefreshTokens { get; set; }
+    }
 }
