@@ -42,17 +42,9 @@ namespace Croppilot.Infrastructure
 					options.User.AllowedUserNameCharacters =
 						"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 					options.User.RequireUniqueEmail = true;
-					//<<<<<<< HEAD
 				}).AddRoles<ApplicationRole>()
 		   .AddEntityFrameworkStores<AppDbContext>();
 			#endregion
-			//=======
-
-			//                }).AddRoles<IdentityRole>()
-			//                .AddEntityFrameworkStores<AppDbContext>();
-			//>>>>>>> d32384bdbc5d1fa7e865c9f497181e7e38ee7d9f
-
-			// #endregion
 
 			#region JWTservice
 
