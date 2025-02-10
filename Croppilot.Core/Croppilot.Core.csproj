@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+
     <Folder Include="Features\Authentication\Queries\Handlers\" />
     <Folder Include="Features\Authentication\Queries\Models\" />
     <Folder Include="Features\Authentication\Queries\Result\" />
@@ -27,6 +28,9 @@
     <Folder Include="Mapping\Authentication\Query\" />
     <Folder Include="Mapping\Authorization\Command\" />
     <Folder Include="Mapping\User\Command\" />
+
+    <Folder Include="Features\Orders\Query\Validators\" />
+
   </ItemGroup>
 
 </Project>

@@ -28,7 +28,7 @@ public class OrderService(IUnitOfWork unitOfWork) : IOrderService
             .GetAllAsync(includeProperties: includeProperties, cancellationToken: cancellationToken);
     }
 
-    public async Task<List<Order>> GetUserOrdersAsync(int userId, CancellationToken cancellationToken = default)
+    public async Task<List<Order>> GetUserOrdersAsync(string userId, CancellationToken cancellationToken = default)
     {
         return await unitOfWork.OrderRepository.GetAllAsync(
             filter: o => o.UserId == userId,
