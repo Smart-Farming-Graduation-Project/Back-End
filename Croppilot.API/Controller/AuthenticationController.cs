@@ -49,15 +49,29 @@ namespace Croppilot.API.Controller
         {
             return NewResult(await _mediator.Send(command));
         }
-
-
-        [HttpPut("ChangePassword")]
-        public async Task<IActionResult> ChangePassword(ChangeUserPasswordCommand command)
+        [HttpPost("resend-email-confirmation-link")]
+        public async Task<IActionResult> ResendEmailConfirmationLink(ResendConfirmEmailCommand command)
         {
             return NewResult(await _mediator.Send(command));
         }
 
 
+        [HttpPost("forgot-username-or-password/")]
+        public async Task<IActionResult> ForgotUsernameOrPassword(ForgetPasswordCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
+
+        [HttpPut("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
+        [HttpPut("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(ChangeUserPasswordCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
         //private void SetRefreshTokenInCookie(string refreshToken, DateTime expireDate)
         //{
         //	var cookieOptions = new CookieOptions()

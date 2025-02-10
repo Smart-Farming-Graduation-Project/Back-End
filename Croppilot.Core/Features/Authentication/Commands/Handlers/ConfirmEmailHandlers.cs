@@ -1,12 +1,15 @@
 ﻿using Croppilot.Core.Features.Authentication.Commands.Models;
 using Croppilot.Date.Identity;
+using Croppilot.Services.Abstract;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 
 namespace Croppilot.Core.Features.Authentication.Commands.Handlers
 {
-    public class ConfirmEmailHandlers(UserManager<ApplicationUser> userManager) : ResponseHandler, IRequestHandler<ConfirmEmailCommand, Response<string>>
+    public class ConfirmEmailHandlers(UserManager<ApplicationUser> userManager, IEmailService emailService) : ResponseHandler,
+        IRequestHandler<ConfirmEmailCommand, Response<string>>,
+        IRequestHandler<ResendConfirmEmailCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
         {
@@ -31,6 +34,29 @@ namespace Croppilot.Core.Features.Authentication.Commands.Handlers
             catch (Exception)
             {
                 return BadRequest<string>("Invalid token. Please try again");
+            }
+        }
+
+        public async Task<Response<string>> Handle(ResendConfirmEmailCommand request, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(request.Email)) return BadRequest<string>("Invalid email");
+            var user = await userManager.FindByEmailAsync(request.Email);
+
+            if (user == null) return BadRequest<string>("This email address has not been registered yet");
+            if (user.EmailConfirmed == true) return BadRequest<string>("Your email address was confirmed before. Please login to your account");
+
+            try
+            {
+                if (await emailService.SendConfirmEMailAsync(user))
+                {
+                    return Success<string>("Confirmation link sent", "Please confirm your email address");
+                }
+
+                return BadRequest<string>("Failed to send email. PLease contact admin");
+            }
+            catch (Exception)
+            {
+                return BadRequest<string>("Failed to send email. PLease contact admin");
             }
         }
     }
