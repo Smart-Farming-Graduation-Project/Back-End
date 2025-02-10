@@ -2,13 +2,14 @@
 using Croppilot.API.Bases;
 using Croppilot.Core.Features.Carts.Command.Models;
 using Croppilot.Core.Features.Carts.Query.Models;
+using Croppilot.Date.Enum;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Croppilot.API.Controller;
 
-[Authorize]
+[Authorize(Policy = nameof(UserRoleEnum.User))]
 public class CartController(IMediator mediator, IHttpContextAccessor httpContextAccessor) : AppControllerBase
 {
     [HttpGet("GetCart")]
