@@ -20,9 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-
-    <Folder Include="Features\Authentication\Queries\Handlers\" />
-    <Folder Include="Features\Authentication\Queries\Models\" />
     <Folder Include="Features\Authentication\Queries\Result\" />
     <Folder Include="Mapping\Authentication\Command\" />
     <Folder Include="Mapping\Authentication\Query\" />
