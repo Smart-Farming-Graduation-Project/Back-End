@@ -12,7 +12,7 @@ public interface IOrderService
     Task<List<Order>> GetAllAsync(string[]? includeProperties = null,
         CancellationToken cancellationToken = default);
 
-    Task<List<Order>> GetUserOrdersAsync(int userId, CancellationToken cancellationToken = default);
+    Task<List<Order>> GetUserOrdersAsync(string userId, CancellationToken cancellationToken = default);
 
 
     Task<OperationResult> UpdateAsync(Order order, CancellationToken cancellationToken = default);

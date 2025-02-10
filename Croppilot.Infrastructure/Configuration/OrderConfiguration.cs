@@ -12,9 +12,6 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(o => o.OrderDate)
-            .IsRequired();
-
         builder.Property(o => o.Status)
             .IsRequired();
 
