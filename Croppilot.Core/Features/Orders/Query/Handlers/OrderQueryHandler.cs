@@ -1,6 +1,4 @@
-﻿using Croppilot.Services.Abstract;
-
-namespace Croppilot.Core.Features.Orders.Query.Handlers;
+﻿namespace Croppilot.Core.Features.Orders.Query.Handlers;
 
 public class OrderQueryHandler(
     IOrderService orderService

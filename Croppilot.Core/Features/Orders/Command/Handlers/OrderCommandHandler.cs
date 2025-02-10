@@ -1,6 +1,5 @@
 ﻿using Croppilot.Core.Features.Orders.Command.Models;
 using Croppilot.Date.Models;
-using Croppilot.Services.Abstract;
 
 namespace Croppilot.Core.Features.Orders.Command.Handlers;
 
@@ -19,7 +18,7 @@ public class OrderCommandHandler(
 
         foreach (var item in command.OrderItems)
         {
-            var product = await productService.GetById(item.ProductId, cancellationToken: cancellationToken);
+            var product = await productService.GetByIdAsync(item.ProductId, cancellationToken: cancellationToken);
             if (product is null)
                 return BadRequest<string>($"Product with ID {item.ProductId} does not exist.");
 

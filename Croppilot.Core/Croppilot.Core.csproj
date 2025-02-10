@@ -20,6 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Carts\Command\Validators\" />
+    <Folder Include="Features\Carts\Query\Validators\" />
     <Folder Include="Features\Orders\Query\Validators\" />
   </ItemGroup>
 

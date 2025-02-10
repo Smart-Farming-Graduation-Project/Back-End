@@ -18,7 +18,7 @@ public class ProductServices(
     }
 
 
-    public async Task<Product?> GetById(int id, string[]? includeProperties = null,
+    public async Task<Product?> GetByIdAsync(int id, string[]? includeProperties = null,
         CancellationToken cancellationToken = default)
     {
         var product = await unit.ProductRepository.GetAsync(

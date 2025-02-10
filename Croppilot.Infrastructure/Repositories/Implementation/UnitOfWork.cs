@@ -11,6 +11,7 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
         public IRefreshTokenRepository RefreshTokenRepository { get; }
         public IOrderRepository OrderRepository { get; }
         public IOrderItemRepository OrderItemRepository { get; }
+        public ICartRepository CartRepository { get; }
 
 
         private readonly AppDbContext _context;
@@ -26,6 +27,7 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
             RefreshTokenRepository = new RefreshTokenRepository(_context);
             OrderRepository = new OrderRepository(_context);
             OrderItemRepository = new OrderItemRepository(_context);
+            CartRepository = new CartRepository(_context);
         }
 
         public IGenericRepository<T> GenericRepository<T>() where T : class
