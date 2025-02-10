@@ -10,6 +10,7 @@ public static class ModelApiDependencies
 		services.AddControllers();
 		services.AddSwaggerServices().AddCorSServices();
 		services.AddRolePolicy();
+		services.AddHttpContextAccessor();
 
 		return services;
 	}
