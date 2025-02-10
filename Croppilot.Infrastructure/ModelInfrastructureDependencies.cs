@@ -29,7 +29,7 @@ namespace Croppilot.Infrastructure
 
             service.AddIdentityCore<ApplicationUser>(options =>
                 {
-                    options.SignIn.RequireConfirmedEmail = false;
+                    options.SignIn.RequireConfirmedEmail = true;
                     // Password settings.
                     options.Password.RequireDigit = true;
                     options.Password.RequireLowercase = true;
