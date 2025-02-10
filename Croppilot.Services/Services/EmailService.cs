@@ -70,5 +70,49 @@ namespace Croppilot.Services.Services
 
             return await SendEmailAsync(emailSend);
         }
+
+        public async Task<string> SendCodeResetPassword(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email).ConfigureAwait(false);
+            if (user is null) return "UserNotFound";
+
+            // Generate a  OTP
+            string otpCode = new Random().Next(100000, 999999).ToString();
+            user.OTPCode = otpCode;
+
+            var updateResult = await userManager.UpdateAsync(user).ConfigureAwait(false);
+            if (!updateResult.Succeeded) return "FailedToUpdateUser";
+
+            string subject = "Reset Your Password";
+            string body = $"<p>Hello {user.FirstName} {user.LastName},</p>" +
+                          $"<p>Your OTP for password reset is: <strong>{otpCode}</strong></p>" +
+                          "<p>Please use this code to reset your password.</p>" +
+                          "<p>If you did not request this, please ignore this email.</p>" +
+                          $"<br><p>Best regards,<br>{configuration["Email:ApplicationName"]}</p>";
+
+
+            var emailSend = new EmailSendDto(email, subject, body);
+
+            bool emailSent = await SendEmailAsync(emailSend);
+            return emailSent ? "Success" : "FailedToSendEmail";
+        }
+
+        public async Task<string> ResetPasswordUsingOTP(string code, string email)
+        {
+            var user = await userManager.FindByEmailAsync(email).ConfigureAwait(false);
+            if (user is null) return "NotFound";
+
+            if (user.OTPCode == code)
+            {
+                // Clear OTP after successful validation
+                user.OTPCode = null;
+                var updateResult = await userManager.UpdateAsync(user).ConfigureAwait(false);
+
+                return updateResult.Succeeded ? "Success" : "FailedToUpdate";
+            }
+
+            return "Failed";
+        }
+
     }
 }

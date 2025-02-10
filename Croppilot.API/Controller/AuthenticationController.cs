@@ -1,5 +1,6 @@
 ﻿using Croppilot.API.Bases;
 using Croppilot.Core.Features.Authentication.Commands.Models;
+using Croppilot.Core.Features.Authentication.Queries.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,7 +57,7 @@ namespace Croppilot.API.Controller
         }
 
 
-        [HttpPost("forgot-username-or-password/")]
+        [HttpPost("forgot-username-or-password")]
         public async Task<IActionResult> ForgotUsernameOrPassword(ForgetPasswordCommand command)
         {
             return NewResult(await _mediator.Send(command));
@@ -71,6 +72,19 @@ namespace Croppilot.API.Controller
         public async Task<IActionResult> ChangePassword(ChangeUserPasswordCommand command)
         {
             return NewResult(await _mediator.Send(command));
+        }
+
+        [HttpPost("forgot-username-or-password-using-OTP")]
+        public async Task<IActionResult> ForgotUsernameOrPasswordUsingOtpCode(ForgetPasswordUsingOTPCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
+
+        [HttpPost("reset-password-otp")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordUsingOTPQuery query)
+        {
+            var response = await _mediator.Send(query);
+            return NewResult(response);
         }
         //private void SetRefreshTokenInCookie(string refreshToken, DateTime expireDate)
         //{
