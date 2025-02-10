@@ -19,7 +19,7 @@ public class TestController(IProductServices _productServices, IAuthenticationSe
 	[HttpGet("{id}")]
 	public async Task<ActionResult<Product?>> GetProductById(int id, string[]? includeProperties = null, CancellationToken cancellationToken = default)
 	{
-		var product = await _productServices.GetById(id, includeProperties, cancellationToken);
+		var product = await _productServices.GetByIdAsync(id, includeProperties, cancellationToken);
 		if (product == null)
 		{
 			return NotFound();

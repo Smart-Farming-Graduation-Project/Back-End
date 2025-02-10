@@ -13,3 +13,7 @@ global using Croppilot.Date.Enum;
 global using Croppilot.Core.Bases;
 global using Croppilot.Core.Features.Orders.Query.Result;
 global using Croppilot.Core.Features.Orders.Query.Models;
+global using Croppilot.Core.Features.Carts.Query.Models;
+global using Croppilot.Core.Features.Carts.Query.Result;
+global using Croppilot.Services.Abstract;
+
