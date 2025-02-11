@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Comman\**" />
+    <EmbeddedResource Remove="Comman\**" />
+    <None Remove="Comman\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Croppilot.Date\Croppilot.Date.csproj" />
     <ProjectReference Include="..\Croppilot.Services\Croppilot.Services.csproj" />
   </ItemGroup>
@@ -20,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Comman\" />
     <Folder Include="Features\Authentication\Queries\Result\" />
     <Folder Include="Mapping\Authentication\Command\" />
     <Folder Include="Mapping\Authentication\Query\" />
