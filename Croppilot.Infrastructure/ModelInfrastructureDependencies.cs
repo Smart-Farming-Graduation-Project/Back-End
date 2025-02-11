@@ -11,108 +11,121 @@ using System.Text;
 
 namespace Croppilot.Infrastructure
 {
-	public static class ModelInfrastructureDependencies
-	{
-		public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection service,
-			IConfiguration confg)
-		{
-			// service.AddTransient(typeof(IGenericRepository<>),typeof(GenericRepository<>));
-			service.AddTransient<IProductRepository, ProductRepository>();
-			service.AddTransient<ICategoryRepository, CategoryRepository>();
-			service.AddTransient<IUnitOfWork, UnitOfWork>();
-			service.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
-			service.AddTransient<IOrderRepository, OrderRepository>();
-			service.AddTransient<IOrderItemRepository, OrderItemRepository>();
-			service.AddTransient<ICartRepository, CartRepository>();
+    public static class ModelInfrastructureDependencies
+    {
+        public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection service,
+            IConfiguration confg)
+        {
+            // service.AddTransient(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+            service.AddTransient<IProductRepository, ProductRepository>();
+            service.AddTransient<ICategoryRepository, CategoryRepository>();
+            service.AddTransient<IUnitOfWork, UnitOfWork>();
+            service.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
+            service.AddTransient<IOrderRepository, OrderRepository>();
+            service.AddTransient<IOrderItemRepository, OrderItemRepository>();
+            service.AddTransient<ICartRepository, CartRepository>();
 
-			#region Identity Service
+            #region Identity Service
 
-			service.AddIdentityCore<ApplicationUser>(options =>
-				{
-					options.SignIn.RequireConfirmedEmail = true;
-					// Password settings.
-					options.Password.RequireDigit = true;
-					options.Password.RequireLowercase = true;
-					options.Password.RequireNonAlphanumeric = true;
-					options.Password.RequireUppercase = true;
+            service.AddIdentityCore<ApplicationUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedEmail = true;
+                    // Password settings.
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireNonAlphanumeric = true;
+                    options.Password.RequireUppercase = true;
 
-					// Lockout settings.
-					options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-					options.Lockout.MaxFailedAccessAttempts = 5;
-					options.Lockout.AllowedForNewUsers = true;
-					// User settings.
-					options.User.AllowedUserNameCharacters =
-						"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-					options.User.RequireUniqueEmail = true;
+                    // Lockout settings.
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                    options.Lockout.MaxFailedAccessAttempts = 5;
+                    options.Lockout.AllowedForNewUsers = true;
+                    // User settings.
+                    options.User.AllowedUserNameCharacters =
+                        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                    options.User.RequireUniqueEmail = true;
 
-				}).AddRoles<ApplicationRole>()
-		   .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
-			#endregion
+                }).AddRoles<ApplicationRole>()
+           .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+            #endregion
 
-			#region JWTservice
+            #region JWTservice
 
-			var jwtSettings = new JwtSettings();
-			confg.GetSection(nameof(JwtSettings)).Bind(jwtSettings);
-			service.AddSingleton(jwtSettings);
+            var jwtSettings = new JwtSettings();
+            confg.GetSection(nameof(JwtSettings)).Bind(jwtSettings);
+            service.AddSingleton(jwtSettings);
 
-			service.AddAuthentication(x =>
-				{
-					x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-					x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-				})
-				.AddJwtBearer(options =>
-				{
-					options.RequireHttpsMetadata = false;
-					options.SaveToken = true;
-					options.TokenValidationParameters = new TokenValidationParameters
-					{
-						ValidateIssuer = jwtSettings.ValidateIssuer,
-						ValidIssuers = new[] { jwtSettings.Issuer },
-						ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Key)),
-						ValidateAudience = jwtSettings.ValidateAudience,
-						ClockSkew = TimeSpan.Zero
-					};
-				});
+            service.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = jwtSettings.ValidateIssuer,
+                        ValidIssuers = new[] { jwtSettings.Issuer },
+                        ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Key)),
+                        ValidateAudience = jwtSettings.ValidateAudience,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                })
 
-			#endregion
+                // Add Google Authentication
+                .AddGoogle(options =>
+                {
+                    options.ClientId = confg["Authentication:Google:ClientId"];
+                    options.ClientSecret = confg["Authentication:Google:ClientSecret"];
+                })
+                // Add Facebook Authentication
+                .AddFacebook(options =>
+                {
+                    options.AppId = confg["Authentication:Facebook:AppId"];
+                    options.AppSecret = confg["Authentication:Facebook:AppSecret"];
+                });
 
-			#region swagger Gn
+            #endregion
 
-			service.AddSwaggerGen(options =>
-			{
-				options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-				{
-					Description =
-						"JWT Authorization header using the Bearer scheme. \r\n\r\n " +
-						"Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
-						"Example: \"Bearer 12345abcdef\"",
-					Name = "Authorization",
-					In = ParameterLocation.Header,
-					Scheme = "Bearer"
-				});
-				options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-				{
-					{
-						new OpenApiSecurityScheme
-						{
-							Reference = new OpenApiReference
-							{
-								Type = ReferenceType.SecurityScheme,
-								Id = "Bearer"
-							},
-							Scheme = "oauth2",
-							Name = "Bearer",
-							In = ParameterLocation.Header
-						},
-						new List<string>()
-					}
-				});
-			});
+            #region swagger Gn
 
-			#endregion
+            service.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description =
+                        "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
+                        "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
+                        "Example: \"Bearer 12345abcdef\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Scheme = "Bearer"
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
+                        },
+                        new List<string>()
+                    }
+                });
+            });
 
-			return service;
-		}
-	}
+            #endregion
+
+            return service;
+        }
+    }
 }

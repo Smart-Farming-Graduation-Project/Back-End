@@ -1,10 +1,10 @@
 ﻿using Croppilot.Date.DTOS;
 using Croppilot.Date.Identity;
-using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Net.Http.Json;
+using RestSharp;
+using System.Text.Json;
 
 namespace Croppilot.Services.Services
 {
@@ -15,31 +15,52 @@ namespace Croppilot.Services.Services
 
 
 
-        public async Task<bool> ValidateFacebookTokenAsync(string accessToken, string userId)
+        public async Task<ExternalAuthUserDTO?> VerifyFacebookToken(string token)
         {
-            var facebookKeys = $"{_config["Facebook:AppId"]}|{_config["Facebook:AppSecret"]}";
-            var fbResult = await _httpClient.GetFromJsonAsync<FacebookResultDto>(
-                $"debug_token?input_token={accessToken}&access_token={facebookKeys}"
-            );
+            var client = new RestClient($"https://graph.facebook.com/me?fields=id,email,name&access_token={token}");
+            var request = new RestRequest();
+            var response = await client.ExecuteGetAsync(request);
 
-            return fbResult?.Data?.Is_Valid == true && fbResult.Data.User_Id == userId;
+            if (!response.IsSuccessful || string.IsNullOrEmpty(response.Content))
+                return null;
+
+            var facebookUser = JsonSerializer.Deserialize<ExternalAuthUserDTO>(response.Content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+            //return new ExternalAuthUserDTO
+            //{
+            //    Email = facebookUser.GetProperty("email").GetString(),
+            //    FirstName = facebookUser.GetProperty("first_name").GetString(),
+            //    LastName = facebookUser.GetProperty("last_name").GetString()
+            //};
+
+            return facebookUser;
         }
 
 
-        public async Task<bool> ValidateGoogleTokenAsync(string accessToken, string userId)
+        public async Task<ExternalAuthUserDTO?> VerifyGoogleTokenAsync(string token)
         {
-            try
-            {
-                var payload = await GoogleJsonWebSignature.ValidateAsync(accessToken);
-                var isValidIssuer = payload.Issuer == "accounts.google.com" || payload.Issuer == "https://accounts.google.com";
-                var isTokenExpired = DateTime.UtcNow > DateTimeOffset.FromUnixTimeSeconds((long)payload.ExpirationTimeSeconds).UtcDateTime;
+            var client = new RestClient($"https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={token}");
+            var request = new RestRequest();
+            var response = await client.ExecuteGetAsync(request);
 
-                return payload.Audience == _config["Google:ClientId"] && isValidIssuer && !isTokenExpired && payload.Subject == userId;
-            }
-            catch
+            if (!response.IsSuccessful || string.IsNullOrEmpty(response.Content))
+                return null;
+
+            var googleUser = JsonSerializer.Deserialize<ExternalAuthUserDTO>(response.Content, new JsonSerializerOptions
             {
-                return false;
-            }
+                PropertyNameCaseInsensitive = true
+            });
+            //return new ExternalAuthUserDTO
+            //{
+            //    Email = googleUser.GetProperty("email").GetString(),
+            //    FirstName = googleUser.GetProperty("given_name").GetString(),
+            //    LastName = googleUser.GetProperty("family_name").GetString()
+            //   UserName = Email.Split('@')[0] // Extracts the username from email
+            //};
+
+            return googleUser;
         }
 
         public async Task<bool?> GetUserByProviderAsync(string userId, string provider)

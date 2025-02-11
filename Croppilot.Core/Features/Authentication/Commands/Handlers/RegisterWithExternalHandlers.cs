@@ -5,7 +5,7 @@ using Croppilot.Infrastructure.Comman;
 namespace Croppilot.Core.Features.Authentication.Commands.Handlers
 {
     public class RegisterWithExternalHandlers(
-        IExternalAuthService externalAuth, IAuthorizationService authorizationService)
+        IExternalAuthService externalAuth, IUserService userService, IAuthenticationService authenticationService, IAuthorizationService authorizationService)
         : ResponseHandler, IRequestHandler<RegisterWithExternalCommand, Response<string>>
     {
         public async Task<Response<string>> Handle(RegisterWithExternalCommand request, CancellationToken cancellationToken)
@@ -13,24 +13,24 @@ namespace Croppilot.Core.Features.Authentication.Commands.Handlers
             try
             {
 
-                // Validate token based on provider
-                bool isValidToken = request.Provider switch
+                // Step 1: Validate external token and retrieve user info
+                var externalUser = request.Provider switch
                 {
-                    SD.Facebook => await externalAuth.ValidateFacebookTokenAsync(request.AccessToken, request.UserId),
-                    SD.Google => await externalAuth.ValidateGoogleTokenAsync(request.AccessToken, request.UserId),
+                    SD.Facebook => await externalAuth.VerifyFacebookToken(request.AccessToken),
+                    SD.Google => await externalAuth.VerifyGoogleTokenAsync(request.AccessToken),
                     _ => throw new ArgumentException("Invalid provider")
                 };
 
-                if (!isValidToken)
-                {
-                    return Unauthorized<string>($"Unable to register with {request.Provider.ToLower()}");
-                }
 
-                // Check if user already exists
-                var existingUser = await externalAuth.GetUserById(request.UserId);
-                if (existingUser != null)
+                if (externalUser == null)
                 {
-                    return BadRequest<string>($"You already have an account. Please login with your {request.Provider}");
+                    return Unauthorized<string>($"Unable to authenticate with {request.Provider}");
+                }
+                // Step 2: Check if the user already exists
+                var existingUser = await userService.GetUserByEmail(externalUser.Email);
+                if (existingUser is not null)
+                {
+                    return BadRequest<string>($"{externalUser.Name} Is Already Exit");
                 }
 
                 var userToAdd = new ApplicationUser()
@@ -39,6 +39,8 @@ namespace Croppilot.Core.Features.Authentication.Commands.Handlers
                     LastName = request.LastName.ToLower(),
                     UserName = request.UserId,
                     Provider = request.Provider,
+                    Email = existingUser.Email,
+                    EmailConfirmed = true
                 };
                 var result = await externalAuth.CreateUser(userToAdd);
                 if (!result.Succeeded)
@@ -49,7 +51,7 @@ namespace Croppilot.Core.Features.Authentication.Commands.Handlers
                 // Assign role
                 await authorizationService.AssignRolesToUser(userToAdd, [SD.UserRole]);
 
-                return Created("User Added successfully", "Your account has been created, please confirm your email address");
+                return Created("User Added successfully", "Your account has been created");
 
 
             }
