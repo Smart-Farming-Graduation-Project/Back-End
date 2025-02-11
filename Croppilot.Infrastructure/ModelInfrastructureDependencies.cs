@@ -55,25 +55,38 @@ namespace Croppilot.Infrastructure
 			confg.GetSection(nameof(JwtSettings)).Bind(jwtSettings);
 			service.AddSingleton(jwtSettings);
 
-			service.AddAuthentication(x =>
-				{
-					x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-					x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-				})
-				.AddJwtBearer(options =>
-				{
-					options.RequireHttpsMetadata = false;
-					options.SaveToken = true;
-					options.TokenValidationParameters = new TokenValidationParameters
-					{
-						ValidateIssuer = jwtSettings.ValidateIssuer,
-						ValidIssuers = new[] { jwtSettings.Issuer },
-						ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Key)),
-						ValidateAudience = jwtSettings.ValidateAudience,
-						ClockSkew = TimeSpan.Zero
-					};
-				});
+            service.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = jwtSettings.ValidateIssuer,
+                        ValidIssuers = new[] { jwtSettings.Issuer },
+                        ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Key)),
+                        ValidateAudience = jwtSettings.ValidateAudience,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+            //Do not use this in production or devlopment for now
+            //// Add Google Authentication
+            //.AddGoogle(options =>
+            //{
+            //    options.ClientId = confg["Authentication:Google:ClientId"];
+            //    options.ClientSecret = confg["Authentication:Google:ClientSecret"];
+            //})
+            //// Add Facebook Authentication
+            //.AddFacebook(options =>
+            //{
+            //    options.AppId = confg["Authentication:Facebook:AppId"];
+            //    options.AppSecret = confg["Authentication:Facebook:AppSecret"];
+            //});
 
 			#endregion
 
@@ -112,7 +125,7 @@ namespace Croppilot.Infrastructure
 
 			#endregion
 
-			return service;
-		}
-	}
+            return service;
+        }
+    }
 }
