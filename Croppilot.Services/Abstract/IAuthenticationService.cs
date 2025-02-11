@@ -15,9 +15,11 @@ namespace Croppilot.Services.Abstract
         Task<TokenResponse> RefreshTokenAsync(ApplicationUser user, string refreshToken);
         Task<bool> RevokeRefreshTokenAsync(string refreshToken);
 
+
         Task<string?> CheckAndHandleLockoutAsync(ApplicationUser user);
         Task HandleFailedLoginAsync(ApplicationUser user);
         Task ResetFailedAttemptsAsync(ApplicationUser user);
+
 
 
     }
