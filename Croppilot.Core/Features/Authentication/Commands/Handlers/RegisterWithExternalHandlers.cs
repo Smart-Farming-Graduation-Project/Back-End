@@ -37,7 +37,7 @@ namespace Croppilot.Core.Features.Authentication.Commands.Handlers
                 {
                     FirstName = request.FirstName.ToLower(),
                     LastName = request.LastName.ToLower(),
-                    UserName = request.UserId,
+                    UserName = request.FirstName + request.LastName,
                     Provider = request.Provider,
                     Email = existingUser.Email,
                     EmailConfirmed = true
