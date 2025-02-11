@@ -21,8 +21,10 @@ namespace Croppilot.Services
             service.AddScoped<IAuthenticationService, AuthenticationService>();
             service.AddScoped<IEmailService, EmailService>();
             service.AddScoped<IUserService, UserService>();
-            service.AddScoped<IAuthorizationService, AuthorizationService>();service.AddScoped<IOrderService, OrderService>();
+            service.AddScoped<IAuthorizationService, AuthorizationService>(); service.AddScoped<IOrderService, OrderService>();
             service.AddScoped<ICartService, CartService>();
+            service.AddScoped<IExternalAuthService, ExternalAuthService>();
+            service.AddHttpClient();
 
             return service;
         }

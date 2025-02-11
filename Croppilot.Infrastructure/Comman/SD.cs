@@ -10,5 +10,9 @@
 
         public const int MaximumLoginAttempts = 5;
         public const string AdminUserName = "admin@example.com";
+
+        //External Provider
+        public const string Facebook = "facebook";
+        public const string Google = "google";
     }
 }

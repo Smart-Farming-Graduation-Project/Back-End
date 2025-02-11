@@ -1,9 +1,7 @@
-﻿using Croppilot.Date.Enum;
-using Croppilot.Date.Helpers;
+﻿using Croppilot.Date.Helpers;
 using Croppilot.Date.Identity;
 using Croppilot.Infrastructure.Comman;
 using Croppilot.Infrastructure.Repositories.Interfaces;
-using Croppilot.Services.Abstract;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,33 +11,27 @@ using System.Text;
 
 namespace Croppilot.Services.Services
 {
-    internal class AuthenticationService : IAuthenticationService
+    internal class AuthenticationService(
+        UserManager<ApplicationUser> userManager,
+        JwtSettings jwtSettings,
+        IUnitOfWork unitOfWork)
+        : IAuthenticationService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly JwtSettings _jwtSettings;
-        private readonly IUnitOfWork _unitOfWork;
-        public AuthenticationService(UserManager<ApplicationUser> userManager, JwtSettings jwtSettings, IUnitOfWork unitOfWork)
-        {
-            _userManager = userManager;
-            _jwtSettings = jwtSettings;
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string currentPassword, string newPassword)
         {
-            return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            return await userManager.ChangePasswordAsync(user, currentPassword, newPassword);
         }
 
         public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
         {
-            return await _userManager.CheckPasswordAsync(user, password);
+            return await userManager.CheckPasswordAsync(user, password);
         }
 
         public async Task<IdentityResult> CreateUserAsync(ApplicationUser user, string password)
         {
-            var result = await _userManager.CreateAsync(user, password);
+            var result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded) return result;
-            return await _userManager.AddToRoleAsync(user, UserRoleEnum.User.ToString());
+            return await userManager.AddToRoleAsync(user, UserRoleEnum.User.ToString());
         }
 
 
@@ -59,10 +51,10 @@ namespace Croppilot.Services.Services
         private async Task<string> CreateTokenAsync(ApplicationUser user)
         {
             var jwtToken = new JwtSecurityToken(
-                issuer: _jwtSettings.Issuer,
-                expires: DateTime.Now.AddMinutes(_jwtSettings.AccessTokenDurationInMinutes),
+                issuer: jwtSettings.Issuer,
+                expires: DateTime.Now.AddMinutes(jwtSettings.AccessTokenDurationInMinutes),
                 signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Key)),
+                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Key)),
                     SecurityAlgorithms.HmacSha256Signature
                     ),
                 claims: await GetClaimsAsync(user)
@@ -79,7 +71,7 @@ namespace Croppilot.Services.Services
                     new Claim(nameof(ClaimTypes.Name),$"{user.FirstName} {user.LastName}"),
                     new Claim(nameof(ClaimTypes.Email),user.Email ?? string.Empty)
                 };
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(nameof(ClaimTypes.Role), role));
@@ -128,11 +120,11 @@ namespace Croppilot.Services.Services
             var refreshToken = new RefreshToken()
             {
                 Token = await CreateRefreshTokenAsync(),
-                ExpiresOn = DateTime.UtcNow.ToLocalTime().AddDays(_jwtSettings.RefreshTokenDurationInDays),
+                ExpiresOn = DateTime.UtcNow.ToLocalTime().AddDays(jwtSettings.RefreshTokenDurationInDays),
                 CreatedOn = DateTime.UtcNow.ToLocalTime(),
                 UserId = user.Id
             };
-            refreshToken = await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
+            refreshToken = await unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
             return await Task.FromResult(refreshToken);
         }
 
@@ -150,10 +142,10 @@ namespace Croppilot.Services.Services
 
         public async Task<bool> RevokeRefreshTokenAsync(string refreshToken)
         {
-            var token = await _unitOfWork.RefreshTokenRepository.GetAsync(r => r.Token.Equals(refreshToken));
+            var token = await unitOfWork.RefreshTokenRepository.GetAsync(r => r.Token.Equals(refreshToken));
             if (token is null || !token.IsActive) return await Task.FromResult(false);
             token.RevokedOn = DateTime.UtcNow.ToLocalTime();
-            await _unitOfWork.RefreshTokenRepository.UpdateAsync(token);
+            await unitOfWork.RefreshTokenRepository.UpdateAsync(token);
             return await Task.FromResult(true);
         }
 
@@ -170,21 +162,23 @@ namespace Croppilot.Services.Services
         {
             if (!user.UserName.Equals(SD.AdminUserName))
             {
-                await _userManager.AccessFailedAsync(user);
+                await userManager.AccessFailedAsync(user);
             }
 
             if (user.AccessFailedCount >= SD.MaximumLoginAttempts)
             {
                 var lockoutEnd = DateTime.UtcNow.AddDays(1);
-                await _userManager.SetLockoutEndDateAsync(user, lockoutEnd);
+                await userManager.SetLockoutEndDateAsync(user, lockoutEnd);
             }
         }
 
         public async Task ResetFailedAttemptsAsync(ApplicationUser user)
         {
-            await _userManager.ResetAccessFailedCountAsync(user);
-            await _userManager.SetLockoutEndDateAsync(user, null);
+            await userManager.ResetAccessFailedCountAsync(user);
+            await userManager.SetLockoutEndDateAsync(user, null);
         }
+
+
 
 
         //private async Task<List<RefreshToken>> GetRefreshTokensBelongToUserAsync(string userId)
@@ -195,7 +189,7 @@ namespace Croppilot.Services.Services
 
         public async Task<List<RefreshToken>> GetRefreshTokens()
         {
-            return await _unitOfWork.RefreshTokenRepository.GetAllAsync();
+            return await unitOfWork.RefreshTokenRepository.GetAllAsync();
         }
 
     }

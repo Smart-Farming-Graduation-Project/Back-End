@@ -10,5 +10,6 @@ namespace Croppilot.Date.Identity
         public string Phone { get; set; } = null!;
         public string? OTPCode { get; set; } = null;
         public List<RefreshToken>? RefreshTokens { get; set; }
+        public string? Provider { get; set; }
     }
 }
