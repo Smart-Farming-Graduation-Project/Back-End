@@ -58,13 +58,13 @@ public class ResponseHandler
         };
     }
 
-    public Response<T> Unauthorized<T>()
+    public Response<T> Unauthorized<T>(string? message = null)
     {
         return new Response<T>()
         {
             StatusCode = HttpStatusCode.Unauthorized,
             Succeeded = false, //todo: i think it should be false because Unauthorized requests should not be marked as successful.
-            Message = "You Are Unauthorized"
+            Message = message ?? "You Are Unauthorized"
         };
     }
 
