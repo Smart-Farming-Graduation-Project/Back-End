@@ -86,6 +86,17 @@ namespace Croppilot.API.Controller
             var response = await _mediator.Send(query);
             return NewResult(response);
         }
+
+        [HttpPost("register-with-third-party")]
+        public async Task<IActionResult> RegisterWithThirdParty(RegisterWithExternalCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
+        [HttpPost("login-with-third-party")]
+        public async Task<IActionResult> LoginWithThirdParty(LoginWithExternalCommand command)
+        {
+            return NewResult(await _mediator.Send(command));
+        }
         //private void SetRefreshTokenInCookie(string refreshToken, DateTime expireDate)
         //{
         //	var cookieOptions = new CookieOptions()
@@ -95,5 +106,6 @@ namespace Croppilot.API.Controller
         //	};
         //	Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
         //}
+
     }
 }
