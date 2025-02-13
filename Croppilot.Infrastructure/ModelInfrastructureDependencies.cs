@@ -73,20 +73,21 @@ namespace Croppilot.Infrastructure
                         ValidateAudience = jwtSettings.ValidateAudience,
                         ClockSkew = TimeSpan.Zero
                     };
-                })
-
-                // Add Google Authentication
-                .AddGoogle(options =>
-                {
-                    options.ClientId = confg["Authentication:Google:ClientId"];
-                    options.ClientSecret = confg["Authentication:Google:ClientSecret"];
-                })
-                // Add Facebook Authentication
-                .AddFacebook(options =>
-                {
-                    options.AppId = confg["Authentication:Facebook:AppId"];
-                    options.AppSecret = confg["Authentication:Facebook:AppSecret"];
                 });
+            //Do not use this in production or devlopment for now
+            //// Add Google Authentication
+            //.AddGoogle(options =>
+            //{
+            //    options.ClientId = confg["Authentication:Google:ClientId"];
+            //    options.ClientSecret = confg["Authentication:Google:ClientSecret"];
+            //})
+            //// Add Facebook Authentication
+            //.AddFacebook(options =>
+            //{
+            //    options.AppId = confg["Authentication:Facebook:AppId"];
+            //    options.AppSecret = confg["Authentication:Facebook:AppSecret"];
+            //});
+
 
             #endregion
 
@@ -123,7 +124,9 @@ namespace Croppilot.Infrastructure
                 });
             });
 
+
             #endregion
+
 
             return service;
         }
