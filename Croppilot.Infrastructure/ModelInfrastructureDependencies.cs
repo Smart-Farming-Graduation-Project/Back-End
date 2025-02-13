@@ -100,7 +100,7 @@ namespace Croppilot.Infrastructure
                 {
                     Title = "Croppilot API",
                     Version = "v1",
-                    Description = "API Documentation for Croppilot Authentication"
+                    Description = "**API Documentation for Croppilot Authentication**"
                 });
                 // Enable annotations for Swagger
                 options.EnableAnnotations();
