@@ -95,6 +95,19 @@ namespace Croppilot.Infrastructure
 
             service.AddSwaggerGen(options =>
             {
+                //Add Swagger Configuration For Documentation
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "Croppilot API",
+                    Version = "v1",
+                    Description = "API Documentation for Croppilot Authentication"
+                });
+                // Enable annotations for Swagger
+                options.EnableAnnotations();
+
+
+
+
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description =
