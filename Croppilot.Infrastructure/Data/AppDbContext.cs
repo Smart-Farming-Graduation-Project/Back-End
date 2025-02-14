@@ -4,12 +4,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Croppilot.Infrastructure.Data
 {
-	public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+	public class AppDbContext(DbContextOptions<AppDbContext> options)
+		: IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
 	{
-		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-		{
-		}
-
 		public DbSet<Product> Products { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Leasing> Leasings { get; set; }
@@ -19,6 +16,8 @@ namespace Croppilot.Infrastructure.Data
 		public DbSet<OrderItem> OrderItems { get; set; }
 		public DbSet<Cart> Carts { get; set; }
 		public DbSet<CartItem> CartItems { get; set; }
+		public DbSet<Wishlist> Wishlists { get; set; }
+		public DbSet<WishlistItem> WishlistItems { get; set; }
 
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,6 +31,8 @@ namespace Croppilot.Infrastructure.Data
 			modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
 			modelBuilder.ApplyConfiguration(new CartConfiguration());
 			modelBuilder.ApplyConfiguration(new CartItemConfiguration());
+			modelBuilder.ApplyConfiguration(new WishlistConfiguration());
+			modelBuilder.ApplyConfiguration(new WishlistItemConfiguration());
 
 			//please do not uncomment this line to seed data for Now 
 			// modelBuilder.SeedData();
