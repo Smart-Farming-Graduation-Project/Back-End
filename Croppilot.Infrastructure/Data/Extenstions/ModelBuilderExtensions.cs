@@ -1,6 +1,6 @@
 ﻿using Croppilot.Date.Enum;
 
-namespace Croppilot.Infrastructure.Data.Extenstions
+namespace Croppilot.Infrastructure.Data.Extensions
 {
     public static class ModelBuilderExtensions
     {
@@ -8,55 +8,78 @@ namespace Croppilot.Infrastructure.Data.Extenstions
         {
             // Seed Categories 
             modelBuilder.Entity<Category>().HasData(
-                new Category { Id = 1, Name = "Seeds", Description = "High-quality seeds for farming" },
-                new Category { Id = 2, Name = "Fertilizers", Description = "Organic and chemical fertilizers" },
-                new Category { Id = 3, Name = "Farming Equipment", Description = "Tractors, plows, and other farming tools" }
+                new Category { Id = 20, Name = "Seeds", Description = "High-quality seeds for farming" },
+                new Category { Id = 21, Name = "Fertilizers", Description = "Organic and chemical fertilizers" },
+                new Category { Id = 22, Name = "Farming Equipment", Description = "Tractors, plows, and other farming tools" }
             );
 
             // Seed Products 
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
-                    Id = 1,
+                    Id = 20,
                     Name = "Wheat Seeds",
                     Description = "High-yield wheat seeds suitable for all climates",
                     Price = 19.99m,
                     Availability = Availability.Sale,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    CategoryId = 1
+                    CategoryId = 20
                 },
                 new Product
                 {
-                    Id = 2,
+                    Id = 21,
                     Name = "Organic Fertilizer",
                     Description = "Natural compost-based fertilizer for better crop growth",
                     Price = 49.99m,
                     Availability = Availability.Sale,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    CategoryId = 2
+                    CategoryId = 21
                 },
                 new Product
                 {
-                    Id = 3,
+                    Id = 22,
                     Name = "Mini Tractor",
                     Description = "Compact tractor for small to medium-sized farms",
                     Price = 4999.99m,
                     Availability = Availability.Lease,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    CategoryId = 3
+                    CategoryId = 22
+                },
+                new Product
+                {
+                    Id = 23,
+                    Name = "Tomato Seeds",
+                    Description = "High-quality tomato seeds for high-yield crops",
+                    Price = 15.99m,
+                    Availability = Availability.Sale,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    CategoryId = 20
+                },
+                new Product
+                {
+                    Id = 24,
+                    Name = "Chemical Fertilizer",
+                    Description = "Boosts plant growth with essential nutrients",
+                    Price = 39.99m,
+                    Availability = Availability.Sale,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    CategoryId = 21
                 }
             );
 
             // Seed Product Images
             modelBuilder.Entity<ProductImage>().HasData(
-                new ProductImage { Id = 1, ImageUrl = "https://example.com/wheat-seeds.jpg", ProductId = 1 },
-                new ProductImage { Id = 2, ImageUrl = "https://example.com/organic-fertilizer.jpg", ProductId = 2 },
-                new ProductImage { Id = 3, ImageUrl = "https://example.com/mini-tractor.jpg", ProductId = 3 }
+                new ProductImage { Id = 20, ImageUrl = "https://example.com/wheat-seeds.jpg", ProductId = 20 },
+                new ProductImage { Id = 21, ImageUrl = "https://example.com/organic-fertilizer.jpg", ProductId = 21 },
+                new ProductImage { Id = 22, ImageUrl = "https://example.com/mini-tractor.jpg", ProductId = 22 },
+                new ProductImage { Id = 23, ImageUrl = "https://example.com/tomato-seeds.jpg", ProductId = 23 },
+                new ProductImage { Id = 24, ImageUrl = "https://example.com/chemical-fertilizer.jpg", ProductId = 24 }
             );
         }
     }
-
 }
