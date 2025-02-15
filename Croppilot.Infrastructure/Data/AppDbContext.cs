@@ -1,47 +1,13 @@
 ﻿using Croppilot.Date.Identity;
 using Croppilot.Infrastructure.Configuration;
-using Croppilot.Infrastructure.Data.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Croppilot.Infrastructure.Data
 {
 
-	public class AppDbContext(DbContextOptions<AppDbContext> options)
-		: IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
-	{
-		public DbSet<Product> Products { get; set; }
-		public DbSet<Category> Categories { get; set; }
-		public DbSet<Leasing> Leasings { get; set; }
-		public DbSet<ProductImage> ProductImages { get; set; }
-		public DbSet<RefreshToken> RefreshTokens { get; set; }
-		public DbSet<Order> Orders { get; set; }
-		public DbSet<OrderItem> OrderItems { get; set; }
-		public DbSet<Cart> Carts { get; set; }
-		public DbSet<CartItem> CartItems { get; set; }
-		public DbSet<Wishlist> Wishlists { get; set; }
-		public DbSet<WishlistItem> WishlistItems { get; set; }
-
-
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
-			modelBuilder.ApplyConfiguration(new ProductConfiguration());
-			modelBuilder.ApplyConfiguration(new CategoryConfiguration());
-			modelBuilder.ApplyConfiguration(new LeasingConfiguration());
-			modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
-			modelBuilder.ApplyConfiguration(new OrderConfiguration());
-			modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
-			modelBuilder.ApplyConfiguration(new CartConfiguration());
-			modelBuilder.ApplyConfiguration(new CartItemConfiguration());
-			modelBuilder.ApplyConfiguration(new WishlistConfiguration());
-			modelBuilder.ApplyConfiguration(new WishlistItemConfiguration());
-
-    public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+    public class AppDbContext(DbContextOptions<AppDbContext> options)
+        : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
-
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Leasing> Leasings { get; set; }
@@ -51,6 +17,8 @@ namespace Croppilot.Infrastructure.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<WishlistItem> WishlistItems { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -64,10 +32,8 @@ namespace Croppilot.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
             modelBuilder.ApplyConfiguration(new CartConfiguration());
             modelBuilder.ApplyConfiguration(new CartItemConfiguration());
-
-            //please do not uncomment this line to seed data for Now 
-            modelBuilder.SeedData();
-
+            modelBuilder.ApplyConfiguration(new WishlistConfiguration());
+            modelBuilder.ApplyConfiguration(new WishlistItemConfiguration());
 
         }
     }
