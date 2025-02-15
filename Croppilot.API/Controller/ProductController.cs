@@ -15,7 +15,7 @@ namespace Croppilot.API.Controller
             return Ok(response);
         }
         [HttpGet("paginatedList")]
-        public async Task<IActionResult> Paginated([FromQuery] GetProductPaginatedQuery query)
+        public async Task<IActionResult> Paginated([FromBody] GetProductPaginatedQuery query)
         {
             var response = await mediator.Send(query);
             return Ok(response);
@@ -27,13 +27,13 @@ namespace Croppilot.API.Controller
             return NewResult(response);
         }
         [HttpPost("Product/Create")]
-        public async Task<IActionResult> Create(/*[FromBody]*/ AddProductCommand command)
+        public async Task<IActionResult> Create([FromBody] AddProductCommand command)
         {
             var response = await mediator.Send(command);
             return NewResult(response);
         }
         [HttpPut("Product/Update")]
-        public async Task<IActionResult> Edit(/*[FromBody]*/ EditProductCommand command)
+        public async Task<IActionResult> Edit([FromBody] EditProductCommand command)
         {
             var response = await mediator.Send(command);
             return NewResult(response);
