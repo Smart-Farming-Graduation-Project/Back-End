@@ -1,6 +1,4 @@
-﻿using Croppilot.Infrastructure.Generics.Implementation;
-
-namespace Croppilot.Infrastructure.Repositories.Implementation
+﻿namespace Croppilot.Infrastructure.Repositories.Implementation
 {
     public class UnitOfWork : IUnitOfWork
     {
@@ -10,8 +8,8 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
         public ILeasingRepository LeasingRepository { get; }
         public IRefreshTokenRepository RefreshTokenRepository { get; }
         public IOrderRepository OrderRepository { get; }
-        public IOrderItemRepository OrderItemRepository { get; }
         public ICartRepository CartRepository { get; }
+        public IWishlistRepository WishlistRepository { get; }
 
 
         private readonly AppDbContext _context;
@@ -26,8 +24,8 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
             LeasingRepository = new LeasingRepository(_context);
             RefreshTokenRepository = new RefreshTokenRepository(_context);
             OrderRepository = new OrderRepository(_context);
-            OrderItemRepository = new OrderItemRepository(_context);
             CartRepository = new CartRepository(_context);
+            WishlistRepository = new WishlistRepository(_context);
         }
 
         public IGenericRepository<T> GenericRepository<T>() where T : class

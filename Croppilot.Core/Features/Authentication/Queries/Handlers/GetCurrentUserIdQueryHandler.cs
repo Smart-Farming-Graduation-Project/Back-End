@@ -4,16 +4,11 @@
 namespace Croppilot.Core.Features.Authentication.Queries.Handlers;
 
 public class GetCurrentUserIdQueryHandler(IUserService userService)
-    : ResponseHandler, IRequestHandler<GetCurrentUserIdQuery, Response<Guid>>
+    : ResponseHandler, IRequestHandler<GetCurrentUserIdQuery, Response<string>>
 {
-    public async Task<Response<Guid>> Handle(GetCurrentUserIdQuery request, CancellationToken cancellationToken)
+    public async Task<Response<string>> Handle(GetCurrentUserIdQuery request, CancellationToken cancellationToken)
     {
         var user = await userService.GetUserByUserName(request.UserName);
-        if (user == null)
-        {
-            return NotFound<Guid>("User not found");
-        }
-
-        return Success(new Guid(user.Id));
+        return user == null ? NotFound<string>("User not found") : Success(user.Id);
     }
 }

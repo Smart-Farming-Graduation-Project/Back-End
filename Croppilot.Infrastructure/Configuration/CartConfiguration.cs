@@ -19,5 +19,10 @@ public class CartConfiguration : IEntityTypeConfiguration<Cart>
             .WithOne(ci => ci.Cart)
             .HasForeignKey(ci => ci.CartId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasOne(c => c.User)
+            .WithMany()
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

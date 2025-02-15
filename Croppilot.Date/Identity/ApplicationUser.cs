@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Croppilot.Date.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Croppilot.Date.Identity
 {
@@ -11,5 +12,6 @@ namespace Croppilot.Date.Identity
         public string? OTPCode { get; set; } = null;
         public List<RefreshToken>? RefreshTokens { get; set; }
         public string? Provider { get; set; }
+        public Wishlist? Wishlist { get; set; }
     }
 }

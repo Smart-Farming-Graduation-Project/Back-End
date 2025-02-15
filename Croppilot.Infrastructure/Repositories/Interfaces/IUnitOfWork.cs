@@ -9,7 +9,7 @@
         ILeasingRepository LeasingRepository { get; }
         IRefreshTokenRepository RefreshTokenRepository { get; }
         IOrderRepository OrderRepository { get; }
-        IOrderItemRepository OrderItemRepository { get; }
         ICartRepository CartRepository { get; }
+        IWishlistRepository WishlistRepository { get; }
     }
 }
