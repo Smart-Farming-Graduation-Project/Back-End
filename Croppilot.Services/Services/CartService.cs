@@ -10,12 +10,13 @@ public class CartService(ICartRepository cartRepository) : ICartService
         return OperationResult.Success;
     }
 
-    public async Task<Cart?> GetCartByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<Cart?> GetCartByUserIdAsync(string userId, CancellationToken cancellationToken = default)
     {
         return await cartRepository.GetAsync(
             filter: c => c.UserId == userId,
             includeProperties: ["CartItems.Product"],
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken,
+            tracked: true);
     }
 
     public async Task<OperationResult> UpdateCartAsync(Cart cart, CancellationToken cancellationToken = default)

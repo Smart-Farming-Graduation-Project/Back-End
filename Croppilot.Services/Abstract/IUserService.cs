@@ -6,7 +6,7 @@ namespace Croppilot.Services.Abstract
 	public interface IUserService
 	{
 		Task<ApplicationUser> GetUserById(string id);
-		Task<ApplicationUser> GetUserByUserName(string userName);
+		Task<ApplicationUser?> GetUserByUserName(string userName);
 		Task<ApplicationUser> GetUserByEmail(string email);
 		Task<IdentityResult> DeleteUserAsync(ApplicationUser user);
 		Task<IdentityResult> UpdateUserAsync(ApplicationUser user);

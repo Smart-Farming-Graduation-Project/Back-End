@@ -23,7 +23,7 @@ namespace Croppilot.Services.Services
 			return await _userManager.FindByIdAsync(id);
 		}
 
-		public async Task<ApplicationUser> GetUserByUserName(string userName)
+		public async Task<ApplicationUser?> GetUserByUserName(string userName)
 		{
 			return await _userManager.Users.Include(u => u.RefreshTokens).Where(u => u.UserName.Equals(userName)).FirstOrDefaultAsync();
 			//return await _userManager.FindByNameAsync(userName);

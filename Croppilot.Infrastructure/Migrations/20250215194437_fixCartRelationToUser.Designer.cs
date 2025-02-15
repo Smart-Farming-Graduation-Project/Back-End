@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Croppilot.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250214165238_addWishList")]
-    partial class addWishList
+    [Migration("20250215194437_fixCartRelationToUser")]
+    partial class fixCartRelationToUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -187,15 +187,13 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Carts");
                 });
@@ -422,16 +420,14 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Wishlists");
                 });
@@ -588,7 +584,9 @@ namespace Croppilot.Infrastructure.Migrations
                 {
                     b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -670,8 +668,8 @@ namespace Croppilot.Infrastructure.Migrations
             modelBuilder.Entity("Croppilot.Date.Models.Wishlist", b =>
                 {
                     b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1")
+                        .WithOne("Wishlist")
+                        .HasForeignKey("Croppilot.Date.Models.Wishlist", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -751,6 +749,8 @@ namespace Croppilot.Infrastructure.Migrations
             modelBuilder.Entity("Croppilot.Date.Identity.ApplicationUser", b =>
                 {
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("Wishlist");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Cart", b =>

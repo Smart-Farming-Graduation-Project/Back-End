@@ -5,82 +5,61 @@ namespace Croppilot.Core.Features.WishLists.Command.Handlers;
 
 public class WishlistCommandHandler(IWishlistService wishlistService, IProductServices productServices)
     : ResponseHandler,
-        IRequestHandler<CreateWishlistCommand, Response<string>>,
-        IRequestHandler<UpdateWishlistCommand, Response<string>>,
-        IRequestHandler<DeleteWishlistCommand, Response<string>>
+        IRequestHandler<AddProductToWishlistCommand, Response<string>>,
+        IRequestHandler<RemoveProductFromWishlistCommand, Response<string>>
 {
-    public async Task<Response<string>> Handle(CreateWishlistCommand command, CancellationToken cancellationToken)
+    public async Task<Response<string>> Handle(AddProductToWishlistCommand command, CancellationToken cancellationToken)
     {
-        var existingWishlist = await wishlistService.GetWishlistByUserIdAsync(command.UserId, cancellationToken);
-        if (existingWishlist != null)
-            return BadRequest<string>("Wishlist already exists");
+        var isProductExist = await IsProductExist(command.ProductId, cancellationToken);
+        if (!isProductExist)
+            return BadRequest<string>($"Product with ID {command.ProductId} does not exist.");
 
-        foreach (var item in command.WishlistItems)
-        {
-            var isProductExist = await IsProductExist(item.ProductId, cancellationToken);
-            if (!isProductExist)
-                return BadRequest<string>($"Product with ID {item.ProductId} does not exist.");
-        }
-
-        var wishlist = new Wishlist
+        var wishlist = await wishlistService.GetWishlistByUserIdAsync(command.UserId, cancellationToken) ?? new Wishlist
         {
             UserId = command.UserId,
-            WishlistItems = command.WishlistItems.Select(i => new WishlistItem
-            {
-                ProductId = i.ProductId
-            }).ToList(),
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            WishlistItems = new List<WishlistItem>()
         };
 
-        var result = await wishlistService.CreateWishlistAsync(wishlist, cancellationToken);
+
+        if (wishlist.WishlistItems.Any(item => item.ProductId == command.ProductId))
+            return BadRequest<string>($"Product with ID {command.ProductId} is already in your wishlist.");
+
+        wishlist.WishlistItems.Add(new WishlistItem
+        {
+            ProductId = command.ProductId,
+            CreatedAt = DateTime.UtcNow
+        });
+
+        OperationResult result;
+        if (wishlist.Id == 0)
+            result = await wishlistService.CreateWishlistAsync(wishlist, cancellationToken);
+        else
+            result = await wishlistService.UpdateWishlistAsync(wishlist, cancellationToken);
+
         return result == OperationResult.Success
-            ? Created<string>("Wishlist created successfully")
-            : BadRequest<string>("Wishlist creation failed");
+            ? Success<string>("Product added to wishlist successfully.")
+            : BadRequest<string>("Failed to add product to wishlist.");
     }
 
-    public async Task<Response<string>> Handle(UpdateWishlistCommand command, CancellationToken cancellationToken)
+    public async Task<Response<string>> Handle(RemoveProductFromWishlistCommand command,
+        CancellationToken cancellationToken)
     {
         var wishlist = await wishlistService.GetWishlistByUserIdAsync(command.UserId, cancellationToken);
         if (wishlist == null)
             return NotFound<string>("Wishlist not found");
 
-        // Map updated items (assuming you want to add new items and keep existing ones)
-        var existingItems = wishlist.WishlistItems.ToDictionary(i => i.Id);
-        var updatedItems = new List<WishlistItem>();
+        var itemToRemove = wishlist.WishlistItems.FirstOrDefault(item => item.ProductId == command.ProductId);
+        if (itemToRemove == null)
+            return NotFound<string>($"Product with ID {command.ProductId} not found in wishlist.");
 
-        foreach (var updateItem in command.WishlistItems)
-        {
-            var isProductExist = await IsProductExist(updateItem.ProductId, cancellationToken);
-            if (!isProductExist)
-                return BadRequest<string>($"Product with ID {updateItem.ProductId} does not exist.");
+        wishlist.WishlistItems.Remove(itemToRemove);
 
-            if (updateItem.Id > 0 && existingItems.TryGetValue(updateItem.Id, out var existingItem))
-            {
-                updatedItems.Add(existingItem);
-            }
-            else
-            {
-                updatedItems.Add(new WishlistItem
-                {
-                    ProductId = updateItem.ProductId,
-                    WishlistId = wishlist.Id
-                });
-            }
-        }
-
-        wishlist.WishlistItems = updatedItems;
         var result = await wishlistService.UpdateWishlistAsync(wishlist, cancellationToken);
+        
         return result == OperationResult.Success
-            ? Success<string>("Wishlist updated successfully")
-            : BadRequest<string>("Wishlist update failed");
-    }
-
-    public async Task<Response<string>> Handle(DeleteWishlistCommand command, CancellationToken cancellationToken)
-    {
-        var result = await wishlistService.DeleteWishlistAsync(command.WishlistId, cancellationToken);
-        return result
-            ? Deleted<string>("Wishlist deleted successfully")
-            : NotFound<string>("Wishlist not found");
+            ? Success<string>("Product removed from wishlist successfully.")
+            : BadRequest<string>("Failed to remove product from wishlist.");
     }
 
     private async Task<bool> IsProductExist(int productId, CancellationToken cancellationToken)

@@ -1,6 +1,1 @@
-﻿namespace Croppilot.API;
-
-public class GlobalUsing
-{
-    
-}
+﻿global using Swashbuckle.AspNetCore.Annotations;

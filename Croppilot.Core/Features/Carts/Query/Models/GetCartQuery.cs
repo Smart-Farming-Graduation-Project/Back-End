@@ -2,5 +2,5 @@
 
 public class GetCartQuery : IRequest<Response<GetCartResponse>>
 {
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
 }

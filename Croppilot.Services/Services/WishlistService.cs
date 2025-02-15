@@ -12,12 +12,13 @@ public class WishlistService(IWishlistRepository wishlistRepository) : IWishlist
         return OperationResult.Success;
     }
 
-    public async Task<Wishlist?> GetWishlistByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<Wishlist?> GetWishlistByUserIdAsync(string userId, CancellationToken cancellationToken = default)
     {
         return await wishlistRepository.GetAsync(
             filter: w => w.UserId == userId,
             includeProperties: ["WishlistItems.Product"],
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken,
+            tracked: true);
     }
 
     public async Task<OperationResult> UpdateWishlistAsync(Wishlist wishlist,

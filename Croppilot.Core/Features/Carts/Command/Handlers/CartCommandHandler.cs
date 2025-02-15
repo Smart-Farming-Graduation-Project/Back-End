@@ -4,101 +4,70 @@ using Croppilot.Date.Models;
 namespace Croppilot.Core.Features.Carts.Command.Handlers;
 
 public class CartCommandHandler(ICartService cartService, IProductServices productServices) : ResponseHandler,
-    IRequestHandler<CreateCartCommand, Response<string>>,
-    IRequestHandler<UpdateCartCommand, Response<string>>,
-    IRequestHandler<DeleteCartCommand, Response<string>>
+    IRequestHandler<AddProductToCartCommand, Response<string>>,
+    IRequestHandler<RemoveProductFromCartCommand, Response<string>>
 {
-    public async Task<Response<string>> Handle(CreateCartCommand command, CancellationToken cancellationToken)
+    public async Task<Response<string>> Handle(AddProductToCartCommand command, CancellationToken cancellationToken)
     {
-        
-        var existingCart = await cartService.GetCartByUserIdAsync(command.UserId, cancellationToken);
-        if (existingCart != null)
-            return BadRequest<string>("Cart already exists");
-        
-        foreach (var item in command.CartItems)
-        {
-            var isProductExist = await IsProductExist(item.ProductId, cancellationToken: cancellationToken);
-            if (!isProductExist)
-                return BadRequest<string>($"Product with ID {item.ProductId} does not exist.");
-        }
-        
-        var cart = new Cart
+        var cart = await cartService.GetCartByUserIdAsync(command.UserId, cancellationToken) ?? new Cart
         {
             UserId = command.UserId,
-            CartItems = command.CartItems.Select(item => new CartItem
-            {
-                ProductId = item.ProductId,
-                Quantity = item.Quantity
-            }).ToList(),
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            CartItems = new List<CartItem>()
         };
 
-        var result = await cartService.CreateCartAsync(cart, cancellationToken);
-        return result == OperationResult.Success
-            ? Created<string>("Cart created successfully")
-            : BadRequest<string>("Cart creation failed");
-    }
+        var isProductExists = await IsProductExistsAsync(command.ProductId, cancellationToken);
+        if (!isProductExists)
+            return BadRequest<string>($"Product with ID {command.ProductId} does not exist.");
+       
+        
+        var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == command.ProductId);
+        if (existingItem != null)
+        {
+            // Increase the quantity.
+            existingItem.Quantity += command.Quantity;
+        }
+        else
+        {
+            // Add new cart item.
+            cart.CartItems.Add(new CartItem
+            {
+                ProductId = command.ProductId,
+                Quantity = command.Quantity
+            });
+        }
 
-    public async Task<Response<string>> Handle(UpdateCartCommand command, CancellationToken cancellationToken)
+        OperationResult result;
+        if (cart.Id == 0)
+            result = await cartService.CreateCartAsync(cart, cancellationToken);
+        else
+            result = await cartService.UpdateCartAsync(cart, cancellationToken);
+
+        return result == OperationResult.Success
+            ? Success<string>("Product added to cart successfully.")
+            : BadRequest<string>("Failed to add product to cart.");
+    }
+    
+    public async Task<Response<string>> Handle(RemoveProductFromCartCommand command,
+        CancellationToken cancellationToken)
     {
         var cart = await cartService.GetCartByUserIdAsync(command.UserId, cancellationToken);
         if (cart == null)
             return NotFound<string>("Cart not found");
 
-        var existingItems = cart.CartItems.ToDictionary(item => item.Id);
+        var itemToRemove = cart.CartItems.FirstOrDefault(ci => ci.ProductId == command.ProductId);
+        if (itemToRemove == null)
+            return NotFound<string>($"Product with ID {command.ProductId} not found in cart.");
 
-        var updatedItems = new List<CartItem>();
-
-        foreach (var updateItem in command.CartItems)
-        {
-            var isProductExist = await IsProductExist(updateItem.ProductId, cancellationToken);
-
-            if (!isProductExist)
-                return BadRequest<string>($"Product with ID {updateItem.ProductId} does not exist.");
-
-            if (updateItem.Id > 0)
-            {
-                if (existingItems.TryGetValue(updateItem.Id, out var existingItem))
-                {
-                    existingItem.Quantity = updateItem.Quantity;
-                    updatedItems.Add(existingItem);
-                }
-                else
-                {
-                    updatedItems.Add(new CartItem
-                    {
-                        ProductId = updateItem.ProductId,
-                        Quantity = updateItem.Quantity,
-                        CartId = cart.Id
-                    });
-                }
-            }
-            else
-            {
-                updatedItems.Add(new CartItem
-                {
-                    ProductId = updateItem.ProductId,
-                    Quantity = updateItem.Quantity,
-                    CartId = cart.Id
-                });
-            }
-        }
-
-        cart.CartItems = updatedItems;
+        cart.CartItems.Remove(itemToRemove);
 
         var result = await cartService.UpdateCartAsync(cart, cancellationToken);
         return result == OperationResult.Success
-            ? Success<string>("Cart updated successfully")
-            : BadRequest<string>("Cart update failed");
+            ? Success<string>("Product removed from cart successfully.")
+            : BadRequest<string>("Failed to remove product from cart.");
     }
-
-    public async Task<Response<string>> Handle(DeleteCartCommand command, CancellationToken cancellationToken)
-    {
-        var result = await cartService.DeleteCartAsync(command.CartId, cancellationToken);
-        return result ? Deleted<string>("Cart deleted successfully") : NotFound<string>("Cart not found");
-    }
-
-    private async Task<bool> IsProductExist(int productId, CancellationToken cancellationToken)
+    
+    private async Task<bool> IsProductExistsAsync(int productId, CancellationToken cancellationToken)
     {
         var product = await productServices.GetByIdAsync(productId, cancellationToken: cancellationToken);
         return product != null;

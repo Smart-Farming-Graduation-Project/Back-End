@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Croppilot.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class addWishList : Migration
+    public partial class addwishlist : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,17 +17,16 @@ namespace Croppilot.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Wishlists", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Wishlists_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Wishlists_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -72,9 +71,10 @@ namespace Croppilot.Infrastructure.Migrations
                 column: "WishlistId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Wishlists_UserId1",
+                name: "IX_Wishlists_UserId",
                 table: "Wishlists",
-                column: "UserId1");
+                column: "UserId",
+                unique: true);
         }
 
         /// <inheritdoc />
