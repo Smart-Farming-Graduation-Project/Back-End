@@ -3,59 +3,87 @@ using Croppilot.Core.Features.Authentication.Commands.Result;
 using Croppilot.Date.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace Croppilot.Core.Features.Authentication.Commands.Handlers
+namespace Croppilot.Core.Features.Authentication.Commands.Handlers;
+
+public class SignInCommandHandler(
+    IAuthenticationService service,
+    IUserService userService)
+    : ResponseHandler, IRequestHandler<SignInCommand, Response<SignInResponse>>
 {
-    public class SignInCommandHandler(
-        IAuthenticationService service,
-        IUserService userService)
-        : ResponseHandler, IRequestHandler<SignInCommand, Response<SignInResponse>>
+    public async Task<Response<SignInResponse>> Handle(SignInCommand request, CancellationToken cancellationToken)
     {
-        public async Task<Response<SignInResponse>> Handle(SignInCommand request, CancellationToken cancellationToken)
+        ApplicationUser user;
+        if (new EmailAddressAttribute().IsValid(request.UserNameOrEmail))
+            user = await userService.GetUserByEmail(request.UserNameOrEmail);
+        else
+            user = await userService.GetUserByUserName(request.UserNameOrEmail);
+
+        if (user is null)
         {
-
-            //var user = await userService.GetUserByUserName(request.UserName);
-            ApplicationUser user = new ApplicationUser();
-            if (new EmailAddressAttribute().IsValid(request.UserNameOrEmail))
-                user = await userService.GetUserByEmail(request.UserNameOrEmail);
-            else
-                user = await userService.GetUserByUserName(request.UserNameOrEmail);
-
-            if (user is null)
-                return BadRequest<SignInResponse>("Username or Password are wrong");
-
-
-            //Ensure email is confirmed before allowing login
-            if (!user.EmailConfirmed) return BadRequest<SignInResponse>("Please confirm your email before signing in.");
-
-            //Check if user is locked out
-            var lockoutMessage = await service.CheckAndHandleLockoutAsync(user);
-            if (!string.IsNullOrEmpty(lockoutMessage))
+            var errors = new List<Error>
             {
-                return BadRequest<SignInResponse>(lockoutMessage);
-            }
-            var signInResult = await service.CheckPasswordAsync(user, request.Password);
-            // Validate password
-            if (!signInResult == true)
-            {
-                //await service.HandleFailedLoginAsync(user);
-                return BadRequest<SignInResponse>("Invalid username or password.");
-            }
-            //Successful login
-            await service.ResetFailedAttemptsAsync(user);
-
-
-            var tokens = await service.GetJWTtoken(user);
-
-
-            return Success(new SignInResponse
-            {
-                UserName = user.UserName,
-                IsAuthenticated = true,
-                Tokens = tokens
-            });
+                new Error
+                {
+                    Code = "InvalidCredentials",
+                    Message = "Username or Password are wrong",
+                    Field = "UserNameOrEmail"
+                }
+            };
+            return BadRequest<SignInResponse>(errors, "Authentication error");
         }
 
+        if (!user.EmailConfirmed)
+        {
+            var errors = new List<Error>
+            {
+                new Error
+                {
+                    Code = "EmailNotConfirmed",
+                    Message = "Please confirm your email before signing in.",
+                    Field = "Email"
+                }
+            };
+            return BadRequest<SignInResponse>(errors, "Authentication error");
+        }
+
+        var lockoutMessage = await service.CheckAndHandleLockoutAsync(user);
+        if (!string.IsNullOrEmpty(lockoutMessage))
+        {
+            var errors = new List<Error>
+            {
+                new Error
+                {
+                    Code = "AccountLocked",
+                    Message = lockoutMessage,
+                    Field = "UserNameOrEmail"
+                }
+            };
+            return BadRequest<SignInResponse>(errors, "Authentication error");
+        }
+
+        var signInResult = await service.CheckPasswordAsync(user, request.Password);
+        if (!signInResult)
+        {
+            var errors = new List<Error>
+            {
+                new Error
+                {
+                    Code = "InvalidCredentials",
+                    Message = "Invalid username or password.",
+                    Field = "Password"
+                }
+            };
+            return BadRequest<SignInResponse>(errors, "Authentication error");
+        }
+
+        await service.ResetFailedAttemptsAsync(user);
+
+        var tokens = await service.GetJWTtoken(user);
+        return Success(new SignInResponse
+        {
+            UserName = user.UserName,
+            IsAuthenticated = true,
+            Tokens = tokens
+        });
     }
 }
-
-

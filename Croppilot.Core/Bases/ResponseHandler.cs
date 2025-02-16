@@ -48,6 +48,18 @@ public class ResponseHandler
         };
     }
 
+    public Response<T> NotFound<T>(List<Error> errors, string? message = null)
+    {
+        return new Response<T>
+        {
+            StatusCode = HttpStatusCode.NotFound,
+            Succeeded = false,
+            Message = message ?? "Resource not found",
+            Errors = errors
+        };
+    }
+
+
     public Response<T> BadRequest<T>(string? message = null)
     {
         return new Response<T>()
@@ -58,13 +70,36 @@ public class ResponseHandler
         };
     }
 
+    public Response<T> BadRequest<T>(List<Error> errors, string? message = null)
+    {
+        return new Response<T>
+        {
+            StatusCode = HttpStatusCode.BadRequest,
+            Succeeded = false,
+            Message = message ?? "Invalid request",
+            Errors = errors
+        };
+    }
+
+
     public Response<T> Unauthorized<T>(string? message = null)
     {
         return new Response<T>()
         {
             StatusCode = HttpStatusCode.Unauthorized,
-            Succeeded = false, //todo: i think it should be false because Unauthorized requests should not be marked as successful.
+            Succeeded = false,
             Message = message ?? "You Are Unauthorized"
+        };
+    }
+
+    public Response<T> Unauthorized<T>(List<Error> errors, string? message = null)
+    {
+        return new Response<T>()
+        {
+            StatusCode = HttpStatusCode.Unauthorized,
+            Succeeded = false,
+            Message = message ?? "You Are Unauthorized",
+            Errors = errors
         };
     }
 
@@ -95,6 +130,28 @@ public class ResponseHandler
             StatusCode = HttpStatusCode.InternalServerError,
             Succeeded = false,
             Message = message ?? "An internal error occurred"
+        };
+    }
+
+    public Response<T> InternalError<T>(List<Error> errors, string? message = null)
+    {
+        return new Response<T>
+        {
+            StatusCode = HttpStatusCode.InternalServerError,
+            Succeeded = false,
+            Message = message ?? "An internal error occurred",
+            Errors = errors
+        };
+    }
+
+    public Response<T> Conflict<T>(List<Error> errors, string? message = null)
+    {
+        return new Response<T>
+        {
+            StatusCode = HttpStatusCode.Conflict,
+            Succeeded = false,
+            Message = message ?? "Resource conflict",
+            Errors = errors
         };
     }
 

@@ -1,46 +1,100 @@
 ﻿using Croppilot.Core.Features.Authentication.Commands.Models;
 using Croppilot.Date.Identity;
 using Croppilot.Infrastructure.Comman;
-using Croppilot.Services.Abstract;
 using IAuthorizationService = Croppilot.Services.Abstract.IAuthorizationService;
 
-namespace Croppilot.Core.Features.Authentication.Commands.Handlers
+namespace Croppilot.Core.Features.Authentication.Commands.Handlers;
+
+public class AddUserCommandHandler(
+    IAuthenticationService service,
+    IEmailService emailService,
+    IUserService userService,
+    IAuthorizationService authorizationService)
+    : ResponseHandler, IRequestHandler<AddUserCommand, Response<string>>
 {
-    public class AddUserCommandHandler(IAuthenticationService service, IEmailService emailService, IUserService userService
-    , IAuthorizationService authorizationService)
-        : ResponseHandler, IRequestHandler<AddUserCommand, Response<string>>
+    public async Task<Response<string>> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        public async Task<Response<string>> Handle(AddUserCommand request, CancellationToken cancellationToken)
+        // Check if email is already in use
+        if (await userService.GetUserByEmail(request.Email) is not null)
         {
-            if (await userService.GetUserByEmail(request.Email) is not null)
-                return BadRequest<string>("Email must be unique");
-            if (await userService.GetUserByUserName(request.UserName) is not null)
-                return BadRequest<string>("UserName must be unique");
-
-            var user = request.Adapt<ApplicationUser>();
-
-            var result = await service.CreateUserAsync(user, request.Password);
-            if (!result.Succeeded) return BadRequest<string>(result.Errors.FirstOrDefault().Description);
-
-            //Assign user role
-
-            await authorizationService.AssignRolesToUser(user, [SD.UserRole]);
-
-            //Send Confirm Email
-            try
+            var errors = new List<Error>
             {
-                if (await emailService.SendConfirmEMailAsync(user))
+                new Error
                 {
-                    return Created("User Added successfully", "Your account has been created, please confirm your email address");
+                    Code = "UniqueEmail",
+                    Message = "Email must be unique",
+                    Field = "Email"
                 }
-                return BadRequest<string>("Failed to send email. Please contact admin");
+            };
+            return BadRequest<string>(errors, "Validation error");
+        }
 
-            }
-            catch (Exception)
+        // Check if username is already in use
+        if (await userService.GetUserByUserName(request.UserName) is not null)
+        {
+            var errors = new List<Error>
             {
-                return BadRequest<string>("Failed to send email. Please contact admin");
-            }
+                new Error
+                {
+                    Code = "UniqueUserName",
+                    Message = "UserName must be unique",
+                    Field = "UserName"
+                }
+            };
+            return BadRequest<string>(errors, "Validation error");
+        }
 
+        var user = request.Adapt<ApplicationUser>();
+
+        var result = await service.CreateUserAsync(user, request.Password);
+        if (!result.Succeeded)
+        {
+            var errorDescription = result.Errors.FirstOrDefault()?.Description ?? "User creation failed";
+            var errors = new List<Error>
+            {
+                new()
+                {
+                    Code = "UserCreationError",
+                    Message = errorDescription,
+                    Field = "User"
+                }
+            };
+            return BadRequest<string>(errors, "User creation error");
+        }
+
+        // Assign the default user role
+        await authorizationService.AssignRolesToUser(user, [SD.UserRole]);
+
+        // Send confirmation email
+        try
+        {
+            if (await emailService.SendConfirmEMailAsync(user))
+                return Created("User Added successfully",
+                    "Your account has been created, please confirm your email address");
+
+            var errors = new List<Error>
+            {
+                new()
+                {
+                    Code = "EmailSendingError",
+                    Message = "Failed to send email. Please contact admin",
+                    Field = "Email"
+                }
+            };
+            return BadRequest<string>(errors, "Email error");
+        }
+        catch (Exception ex)
+        {
+            var errors = new List<Error>
+            {
+                new()
+                {
+                    Code = "EmailSendingException",
+                    Message = $"Failed to send email. Please contact admin. Error: {ex.Message}",
+                    Field = "Email"
+                }
+            };
+            return BadRequest<string>(errors, "Email error");
         }
     }
 }
