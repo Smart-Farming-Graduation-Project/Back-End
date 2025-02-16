@@ -1,6 +1,5 @@
 ﻿using Croppilot.Date.Models;
 using Croppilot.Services.Abstract;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Croppilot.API.Controller;
 

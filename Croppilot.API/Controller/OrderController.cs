@@ -1,8 +1,5 @@
-﻿using Croppilot.API.Bases;
-using Croppilot.Core.Features.Orders.Command.Models;
+﻿using Croppilot.Core.Features.Orders.Command.Models;
 using Croppilot.Core.Features.Orders.Query.Models;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Croppilot.API.Controller;
 
@@ -33,7 +30,7 @@ public class OrderController(IMediator mediator) : AppControllerBase
         // Example using HttpContext.User
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     */
-        
+
         var response = await mediator.Send(new GetUserOrdersQuery { UserId = userId });
         return NewResult(response);
     }

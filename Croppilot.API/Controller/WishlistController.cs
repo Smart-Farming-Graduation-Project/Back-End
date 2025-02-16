@@ -1,11 +1,6 @@
-﻿using Croppilot.API.Bases;
-using Croppilot.Core.Features.Authentication.Queries.Models;
+﻿using Croppilot.Core.Features.Authentication.Queries.Models;
 using Croppilot.Core.Features.WishLists.Command.Models;
 using Croppilot.Core.Features.WishLists.Query.Models;
-using Croppilot.Date.Enum;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Croppilot.API.Controller;
 
