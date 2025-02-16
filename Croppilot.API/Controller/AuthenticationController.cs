@@ -22,15 +22,8 @@ namespace Croppilot.API.Controller;
 [ApiController]
 [SwaggerResponse(200, "Operation is done successfully")]
 [SwaggerResponse(400, "Invalid operation or something is invalid")]
-public class AuthenticationController : AppControllerBase
+public class AuthenticationController(IMediator mediator) : AppControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public AuthenticationController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     /// <summary>
     /// Registers a new user.
     /// Frontend: Provide user details (first name, last name, username, email, password, etc.). 
@@ -42,7 +35,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Creates a new user account with the provided details.**")]
     public async Task<IActionResult> Register(AddUserCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -56,7 +49,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Authenticates a user and returns an access token.**")]
     public async Task<IActionResult> SignIn(SignInCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -70,7 +63,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Generates a new access token using a refresh token.**")]
     public async Task<IActionResult> RefreshToken(RefreshTokenCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -84,7 +77,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Invalidates a user's refresh token to prevent further use.**")]
     public async Task<IActionResult> RevokeToken(RevokeRefreshTokenCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -98,7 +91,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Verifies the user's email using a confirmation token.**")]
     public async Task<IActionResult> ConfirmEmail(ConfirmEmailCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -112,7 +105,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Sends a new confirmation email to the user.**")]
     public async Task<IActionResult> ResendEmailConfirmationLink(ResendConfirmEmailCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -126,7 +119,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Sends an email to reset the password or retrieve the username.**")]
     public async Task<IActionResult> ForgotUsernameOrPassword(ForgetPasswordCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -140,7 +133,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Allows a user to reset their password using a token.**")]
     public async Task<IActionResult> ResetPassword(ResetPasswordCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -154,7 +147,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Allows a logged-in user to change their password.**")]
     public async Task<IActionResult> ChangePassword(ChangeUserPasswordCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -168,7 +161,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Sends a One-Time Password (OTP) for recovery.**")]
     public async Task<IActionResult> ForgotUsernameOrPasswordUsingOtpCode(ForgetPasswordUsingOTPCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -182,7 +175,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Allows a user to reset their password using an OTP.**")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordUsingOTPQuery query)
     {
-        return NewResult(await _mediator.Send(query));
+        return NewResult(await mediator.Send(query));
     }
 
     /// <summary>
@@ -196,7 +189,7 @@ public class AuthenticationController : AppControllerBase
         Description = "**Creates a user account using external authentication providers like Google or Facebook.**")]
     public async Task<IActionResult> RegisterWithThirdParty(RegisterWithExternalCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 
     /// <summary>
@@ -210,6 +203,6 @@ public class AuthenticationController : AppControllerBase
         Description = "**Authenticates a user using external authentication providers like Google or Facebook.**")]
     public async Task<IActionResult> LoginWithThirdParty(LoginWithExternalCommand command)
     {
-        return NewResult(await _mediator.Send(command));
+        return NewResult(await mediator.Send(command));
     }
 }
