@@ -5,65 +5,59 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Croppilot.Services.Services
 {
-	internal class UserService : IUserService
+	internal class UserService(UserManager<ApplicationUser> userManager) : IUserService
 	{
-		private readonly UserManager<ApplicationUser> _userManager;
-		public UserService(UserManager<ApplicationUser> userManager)
+		public async Task<ApplicationUser?> GetUserByEmail(string email)
 		{
-			_userManager = userManager;
+			return await userManager.FindByEmailAsync(email);
 		}
 
-		public async Task<ApplicationUser> GetUserByEmail(string email)
+		public async Task<ApplicationUser?> GetUserById(string id)
 		{
-			return await _userManager.FindByEmailAsync(email);
-		}
-
-		public async Task<ApplicationUser> GetUserById(string id)
-		{
-			return await _userManager.FindByIdAsync(id);
+			return await userManager.FindByIdAsync(id);
 		}
 
 		public async Task<ApplicationUser?> GetUserByUserName(string userName)
 		{
-			return await _userManager.Users.Include(u => u.RefreshTokens).Where(u => u.UserName.Equals(userName)).FirstOrDefaultAsync();
+			return await userManager.Users.Include(u => u.RefreshTokens).Where(u => u.UserName.Equals(userName)).FirstOrDefaultAsync();
 			//return await _userManager.FindByNameAsync(userName);
 		}
 
 		public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
 		{
-			return await _userManager.UpdateAsync(user);
+			return await userManager.UpdateAsync(user);
 		}
 
 		public async Task<IdentityResult> DeleteUserAsync(ApplicationUser user)
 		{
-			return await _userManager.DeleteAsync(user);
+			return await userManager.DeleteAsync(user);
 		}
 
 		public async Task<bool> IsUserAssignedToRole(ApplicationUser user, string role)
 		{
-			return await _userManager.IsInRoleAsync(user, role);
+			return await userManager.IsInRoleAsync(user, role);
 		}
 
 		public async Task<List<string>> GetUserRolesAsync(ApplicationUser user)
 		{
-			return (await _userManager.GetRolesAsync(user)).ToList();
+			return (await userManager.GetRolesAsync(user)).ToList();
 		}
 
 		public async Task<IdentityResult> ChangeUserRole(ApplicationUser user, string roleName, string newRoleName)
 		{
-			var result = await _userManager.RemoveFromRoleAsync(user, roleName);
+			var result = await userManager.RemoveFromRoleAsync(user, roleName);
 			if (!result.Succeeded) return result;
-			return await _userManager.AddToRoleAsync(user, newRoleName);
+			return await userManager.AddToRoleAsync(user, newRoleName);
 		}
 
 		public async Task<List<ApplicationUser>> GetUsersAssignedToRole(string roleName)
 		{
-			return (await _userManager.GetUsersInRoleAsync(roleName)).ToList();
+			return (await userManager.GetUsersInRoleAsync(roleName)).ToList();
 		}
 
 		public async Task<IdentityResult> RemoveUserRoleAsync(ApplicationUser user, string roleName)
 		{
-			return await _userManager.RemoveFromRoleAsync(user, roleName);
+			return await userManager.RemoveFromRoleAsync(user, roleName);
 		}
 	}
 }
