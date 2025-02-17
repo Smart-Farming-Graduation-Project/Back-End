@@ -1,6 +1,5 @@
 ﻿using Croppilot.Date.DTOS;
 using Croppilot.Date.Identity;
-using Croppilot.Services.Abstract;
 using Mailjet.Client;
 using Mailjet.Client.TransactionalEmails;
 using Microsoft.AspNetCore.Identity;
@@ -40,11 +39,11 @@ namespace Croppilot.Services.Services
         {
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
             token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            var url = $"{configuration["Jwt:ClientUrl"]}/{configuration["Email:ConfirmEmailPath"]}?token={token}&email={user.Email}";
-
+            //   var url = $"{configuration["Jwt:ClientUrl"]}/{configuration["Email:ConfirmEmailPath"]}?token={token}&email={user.Email}";
+            var testUrl = $"http://localhost:3000/confirm-email?token={token}&email={user.Email}";
             var body = $"<p>Hello: {user.FirstName} {user.LastName}</p>" +
                        "<p>Please confirm your email address by clicking on the following link.</p>" +
-                       $"<p><a href=\"{url}\">Click here</a></p>" +
+                       $"<p><a href=\"{testUrl}\">Click here</a></p>" +
                        "<p>Thank you,</p>" +
                        $"<br>{configuration["Email:ApplicationName"]}";
 
