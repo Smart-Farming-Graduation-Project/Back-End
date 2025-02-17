@@ -1,5 +1,4 @@
 ﻿using Croppilot.Core.Beheviors;
-using Croppilot.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -11,7 +10,7 @@ public static class ModelCoreDependencies
     public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
     {
         service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-        service.AddFluentValidationServices().AddMapsterServices().AddGlobalExceptionHandlingServices();
+        service.AddFluentValidationServices().AddMapsterServices();
 
         return service;
     }
@@ -34,11 +33,11 @@ public static class ModelCoreDependencies
         return service;
     }
 
-    private static IServiceCollection AddGlobalExceptionHandlingServices(this IServiceCollection service)
-    {
-        service.AddExceptionHandler<GlobalExceptionHandler>();
-        service.AddProblemDetails();
+    //private static IServiceCollection AddGlobalExceptionHandlingServices(this IServiceCollection service)
+    //{
+    //      service.AddExceptionHandler<GlobalExceptionHandlerMiddleware>();
+    //    service.AddProblemDetails();
 
-        return service;
-    }
+    //    return service;
+    //}
 }
