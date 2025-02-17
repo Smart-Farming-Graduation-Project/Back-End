@@ -11,25 +11,29 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddInfrastructureDependencies(builder.Configuration).AddApiDependencies()
-	.AddCoreDependencies().AddServicesDependencies(builder.Configuration);
+    .AddCoreDependencies().AddServicesDependencies(builder.Configuration);
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-	var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-	var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-	await RoleSeeder.SeedAsync(roleManager);
-	await UserSeeder.SeedAsync(userManager);
+    // Apply Migrations Automatically
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+    await RoleSeeder.SeedAsync(roleManager);
+    await UserSeeder.SeedAsync(userManager);
 }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
