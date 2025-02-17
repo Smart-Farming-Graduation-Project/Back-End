@@ -9,7 +9,7 @@ public class Response<T>
     public string Message { get; set; }
     public T? Data { get; set; }
     public Dictionary<string, object>? Meta { get; set; }
-    public List<Error> Errors { get; set; } = new();
+    //public List<Error> Errors { get; set; } = new();
 
     //public Dictionary<string, List<string>> ErrorsBag { get; set; }
 
