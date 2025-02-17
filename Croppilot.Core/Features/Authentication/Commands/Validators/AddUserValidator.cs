@@ -40,6 +40,7 @@ namespace Croppilot.Core.Features.Authentication.Commands.Validators
                 .NotEmpty().WithMessage("Email is required.")
                 .EmailAddress().WithMessage("Invalid email format.")
                 .MustAsync(BeUniqueEmail).WithMessage("This email is already registered.");
+
         }
 
         private async Task<bool> BeUniqueUserName(string userName, CancellationToken cancellationToken)

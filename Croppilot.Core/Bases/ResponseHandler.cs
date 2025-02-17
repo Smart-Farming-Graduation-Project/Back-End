@@ -55,7 +55,7 @@ public class ResponseHandler
             StatusCode = HttpStatusCode.NotFound,
             Succeeded = false,
             Message = message ?? "Resource not found",
-            //   Errors = errors
+            //    Errors = errors
         };
     }
 
@@ -77,7 +77,7 @@ public class ResponseHandler
             StatusCode = HttpStatusCode.BadRequest,
             Succeeded = false,
             Message = message ?? "Invalid request",
-            // Errors = errors
+            //    Errors = errors
         };
     }
 
@@ -99,7 +99,7 @@ public class ResponseHandler
             StatusCode = HttpStatusCode.Unauthorized,
             Succeeded = false,
             Message = message ?? "You Are Unauthorized",
-            //  Errors = errors
+            //   Errors = errors
         };
     }
 
@@ -140,7 +140,7 @@ public class ResponseHandler
             StatusCode = HttpStatusCode.InternalServerError,
             Succeeded = false,
             Message = message ?? "An internal error occurred",
-            //  Errors = errors
+            //       Errors = errors
         };
     }
 
@@ -151,7 +151,7 @@ public class ResponseHandler
             StatusCode = HttpStatusCode.Conflict,
             Succeeded = false,
             Message = message ?? "Resource conflict",
-            //  Errors = errors
+            //    Errors = errors
         };
     }
 
