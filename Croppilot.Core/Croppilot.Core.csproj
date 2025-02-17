@@ -31,7 +31,6 @@
     <Folder Include="Mapping\Authorization\Command\" />
     <Folder Include="Mapping\User\Command\" />
     <Folder Include="Features\Orders\Query\Validators\" />
-    <Folder Include="Beheviors\" />
 
   </ItemGroup>
 
