@@ -14,87 +14,61 @@ public class AddUserCommandHandler(
 {
     public async Task<Response<string>> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        // Check if email is already in use
-        if (await userService.GetUserByEmail(request.Email) is not null)
-        {
-            var errors = new List<Error>
-            {
-                new Error
-                {
-                    Code = "UniqueEmail",
-                    Message = "Email must be unique",
-                    Field = "Email"
-                }
-            };
-            return BadRequest<string>(errors, "Validation error");
-        }
+        //// Check if email is already in use
+        //if (await userService.GetUserByEmail(request.Email) is not null)
+        //{
+        //    var errors = new List<Error>
+        //    {
+        //        new Error
+        //        {
+        //            Code = "UniqueEmail",
+        //            Message = "Email must be unique",
+        //            Field = "Email"
+        //        }
+        //    };
+        //    return BadRequest<string>(errors, "Validation error");
+        //}
 
         // Check if username is already in use
-        if (await userService.GetUserByUserName(request.UserName) is not null)
-        {
-            var errors = new List<Error>
-            {
-                new Error
-                {
-                    Code = "UniqueUserName",
-                    Message = "UserName must be unique",
-                    Field = "UserName"
-                }
-            };
-            return BadRequest<string>(errors, "Validation error");
-        }
+        //if (await userService.GetUserByUserName(request.UserName) is not null)
+        //{
+        //    var errors = new List<Error>
+        //    {
+        //        new Error
+        //        {
+        //            Code = "UniqueUserName",
+        //            Message = "UserName must be unique",
+        //            Field = "UserName"
+        //        }
+        //    };
+        //    return BadRequest<string>(errors, "Validation error");
+        //}
 
         var user = request.Adapt<ApplicationUser>();
 
         var result = await service.CreateUserAsync(user, request.Password);
         if (!result.Succeeded)
         {
-            var errorDescription = result.Errors.FirstOrDefault()?.Description ?? "User creation failed";
-            var errors = new List<Error>
-            {
-                new()
-                {
-                    Code = "UserCreationError",
-                    Message = errorDescription,
-                    Field = "User"
-                }
-            };
-            return BadRequest<string>(errors, "User creation error");
+            return BadRequest<string>(result.Errors.FirstOrDefault()?.Description ?? "User creation failed");
         }
 
         // Assign the default user role
         await authorizationService.AssignRolesToUser(user, [SD.UserRole]);
 
         // Send confirmation email
+
         try
         {
             if (await emailService.SendConfirmEMailAsync(user))
-                return Created("User Added successfully",
-                    "Your account has been created, please confirm your email address");
+            {
+                return Created("User Added successfully", "Your account has been created, please confirm your email address");
+            }
+            return BadRequest<string>("Failed to send email. Please contact admin");
 
-            var errors = new List<Error>
-            {
-                new()
-                {
-                    Code = "EmailSendingError",
-                    Message = "Failed to send email. Please contact admin",
-                    Field = "Email"
-                }
-            };
-            return BadRequest<string>(errors, "Email error");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            var errors = new List<Error>
-            {
-                new()
-                {
-                    Code = "EmailSendingException",
-                    Message = $"Failed to send email. Please contact admin. Error: {ex.Message}",
-                    Field = "Email"
-                }
-            };
-            return BadRequest<string>(errors, "Email error");
+            return BadRequest<string>("Failed to send email. Please contact admin");
         }
     }
 }
