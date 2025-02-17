@@ -1,5 +1,6 @@
 using Croppilot.API;
 using Croppilot.Core;
+using Croppilot.Core.Exceptions;
 using Croppilot.Date.Identity;
 using Croppilot.Infrastructure;
 using Croppilot.Infrastructure.Data;
@@ -35,11 +36,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors();
 
-app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

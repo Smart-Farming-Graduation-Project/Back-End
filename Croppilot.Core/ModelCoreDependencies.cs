@@ -1,4 +1,4 @@
-﻿using Croppilot.Core.Exceptions;
+﻿using Croppilot.Core.Beheviors;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -7,36 +7,37 @@ namespace Croppilot.Core;
 
 public static class ModelCoreDependencies
 {
-	public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
-	{
-		service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-		service.AddFluentValidationServices().AddMapsterServices().AddGlobalExceptionHandlingServices();
+    public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
+    {
+        service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        service.AddFluentValidationServices().AddMapsterServices();
 
-		return service;
-	}
+        return service;
+    }
 
-	private static IServiceCollection AddFluentValidationServices(this IServiceCollection service)
-	{
-		service.AddValidatorsFromAssemblies([Assembly.GetExecutingAssembly()]);
-		service.AddFluentValidationAutoValidation();
+    private static IServiceCollection AddFluentValidationServices(this IServiceCollection service)
+    {
+        service.AddValidatorsFromAssemblies([Assembly.GetExecutingAssembly()]);
+        //service.AddFluentValidationAutoValidation();
+        service.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidtorBehevior<,>));
 
-		return service;
-	}
+        return service;
+    }
 
-	private static IServiceCollection AddMapsterServices(this IServiceCollection service)
-	{
-		var config = TypeAdapterConfig.GlobalSettings;
-		config.Scan(Assembly.GetExecutingAssembly());
-		service.AddSingleton<IMapper>(new Mapper(config));
+    private static IServiceCollection AddMapsterServices(this IServiceCollection service)
+    {
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(Assembly.GetExecutingAssembly());
+        service.AddSingleton<IMapper>(new Mapper(config));
 
-		return service;
-	}
+        return service;
+    }
 
-	private static IServiceCollection AddGlobalExceptionHandlingServices(this IServiceCollection service)
-	{
-		service.AddExceptionHandler<GlobalExceptionHandler>();
-		service.AddProblemDetails();
+    //private static IServiceCollection AddGlobalExceptionHandlingServices(this IServiceCollection service)
+    //{
+    //      service.AddExceptionHandler<GlobalExceptionHandlerMiddleware>();
+    //    service.AddProblemDetails();
 
-		return service;
-	}
+    //    return service;
+    //}
 }
