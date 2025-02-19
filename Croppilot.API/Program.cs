@@ -8,14 +8,16 @@ using Croppilot.Infrastructure.Seeder;
 using Croppilot.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WatchDog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
-builder.Services.AddInfrastructureDependencies(builder.Configuration).AddApiDependencies()
+builder.Services.AddInfrastructureDependencies(builder.Configuration).AddApiDependencies(builder.Configuration)
     .AddCoreDependencies().AddServicesDependencies(builder.Configuration);
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -36,13 +38,25 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseMiddleware<ErrorHandlerMiddleware>();
+
+app.UseWatchDogExceptionLogger();
 
 app.UseHttpsRedirection();
 app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseWatchDog(opt =>
+{
+    opt.WatchPageUsername = "admin";
+    opt.WatchPagePassword = "123";
+    // opt.Blacklist = "api/Authentication/SignIn";
+    // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
+});
+
 app.MapControllers();
 
 app.Run();
