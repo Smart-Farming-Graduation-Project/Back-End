@@ -30,10 +30,12 @@ public class AuthenticationController(IMediator mediator) : AppControllerBase
     [HttpPost("Register")]
     [SwaggerResponse(201, "Your account has been created, please confirm your email address")]
     [SwaggerResponse(400, "Bad Request. Possible reasons 'Messages returned': \n- User creation failed \n- Failed to send email. Please contact admin \n- some error in operation it will appear in message 'دي مش الرساله اللي هتظهر انا بوضحكلك'")]
+    // [SwaggerRequestExample(typeof(AddUserCommand), typeof(RegisterRequestExample))] //Show frontend and mobile request examples
     [SwaggerOperation(
         Summary = "Registers a new user",
-        Description = "**Creates a new user account with the provided details.**")]
-    public async Task<IActionResult> Register(AddUserCommand command)
+        Description = "Creates a new user account. **For mobile clients, firstName, lastName, phone, and address are optional. 'سبهم فاضيين عادي'**"
+    )]
+    public async Task<IActionResult> Register([FromBody] AddUserCommand command)
     {
         return NewResult(await mediator.Send(command));
     }
