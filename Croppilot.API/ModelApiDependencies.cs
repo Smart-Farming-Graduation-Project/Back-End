@@ -1,5 +1,5 @@
-﻿using Croppilot.Date.Enum;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using System.Text.Json.Serialization;
 using WatchDog;
 using WatchDog.src.Enums;
 
@@ -9,7 +9,10 @@ public static class ModelApiDependencies
 {
     public static IServiceCollection AddApiDependencies(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddControllers();
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        }); ;
         services.AddHttpContextAccessor().AddSwaggerServices().AddRolePolicy().AddCorSServices()
             .AddWatchDogConfigurations(configuration);
 
