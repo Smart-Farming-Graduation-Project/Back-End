@@ -28,13 +28,13 @@ public class Product
     // todo : change to nullable update date should be null firstly when product is created and when it added it should be updated
 
     public int CategoryId { get; set; }
+
     [ForeignKey("CategoryId")]
     [ValidateNever]
     public Category Category { get; set; }
 
-    [ValidateNever]
-    public List<ProductImage> ProductImages { get; set; }
-    [ValidateNever]
-    public ICollection<Leasing> Leasings { get; set; } = new List<Leasing>();
+    [ValidateNever] public List<ProductImage> ProductImages { get; set; }
+    [ValidateNever] public ICollection<Leasing> Leasings { get; set; } = new List<Leasing>();
 
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
 }
