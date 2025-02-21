@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Croppilot.Core.Features.Reviews.Command.Models;
+﻿using Croppilot.Core.Features.Reviews.Command.Models;
 using Croppilot.Infrastructure.Repositories.Interfaces;
 
 namespace Croppilot.Core.Features.Reviews.Command.Validators;

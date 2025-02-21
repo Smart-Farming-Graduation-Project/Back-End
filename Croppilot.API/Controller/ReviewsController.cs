@@ -3,7 +3,7 @@ using Croppilot.Core.Features.Reviews.Query.Models;
 
 namespace Croppilot.API.Controller;
 
-public class ReviewsController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
+public class ReviewsController(IMediator mediator)
     : AppControllerBase
 {
     // This endpoint is available to anyone.
@@ -25,7 +25,7 @@ public class ReviewsController(IMediator mediator, IHttpContextAccessor httpCont
         Description = "**Creates a review for a product.**")]
     public async Task<IActionResult> CreateReview([FromBody] AddReviewCommand command)
     {
-        command.UserID = GetCurrentUserId();
+        command.UserID = User.GetUserId()!;
         var response = await mediator.Send(command);
         return NewResult(response);
     }
@@ -40,12 +40,12 @@ public class ReviewsController(IMediator mediator, IHttpContextAccessor httpCont
         var command = new DeleteReviewCommand
         {
             ReviewID = reviewId,
-            CurrentUserID = GetCurrentUserId()
+            CurrentUserID = User.GetUserId()!
         };
         var response = await mediator.Send(command);
         return NewResult(response);
     }
-    
+
     [HttpPut("UpdateReview/{reviewId}")]
     [Authorize(Policy = nameof(UserRoleEnum.User))]
     [SwaggerOperation(Summary = "Updates a review",
@@ -53,24 +53,9 @@ public class ReviewsController(IMediator mediator, IHttpContextAccessor httpCont
     public async Task<IActionResult> UpdateReview([FromRoute] int reviewId, [FromBody] UpdateReviewCommand command)
     {
         command.ReviewID = reviewId;
-        command.CurrentUserID = GetCurrentUserId();
+        command.CurrentUserID = User.GetUserId()!;
 
         var response = await mediator.Send(command);
         return NewResult(response);
-    }
-
-    /// <summary>
-    /// Retrieves the current user's identifier from the HTTP context claims.
-    /// </summary>
-    /// <returns>The authenticated user's ID.</returns>
-    private string GetCurrentUserId()
-    {
-        var userIdClaim = httpContextAccessor.HttpContext?.User
-            .Claims.FirstOrDefault(c => c.Type == "NameIdentifier")?.Value;
-
-        if (string.IsNullOrWhiteSpace(userIdClaim))
-            throw new UnauthorizedAccessException("User not authenticated");
-
-        return userIdClaim;
     }
 }

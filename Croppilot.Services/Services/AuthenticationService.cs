@@ -68,7 +68,7 @@ namespace Croppilot.Services.Services
         {
             var claims = new List<Claim>
                 {
-                    new Claim("id", user.Id.ToString()),
+                    new Claim("Id", user.Id),
                     new Claim(ClaimTypes.NameIdentifier,user.UserName ?? string.Empty),
                     new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
