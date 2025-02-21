@@ -16,11 +16,14 @@ public class ReviewService(IReviewRepository reviewRepository) : IReviewService
         return await reviewRepository.GetReviewsByProductIdAsync(productId, cancellationToken);
     }
 
-    public async Task<OperationResult> DeleteReviewAsync(int reviewId, CancellationToken cancellationToken = default)
+    public async Task<OperationResult> DeleteReviewAsync(int reviewId, string currentUserId,
+        CancellationToken cancellationToken = default)
     {
-        var review =
-            await reviewRepository.GetAsync(r => r.ReviewID == reviewId, cancellationToken: cancellationToken);
+        var review = await reviewRepository.GetAsync(r => r.ReviewID == reviewId, cancellationToken: cancellationToken);
         if (review == null)
+            return OperationResult.Failure;
+
+        if (review.UserID != currentUserId)
             return OperationResult.Failure;
 
         await reviewRepository.DeleteAsync(review, cancellationToken);
