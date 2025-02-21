@@ -20,13 +20,26 @@ public class ReviewService(IReviewRepository reviewRepository) : IReviewService
         CancellationToken cancellationToken = default)
     {
         var review = await reviewRepository.GetAsync(r => r.ReviewID == reviewId, cancellationToken: cancellationToken);
-        if (review == null)
+
+        await reviewRepository.DeleteAsync(review!, cancellationToken);
+        return OperationResult.Success;
+    }
+
+    public async Task<OperationResult> UpdateReviewAsync(Review review,
+        CancellationToken cancellationToken = default)
+    {
+        var currentReview = await reviewRepository.GetAsync(r => r.ReviewID == review.ReviewID,
+            cancellationToken: cancellationToken);
+
+        if (currentReview == null)
             return OperationResult.Failure;
 
-        if (review.UserID != currentUserId)
-            return OperationResult.Failure;
+        currentReview.Headline = review.Headline;
+        currentReview.Rating = review.Rating;
+        currentReview.ReviewText = review.ReviewText;
+        currentReview.UpdatedAt = DateTime.UtcNow;
 
-        await reviewRepository.DeleteAsync(review, cancellationToken);
+        await reviewRepository.UpdateAsync(currentReview, cancellationToken);
         return OperationResult.Success;
     }
 }

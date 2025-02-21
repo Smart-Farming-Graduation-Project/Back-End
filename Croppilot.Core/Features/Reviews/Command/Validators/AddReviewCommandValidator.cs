@@ -12,7 +12,7 @@ public class AddReviewCommandValidator : AbstractValidator<AddReviewCommand>
 
         RuleFor(x => x.ProductID)
             .GreaterThan(0).WithMessage("ProductID must be greater than 0.")
-            // Check asynchronously if the product exists.
+            // Check if the product exists.
             .MustAsync(async (productId, cancellationToken) =>
                 await productServices.GetByIdAsync(productId, cancellationToken: cancellationToken) != null)
             .WithMessage("Product does not exist.");
@@ -27,6 +27,7 @@ public class AddReviewCommandValidator : AbstractValidator<AddReviewCommand>
         RuleFor(x => x.ReviewText)
             .NotEmpty().WithMessage("ReviewText is required.");
 
+        // Check if the user has already submitted a review for this product.
         RuleFor(x => x).MustAsync(async (command, cancellationToken) =>
         {
             var existingReview = await reviewRepository.GetAsync(

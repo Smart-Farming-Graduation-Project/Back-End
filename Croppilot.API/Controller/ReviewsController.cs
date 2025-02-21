@@ -45,6 +45,19 @@ public class ReviewsController(IMediator mediator, IHttpContextAccessor httpCont
         var response = await mediator.Send(command);
         return NewResult(response);
     }
+    
+    [HttpPut("UpdateReview/{reviewId}")]
+    [Authorize(Policy = nameof(UserRoleEnum.User))]
+    [SwaggerOperation(Summary = "Updates a review",
+        Description = "**Updates an existing review if the authenticated user is the creator.**")]
+    public async Task<IActionResult> UpdateReview([FromRoute] int reviewId, [FromBody] UpdateReviewCommand command)
+    {
+        command.ReviewID = reviewId;
+        command.CurrentUserID = GetCurrentUserId();
+
+        var response = await mediator.Send(command);
+        return NewResult(response);
+    }
 
     /// <summary>
     /// Retrieves the current user's identifier from the HTTP context claims.
