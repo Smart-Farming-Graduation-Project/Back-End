@@ -12,7 +12,7 @@ public static class ModelApiDependencies
         services.AddControllers().AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        }); ;
+        });
         services.AddHttpContextAccessor().AddSwaggerServices().AddRolePolicy().AddCorSServices()
             .AddWatchDogConfigurations(configuration);
 

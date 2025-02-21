@@ -52,6 +52,7 @@ namespace Croppilot.Services.Services
         {
             var jwtToken = new JwtSecurityToken(
                 issuer: jwtSettings.Issuer,
+                audience: jwtSettings.Audience, // Add Audience
                 expires: DateTime.Now.AddMinutes(jwtSettings.AccessTokenDurationInMinutes),
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Key)),
@@ -67,9 +68,10 @@ namespace Croppilot.Services.Services
         {
             var claims = new List<Claim>
                 {
-                    new Claim(nameof(ClaimTypes.NameIdentifier),user.UserName ?? string.Empty),
-                    new Claim(nameof(ClaimTypes.Name),$"{user.FirstName} {user.LastName}"),
-                    new Claim(nameof(ClaimTypes.Email),user.Email ?? string.Empty)
+                    new Claim("id", user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier,user.UserName ?? string.Empty),
+                    new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
                 };
             var roles = await userManager.GetRolesAsync(user);
             foreach (var role in roles)
