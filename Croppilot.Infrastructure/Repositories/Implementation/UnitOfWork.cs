@@ -10,6 +10,7 @@
         public IOrderRepository OrderRepository { get; }
         public ICartRepository CartRepository { get; }
         public IWishlistRepository WishlistRepository { get; }
+        public IReviewRepository ReviewRepository { get; }
 
 
         private readonly AppDbContext _context;
@@ -26,6 +27,7 @@
             OrderRepository = new OrderRepository(_context);
             CartRepository = new CartRepository(_context);
             WishlistRepository = new WishlistRepository(_context);
+            ReviewRepository = new ReviewRepository(_context);
         }
 
         public IGenericRepository<T> GenericRepository<T>() where T : class
