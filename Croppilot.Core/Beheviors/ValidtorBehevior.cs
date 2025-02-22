@@ -21,12 +21,48 @@ namespace Beheviors
 
             if (failures.Any())
             {
-                var errorMessages = failures.Select(f => f.ErrorMessage).ToList();
+                var errorDictionary = new Dictionary<string, object>();
+
+                foreach (var failure in failures)
+                {
+                    if (!string.IsNullOrWhiteSpace(failure.PropertyName))
+                    {
+                        if (errorDictionary.ContainsKey(failure.PropertyName))
+                        {
+                            if (errorDictionary[failure.PropertyName] is List<string> errorList)
+                            {
+                                errorList.Add(failure.ErrorMessage);
+                            }
+                            else
+                            {
+                                errorDictionary[failure.PropertyName] = new List<string>
+                                {
+                                    errorDictionary[failure.PropertyName].ToString(),
+                                    failure.ErrorMessage
+                                };
+                            }
+                        }
+                        else
+                        {
+                            errorDictionary[failure.PropertyName] = failure.ErrorMessage;
+                        }
+                    }
+                    else
+                    {
+                        if (!errorDictionary.ContainsKey("GeneralErrors"))
+                        {
+                            errorDictionary["GeneralErrors"] = new List<string>();
+                        }
+                        ((List<string>)errorDictionary["GeneralErrors"]).Add(failure.ErrorMessage);
+                    }
+                }
+                var validatorNames = validators.Select(v => v.GetType().Name).ToList();
 
                 if (typeof(TResponse).IsGenericType && typeof(TResponse).GetGenericTypeDefinition() == typeof(Response<>))
                 {
                     var responseType = typeof(TResponse).GetGenericArguments()[0]; // Extract T from Response<T>
                     var responseInstance = Activator.CreateInstance(typeof(Response<>).MakeGenericType(responseType), new object?[] { default, "Validation Failed" });
+
 
                     if (responseInstance != null)
                     {
@@ -36,7 +72,11 @@ namespace Beheviors
                         response.Message = failures.Any()
                             ? failures.Select(x => $"{x.PropertyName}: {x.ErrorMessage}").First()
                             : "Validation failed.";
-                        response.Meta = new Dictionary<string, object> { { "errors", errorMessages } };
+                        response.Meta = new Dictionary<string, object>
+                        {
+
+                            { "Errors", errorDictionary  }
+                        };
                         return (TResponse)response;
                     }
                 }
