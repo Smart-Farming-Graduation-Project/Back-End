@@ -19,13 +19,13 @@ namespace Croppilot.Core.Features.Authentication.Commands.Validators
                 .NotEmpty().WithMessage("First name is required.")
                 .MaximumLength(50).WithMessage("First name cannot exceed 50 characters.")
                 .Matches(@"^[a-zA-Z]+$").WithMessage("First name must contain only letters.")
-                .When(x => x.FirstName != null);
+                .When(x => !string.IsNullOrWhiteSpace(x.FirstName));
 
             RuleFor(x => x.LastName)
                 .NotEmpty().WithMessage("Last name is required.")
                 .MaximumLength(50).WithMessage("Last name cannot exceed 50 characters.")
                 .Matches(@"^[a-zA-Z]+$").WithMessage("Last name must contain only letters.")
-                .When(x => x.LastName != null);
+                .When(x => !string.IsNullOrWhiteSpace(x.LastName));
 
             RuleFor(x => x.UserName)
                 .NotEmpty().WithMessage("Username is required.")
@@ -51,13 +51,12 @@ namespace Croppilot.Core.Features.Authentication.Commands.Validators
             RuleFor(x => x.Phone)
                 .NotEmpty().WithMessage("Phone number is required.")
                 .Matches(@"^\d{11}$").WithMessage("Phone number must be exactly 11 digits.")
-                .When(x => x.Phone != null);
-
+                .When(x => !string.IsNullOrWhiteSpace(x.Phone));
 
             RuleFor(x => x.Address)
                 .NotEmpty().WithMessage("Address is required.")
                 .MaximumLength(200).WithMessage("Address cannot exceed 200 characters.")
-                .When(x => x.Address != null);
+                .When(x => !string.IsNullOrWhiteSpace(x.Address));
 
         }
 
