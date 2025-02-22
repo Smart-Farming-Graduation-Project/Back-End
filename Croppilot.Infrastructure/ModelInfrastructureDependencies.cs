@@ -25,6 +25,7 @@ namespace Croppilot.Infrastructure
             service.AddTransient<IOrderRepository, OrderRepository>();
             service.AddTransient<ICartRepository, CartRepository>();
             service.AddTransient<IWishlistRepository, WishlistRepository>();
+            service.AddTransient<IReviewRepository, ReviewRepository>();
 
 
             #region Identity Service

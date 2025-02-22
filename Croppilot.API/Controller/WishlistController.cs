@@ -1,5 +1,4 @@
-﻿using Croppilot.Core.Features.Authentication.Queries.Models;
-using Croppilot.Core.Features.WishLists.Command.Models;
+﻿using Croppilot.Core.Features.WishLists.Command.Models;
 using Croppilot.Core.Features.WishLists.Query.Models;
 
 namespace Croppilot.API.Controller;
@@ -8,7 +7,7 @@ namespace Croppilot.API.Controller;
 [SwaggerResponse(400, "Invalid operation or something is invalid")]
 [SwaggerResponse(401, "User is not authorized to perform this operation")]
 [Authorize(Policy = nameof(UserRoleEnum.User))]
-public class WishlistController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
+public class WishlistController(IMediator mediator)
     : AppControllerBase
 {
     /// <summary>
@@ -20,13 +19,7 @@ public class WishlistController(IMediator mediator, IHttpContextAccessor httpCon
         Description = "**Fetches the wishlist for the authenticated user.**")]
     public async Task<IActionResult> GetWishlist()
     {
-        var username = GetCurrentUserName();
-
-        var userIdResponse = await mediator.Send(new GetCurrentUserIdQuery { UserName = username });
-        if (!userIdResponse.Succeeded)
-            return NewResult(userIdResponse);
-
-        var userId = userIdResponse.Data;
+        var userId = User.GetUserId();
         var response = await mediator.Send(new GetWishlistQuery { UserId = userId! });
         return NewResult(response);
     }
@@ -43,14 +36,9 @@ public class WishlistController(IMediator mediator, IHttpContextAccessor httpCon
             "**Adds a specified product to the user's wishlist.Need ID of the product to add to the wishlist.**")]
     public async Task<IActionResult> AddProductToWishlist([FromRoute] int productId)
     {
-        var username = GetCurrentUserName();
-        var userIdResponse = await mediator.Send(new GetCurrentUserIdQuery { UserName = username });
-        if (!userIdResponse.Succeeded)
-            return NewResult(userIdResponse);
-
         var command = new AddProductToWishlistCommand
         {
-            UserId = userIdResponse.Data!,
+            UserId = User.GetUserId()!,
             ProductId = productId
         };
 
@@ -69,36 +57,13 @@ public class WishlistController(IMediator mediator, IHttpContextAccessor httpCon
             "**Removes the specified product from the user's wishlist.Need the ID of the product to remove from the wishlist.**")]
     public async Task<IActionResult> RemoveProductFromWishlist([FromRoute] int productId)
     {
-        var username = GetCurrentUserName();
-        var userIdResponse = await mediator.Send(new GetCurrentUserIdQuery { UserName = username });
-        if (!userIdResponse.Succeeded)
-            return NewResult(userIdResponse);
-
         var command = new RemoveProductFromWishlistCommand
         {
-            UserId = userIdResponse.Data!,
+            UserId = User.GetUserId()!,
             ProductId = productId
         };
 
         var response = await mediator.Send(command);
         return NewResult(response);
-    }
-
-    /// <summary>
-    /// Retrieves the current user's username from the HTTP context claims.
-    /// </summary>
-    /// <returns>The username of the authenticated user.</returns>
-    /// <exception cref="UnauthorizedAccessException">Thrown if the user is not authenticated.</exception>
-    private string GetCurrentUserName()
-    {
-        var userNameClaim = httpContextAccessor.HttpContext?.User
-            .Claims
-            .FirstOrDefault(c => c.Type == "NameIdentifier")?
-            .Value;
-
-        if (string.IsNullOrWhiteSpace(userNameClaim))
-            throw new UnauthorizedAccessException("User not authenticated");
-
-        return userNameClaim;
     }
 }
