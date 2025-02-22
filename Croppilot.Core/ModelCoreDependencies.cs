@@ -1,4 +1,4 @@
-﻿using Croppilot.Core.Behaviors;
+﻿using Beheviors;
 using Croppilot.Core.RequestExample;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Filters;
