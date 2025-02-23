@@ -10,4 +10,6 @@ public interface IReviewService
 
     Task<OperationResult> UpdateReviewAsync(Review review,
         CancellationToken cancellationToken = default);
+
+    Task<double> GetAverageRatingByProductIdAsync(int productId, CancellationToken cancellationToken = default);
 }

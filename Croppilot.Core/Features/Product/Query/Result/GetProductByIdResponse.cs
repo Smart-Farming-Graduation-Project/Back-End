@@ -7,5 +7,6 @@ public record GetProductByIdResponse(
     string Description,
     decimal Price,
     string Availability,
+    double AverageRating,
     List<string> Images
 );
