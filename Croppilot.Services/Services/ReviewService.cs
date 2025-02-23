@@ -42,4 +42,9 @@ public class ReviewService(IReviewRepository reviewRepository) : IReviewService
         await reviewRepository.UpdateAsync(currentReview, cancellationToken);
         return OperationResult.Success;
     }
+
+    public Task<double> GetAverageRatingByProductIdAsync(int productId, CancellationToken cancellationToken = default)
+    {
+        return reviewRepository.GetAverageRatingByProductIdAsync(productId, cancellationToken);
+    }
 }
