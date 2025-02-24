@@ -16,7 +16,7 @@ public class WishlistService(IWishlistRepository wishlistRepository) : IWishlist
     {
         return await wishlistRepository.GetAsync(
             filter: w => w.UserId == userId,
-            includeProperties: ["WishlistItems.Product"],
+            includeProperties: ["WishlistItems.Product", "WishlistItems.Product.ProductImages"],
             cancellationToken: cancellationToken,
             tracked: true);
     }
