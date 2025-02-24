@@ -18,6 +18,10 @@ public class WishlistQueryMapping : IRegister
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.ProductId, src => src.ProductId)
             .Map(dest => dest.ProductName, src => src.Product.Name)
-            .Map(dest => dest.ProductPrice, src => src.Product.Price);
+            .Map(dest => dest.ProductPrice, src => src.Product.Price)
+            .Map(dest => dest.ProductDescription, src => src.Product.Description)
+            .Map(dest => dest.ProductAvailability, src => src.Product.Availability)
+            .Map(dest => dest.ProductImages, src =>
+                src.Product.ProductImages.Select(i => i.ImageUrl).ToList());
     }
 }

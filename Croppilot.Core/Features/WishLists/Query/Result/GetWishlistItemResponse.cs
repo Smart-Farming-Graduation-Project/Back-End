@@ -4,5 +4,8 @@ public record GetWishlistItemResponse(
     int Id,
     int ProductId,
     string ProductName,
-    decimal ProductPrice
+    string ProductDescription,
+    string ProductAvailability,
+    decimal ProductPrice,
+    List<string> ProductImages
 );
