@@ -14,7 +14,7 @@ public class CartService(ICartRepository cartRepository) : ICartService
     {
         return await cartRepository.GetAsync(
             filter: c => c.UserId == userId,
-            includeProperties: ["CartItems.Product"],
+            includeProperties: ["CartItems.Product", "CartItems.Product.ProductImages"],
             cancellationToken: cancellationToken,
             tracked: true);
     }
