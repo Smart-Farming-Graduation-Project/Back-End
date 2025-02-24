@@ -16,7 +16,7 @@ public class TestController(IProductServices _productServices, IEmailService ema
             return BadRequest("Invalid email data.");
         }
 
-        bool isSuccess = await emailService.SendEmailForTEst(emailSend);
+        bool isSuccess = await emailService.SendEmailAsync(emailSend);
 
         if (isSuccess)
         {
