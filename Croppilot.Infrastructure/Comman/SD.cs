@@ -17,5 +17,6 @@
 
         //Email Templetes 
         public const long ConfirmEmailTemplateId = 6754025;
+        public const long ResetPasswordTemplateId = 6754405;
     }
 }

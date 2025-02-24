@@ -49,17 +49,10 @@ namespace Croppilot.Services.Services
         {
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
             token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            var url = $"{configuration["Jwt:ClientUrl"]}/{configuration["Email:ResetPasswordPath"]}?token={token}&email={user.Email}";
-            var testUrl = $"http://localhost:3000/reset-password?token={token}&email={user.Email}";
+            var url = $"{configuration["JwtSettings:Audience"]}/{configuration["Email:ResetPasswordPath"]}?token={token}&email={user.Email}";
 
-            var body = $"<p>Hello: {user.FirstName} {user.LastName}</p>" +
-                       $"<p>Username: {user.UserName}.</p>" +
-                       "<p>In order to reset your password, please click on the following link.</p>" +
-                       $"<p><a href=\"{testUrl}\">Click here</a></p>" +
-                       "<p>Thank you,</p>" +
-                       $"<br>{configuration["Email:ApplicationName"]}";
-
-            var emailSend = new EmailSendDto(user.Email, "Forgot username or password", body);
+            //var testUrl = $"http://localhost:3000/reset-password?token={token}&email={user.Email}";
+            var emailSend = new EmailSendDto(user.Email, "Forgot username or password", url, user.UserName, SD.ResetPasswordTemplateId);
 
             return await SendEmailAsync(emailSend);
         }
