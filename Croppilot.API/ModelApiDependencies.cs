@@ -65,7 +65,7 @@ public static class ModelApiDependencies
         services.AddWatchDogServices(opt =>
         {
             opt.IsAutoClear = true;
-            opt.ClearTimeSchedule = WatchDogAutoClearScheduleEnum.Weekly;
+            opt.ClearTimeSchedule = WatchDogAutoClearScheduleEnum.Daily;
             opt.SetExternalDbConnString = configuration.GetConnectionString("WatchDog");
             opt.DbDriverOption = WatchDogDbDriverEnum.MSSQL;
         });
