@@ -1,5 +1,6 @@
 ﻿using Croppilot.Date.DTOS;
 using Croppilot.Date.Identity;
+using Croppilot.Infrastructure.Comman;
 using Mailjet.Client;
 using Mailjet.Client.TransactionalEmails;
 using Microsoft.AspNetCore.Identity;
@@ -18,36 +19,28 @@ namespace Croppilot.Services.Services
             var email = new TransactionalEmailBuilder()
                 .WithFrom(new SendContact(configuration["Email:From"], configuration["Email:ApplicationName"]))
                 .WithSubject(emailSend.Subject)
-                .WithHtmlPart(emailSend.Body)
                 .WithTo(new SendContact(emailSend.To))
-                .Build();
-
-            var response = await client.SendTransactionalEmailAsync(email);
-            if (response.Messages != null)
-            {
-                if (response.Messages[0].Status == "success")
+                .WithVariables(new Dictionary<string, object>
                 {
-                    return true;
-                }
-            }
+                    { "username", emailSend.UserName },
+                    { "confirmation_link", emailSend.Url }
 
-            return false;
+                })
+                .WithTemplateId(emailSend.TemplateId)
+                .Build();
+            var response = await client.SendTransactionalEmailAsync(email);
+            return response.Messages != null && response.Messages[0].Status == "success";
         }
 
 
         public async Task<bool> SendConfirmEMailAsync(ApplicationUser user)
         {
+
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
             token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            //   var url = $"{configuration["Jwt:ClientUrl"]}/{configuration["Email:ConfirmEmailPath"]}?token={token}&email={user.Email}";
-            var testUrl = $"http://localhost:3000/confirm-email?token={token}&email={user.Email}";
-            var body = $"<p>Hello: {user.FirstName} {user.LastName}</p>" +
-                       "<p>Please confirm your email address by clicking on the following link.</p>" +
-                       $"<p><a href=\"{testUrl}\">Click here</a></p>" +
-                       "<p>Thank you,</p>" +
-                       $"<br>{configuration["Email:ApplicationName"]}";
-
-            var emailSend = new EmailSendDto(user.Email, "Confirm your email", body);
+            var url = $"{configuration["JwtSettings:Audience"]}/{configuration["Email:ConfirmEmailPath"]}?token={token}&email={user.Email}";
+            //var testUrl = $"http://localhost:3000/confirm-email?token={token}&email={user.Email}";
+            var emailSend = new EmailSendDto(user.Email, "Confirm your email", url, user.UserName, SD.ConfirmEmailTemplateId);
 
             return await SendEmailAsync(emailSend);
         }
@@ -113,6 +106,29 @@ namespace Croppilot.Services.Services
 
             return "Failed";
         }
+        public async Task<bool> SendEmailForTEst(EmailSendDto emailSend)
+        {
 
+            MailjetClient client = new MailjetClient(configuration["MailJet:ApiKey"], configuration["MailJet:SecretKey"]);
+            ApplicationUser? user = await userManager.FindByEmailAsync(emailSend.To).ConfigureAwait(false);
+            var testUrl = $"http://localhost:3000/confirm-email?token={user.Address}&email={user.Email}";
+
+            var email = new TransactionalEmailBuilder()
+                .WithFrom(new SendContact(configuration["Email:From"], configuration["Email:ApplicationName"]))
+                .WithSubject(emailSend.Subject)
+                .WithTo(new SendContact(emailSend.To))
+                .WithVariables(new Dictionary<string, object>
+                {
+                    { "username", user.UserName },
+                    { "confirmation_link", testUrl }
+
+                })
+                .WithTemplateId(6754025)
+                .Build();
+
+            var response = await client.SendTransactionalEmailAsync(email);
+            return response.Messages != null && response.Messages[0].Status == "success";
+
+        }
     }
 }

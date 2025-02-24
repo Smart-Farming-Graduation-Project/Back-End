@@ -14,5 +14,8 @@
         //External Provider
         public const string Facebook = "facebook";
         public const string Google = "google";
+
+        //Email Templetes 
+        public const long ConfirmEmailTemplateId = 6754025;
     }
 }

@@ -10,5 +10,7 @@ namespace Croppilot.Services.Abstract
         Task<bool> SendForgotUsernameOrPasswordEmail(ApplicationUser user);
         Task<string> SendCodeResetPassword(string Email);
         Task<string> ResetPasswordUsingOTP(string code, string email);
+
+        Task<bool> SendEmailForTEst(EmailSendDto emailSend);
     }
 }
