@@ -18,6 +18,7 @@ public class ReviewRepository(AppDbContext context) : GenericRepository<Review>(
             .Select(r => r.Rating)
             .ToListAsync(cancellationToken);
 
-        return ratings.Average();
+
+        return ratings.Count != 0 ? ratings.Average() : 5;
     }
 }
