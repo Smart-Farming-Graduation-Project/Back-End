@@ -17,6 +17,8 @@ public class ReviewQueryHandler(IReviewService reviewService) : ResponseHandler,
         {
             ReviewID = r.ReviewID,
             UserID = r.UserID,
+            FirstName = r.User.FirstName,
+            LastName = r.User.LastName,
             Headline = r.Headline,
             Rating = r.Rating,
             ReviewText = r.ReviewText,

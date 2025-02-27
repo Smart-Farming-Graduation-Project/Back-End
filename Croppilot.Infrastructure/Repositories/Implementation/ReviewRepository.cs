@@ -6,7 +6,7 @@ public class ReviewRepository(AppDbContext context) : GenericRepository<Review>(
         CancellationToken cancellationToken = default)
     {
         return await _context.Set<Review>()
-            .Where(r => r.ProductID == productId)
+            .Where(r => r.ProductID == productId).Include(r => r.User)
             .ToListAsync(cancellationToken);
     }
 
