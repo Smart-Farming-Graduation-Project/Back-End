@@ -6,7 +6,7 @@ using Croppilot.Services.Abstract;
 
 namespace Croppilot.Core.Features.Product.Query.Handlers;
 
-public class ProductHandlers(IProductServices productServices)
+public class ProductHandlers(IProductServices productServices, IReviewService reviewService)
     : ResponseHandler,
         IRequestHandler<GetAllProductQuery, Response<List<GetAllProductResponse>>>,
         IRequestHandler<GetProductByIdQuery, Response<GetProductByIdResponse>>,
@@ -29,13 +29,17 @@ public class ProductHandlers(IProductServices productServices)
     public async Task<Response<GetProductByIdResponse>> Handle(GetProductByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var product = await productServices.GetByIdAsync(request.Id, includeProperties:["Category", "ProductImages"],
+        var product = await productServices.GetByIdAsync(request.Id, includeProperties: ["Category", "ProductImages"],
             cancellationToken: cancellationToken);
 
         if (product is null)
             return NotFound<GetProductByIdResponse>("This Product Is Not Found");
 
         var productResult = product.Adapt<GetProductByIdResponse>();
+        productResult = productResult with
+        {
+            AverageRating = await reviewService.GetAverageRatingByProductIdAsync(product.Id, cancellationToken)
+        };
 
         return Success(productResult);
     }

@@ -16,17 +16,14 @@ namespace Croppilot.API.Controller;
 public class CartController : AppControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CartController"/> class.
     /// </summary>
     /// <param name="mediator">The MediatR mediator instance used to send commands and queries.</param>
-    /// <param name="httpContextAccessor">Provides access to the current HTTP context.</param>
-    public CartController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
+    public CartController(IMediator mediator)
     {
         _mediator = mediator;
-        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
@@ -38,13 +35,7 @@ public class CartController : AppControllerBase
         Description = "**Fetches the shopping cart for the authenticated user.**")]
     public async Task<IActionResult> GetCart()
     {
-        var username = GetCurrentUserName();
-
-        var userIdResponse = await _mediator.Send(new GetCurrentUserIdQuery { UserName = username });
-        if (!userIdResponse.Succeeded)
-            return NewResult(userIdResponse);
-
-        var userId = userIdResponse.Data;
+        var userId = User.GetUserId();
         var response = await _mediator.Send(new GetCartQuery { UserId = userId! });
         return NewResult(response);
     }
@@ -62,15 +53,9 @@ public class CartController : AppControllerBase
             "**Adds a specified product to the authenticated user's shopping cart. Provide the product ID and optionally specify the quantity (default is 1).**")]
     public async Task<IActionResult> AddProductToCart([FromRoute] int productId, [FromQuery] int quantity = 1)
     {
-        var username = GetCurrentUserName();
-
-        var userIdResponse = await _mediator.Send(new GetCurrentUserIdQuery { UserName = username });
-        if (!userIdResponse.Succeeded)
-            return NewResult(userIdResponse);
-
         var command = new AddProductToCartCommand
         {
-            UserId = userIdResponse.Data!,
+            UserId = User.GetUserId()!,
             ProductId = productId,
             Quantity = quantity
         };
@@ -90,37 +75,13 @@ public class CartController : AppControllerBase
             "**Removes the specified product from the user's shopping cart.Need the The ID of the product to remove from the cart.**")]
     public async Task<IActionResult> RemoveProductFromCart([FromRoute] int productId)
     {
-        var username = GetCurrentUserName();
-
-        var userIdResponse = await _mediator.Send(new GetCurrentUserIdQuery { UserName = username });
-        if (!userIdResponse.Succeeded)
-            return NewResult(userIdResponse);
-
         var command = new RemoveProductFromCartCommand
         {
-            UserId = userIdResponse.Data!,
+            UserId = User.GetUserId()!,
             ProductId = productId
         };
 
         var response = await _mediator.Send(command);
         return NewResult(response);
-    }
-
-    /// <summary>
-    /// Retrieves the current user's username from the HTTP context claims.
-    /// </summary>
-    /// <returns>The username of the authenticated user.</returns>
-    /// <exception cref="UnauthorizedAccessException">Thrown if the user is not authenticated.</exception>
-    private string GetCurrentUserName()
-    {
-        var userNameClaim = _httpContextAccessor.HttpContext?.User
-            .Claims
-            .FirstOrDefault(c => c.Type == "NameIdentifier")?
-            .Value;
-
-        if (string.IsNullOrWhiteSpace(userNameClaim))
-            throw new UnauthorizedAccessException("User not authenticated");
-
-        return userNameClaim;
     }
 }

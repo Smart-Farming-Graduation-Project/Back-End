@@ -1,5 +1,7 @@
-﻿using Croppilot.Core.Beheviors;
+﻿using Beheviors;
+using Croppilot.Core.RequestExample;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 
 
@@ -11,15 +13,16 @@ public static class ModelCoreDependencies
     {
         service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         service.AddFluentValidationServices().AddMapsterServices();
-
+        service.AddSwaggerExamplesFromAssemblyOf<RegisterRequestExample>();
         return service;
     }
 
     private static IServiceCollection AddFluentValidationServices(this IServiceCollection service)
     {
         service.AddValidatorsFromAssemblies([Assembly.GetExecutingAssembly()]);
-        //service.AddFluentValidationAutoValidation();
-        service.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidtorBehevior<,>));
+        //  service.AddFluentValidationAutoValidation();
+        service.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+
 
         return service;
     }
@@ -33,11 +36,4 @@ public static class ModelCoreDependencies
         return service;
     }
 
-    //private static IServiceCollection AddGlobalExceptionHandlingServices(this IServiceCollection service)
-    //{
-    //      service.AddExceptionHandler<GlobalExceptionHandlerMiddleware>();
-    //    service.AddProblemDetails();
-
-    //    return service;
-    //}
 }

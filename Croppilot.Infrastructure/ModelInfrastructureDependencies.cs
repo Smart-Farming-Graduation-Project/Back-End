@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 namespace Croppilot.Infrastructure
@@ -24,6 +25,8 @@ namespace Croppilot.Infrastructure
             service.AddTransient<IOrderRepository, OrderRepository>();
             service.AddTransient<ICartRepository, CartRepository>();
             service.AddTransient<IWishlistRepository, WishlistRepository>();
+            service.AddTransient<IReviewRepository, ReviewRepository>();
+
 
             #region Identity Service
 
@@ -100,11 +103,11 @@ namespace Croppilot.Infrastructure
                 {
                     Title = "Croppilot API",
                     Version = "v1",
-                    Description = "**API Documentation for Croppilot Authentication**"
+                    Description = "**API Documentation for Croppilot**"
                 });
                 // Enable annotations for Swagger
                 options.EnableAnnotations();
-
+                options.ExampleFilters();
 
 
 

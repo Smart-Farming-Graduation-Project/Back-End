@@ -46,7 +46,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
         Description =
             "**Fetches a paginated list of products based on query parameters." +
             "Frontend: Supply pagination parameters (e.g., page number, page size) via query parameters**")]
-    public async Task<IActionResult> Paginated(GetProductPaginatedQuery query)
+    public async Task<IActionResult> Paginated([FromQuery] GetProductPaginatedQuery query)
     {
         var response = await mediator.Send(query);
         return Ok(response);

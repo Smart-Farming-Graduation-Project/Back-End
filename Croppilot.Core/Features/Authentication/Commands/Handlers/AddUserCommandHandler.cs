@@ -14,35 +14,6 @@ public class AddUserCommandHandler(
 {
     public async Task<Response<string>> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        //// Check if email is already in use
-        //if (await userService.GetUserByEmail(request.Email) is not null)
-        //{
-        //    var errors = new List<Error>
-        //    {
-        //        new Error
-        //        {
-        //            Code = "UniqueEmail",
-        //            Message = "Email must be unique",
-        //            Field = "Email"
-        //        }
-        //    };
-        //    return BadRequest<string>(errors, "Validation error");
-        //}
-
-        // Check if username is already in use
-        //if (await userService.GetUserByUserName(request.UserName) is not null)
-        //{
-        //    var errors = new List<Error>
-        //    {
-        //        new Error
-        //        {
-        //            Code = "UniqueUserName",
-        //            Message = "UserName must be unique",
-        //            Field = "UserName"
-        //        }
-        //    };
-        //    return BadRequest<string>(errors, "Validation error");
-        //}
 
         var user = request.Adapt<ApplicationUser>();
 

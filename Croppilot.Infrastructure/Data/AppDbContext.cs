@@ -19,6 +19,7 @@ namespace Croppilot.Infrastructure.Data
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<WishlistItem> WishlistItems { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,6 +35,7 @@ namespace Croppilot.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new CartItemConfiguration());
             modelBuilder.ApplyConfiguration(new WishlistConfiguration());
             modelBuilder.ApplyConfiguration(new WishlistItemConfiguration());
+            modelBuilder.ApplyConfiguration(new ReviewConfiguration());
 
         }
     }
