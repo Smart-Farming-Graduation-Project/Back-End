@@ -24,185 +24,185 @@ namespace Croppilot.API.Controller;
 [SwaggerResponse(400, "Invalid operation or something is invalid")]
 public class AuthenticationController(IMediator mediator) : AppControllerBase
 {
-    /// <summary>
-    /// Registers a new user.
-    /// Frontend: Provide user details (first name, last name, username, email, password, etc.). 
-    /// If errors occur (e.g., duplicate email), the response 'Errors' list will contain the problematic field (e.g., "Email").
-    /// </summary>
-    [HttpPost("Register")]
-    [SwaggerOperation(
-        Summary = "Registers a new user",
-        Description = "**Creates a new user account with the provided details.**")]
-    public async Task<IActionResult> Register(AddUserCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Registers a new user.
+	/// Frontend: Provide user details (first name, last name, username, email, password, etc.). 
+	/// If errors occur (e.g., duplicate email), the response 'Errors' list will contain the problematic field (e.g., "Email").
+	/// </summary>
+	[HttpPost("Register")]
+	[SwaggerOperation(
+		Summary = "Registers a new user",
+		Description = "**Creates a new user account with the provided details.**")]
+	public async Task<IActionResult> Register(AddUserCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Logs in a user.
-    /// Frontend: Supply username/email and password.
-    /// On failure (e.g., invalid credentials or unconfirmed email), check the 'Errors' for details.
-    /// </summary>
-    [HttpPost("SignIn")]
-    [SwaggerOperation(
-        Summary = "Log in a user",
-        Description = "**Authenticates a user and returns an access token.**")]
-    public async Task<IActionResult> SignIn(SignInCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Logs in a user.
+	/// Frontend: Supply username/email and password.
+	/// On failure (e.g., invalid credentials or unconfirmed email), check the 'Errors' for details.
+	/// </summary>
+	[HttpPost("SignIn")]
+	[SwaggerOperation(
+		Summary = "Log in a user",
+		Description = "**Authenticates a user and returns an access token.**")]
+	public async Task<IActionResult> SignIn(SignInCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Refreshes the authentication token.
-    /// Frontend: Provide the current refresh token along with the username.
-    /// On failure, the error will indicate issues with the "RefreshToken" field.
-    /// </summary>
-    [HttpPost("RefreshToken")]
-    [SwaggerOperation(
-        Summary = "Refreshes the authentication token",
-        Description = "**Generates a new access token using a refresh token.**")]
-    public async Task<IActionResult> RefreshToken(RefreshTokenCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Refreshes the authentication token.
+	/// Frontend: Provide the current refresh token along with the username.
+	/// On failure, the error will indicate issues with the "RefreshToken" field.
+	/// </summary>
+	[HttpPost("RefreshToken")]
+	[SwaggerOperation(
+		Summary = "Refreshes the authentication token",
+		Description = "**Generates a new access token using a refresh token.**")]
+	public async Task<IActionResult> RefreshToken(RefreshTokenCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Revokes a refresh token.
-    /// Frontend: Provide the refresh token to be revoked.
-    /// On failure, check the 'Errors' for issues with the "RefreshToken" field.
-    /// </summary>
-    [HttpPost("RevokeToken")]
-    [SwaggerOperation(
-        Summary = "Revokes a refresh token",
-        Description = "**Invalidates a user's refresh token to prevent further use.**")]
-    public async Task<IActionResult> RevokeToken(RevokeRefreshTokenCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Revokes a refresh token.
+	/// Frontend: Provide the refresh token to be revoked.
+	/// On failure, check the 'Errors' for issues with the "RefreshToken" field.
+	/// </summary>
+	[HttpPost("RevokeToken")]
+	[SwaggerOperation(
+		Summary = "Revokes a refresh token",
+		Description = "**Invalidates a user's refresh token to prevent further use.**")]
+	public async Task<IActionResult> RevokeToken(RevokeRefreshTokenCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Confirms a user's email address.
-    /// Frontend: Pass the confirmation token and email.
-    /// On failure, errors may include issues with the "Email" or "Token" fields.
-    /// </summary>
-    [HttpPut("confirm-email")]
-    [SwaggerOperation(
-        Summary = "Confirms a user's email",
-        Description = "**Verifies the user's email using a confirmation token.**")]
-    public async Task<IActionResult> ConfirmEmail(ConfirmEmailCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Confirms a user's email address.
+	/// Frontend: Pass the confirmation token and email.
+	/// On failure, errors may include issues with the "Email" or "Token" fields.
+	/// </summary>
+	[HttpPut("confirm-email")]
+	[SwaggerOperation(
+		Summary = "Confirms a user's email",
+		Description = "**Verifies the user's email using a confirmation token.**")]
+	public async Task<IActionResult> ConfirmEmail(ConfirmEmailCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Resends the email confirmation link.
-    /// Frontend: Supply the email address. 
-    /// If errors occur (e.g., email not registered or already confirmed), the 'Errors' list will detail the issue.
-    /// </summary>
-    [HttpPost("resend-email-confirmation-link")]
-    [SwaggerOperation(
-        Summary = "Resends the email confirmation link",
-        Description = "**Sends a new confirmation email to the user.**")]
-    public async Task<IActionResult> ResendEmailConfirmationLink(ResendConfirmEmailCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Resends the email confirmation link.
+	/// Frontend: Supply the email address. 
+	/// If errors occur (e.g., email not registered or already confirmed), the 'Errors' list will detail the issue.
+	/// </summary>
+	[HttpPost("resend-email-confirmation-link")]
+	[SwaggerOperation(
+		Summary = "Resends the email confirmation link",
+		Description = "**Sends a new confirmation email to the user.**")]
+	public async Task<IActionResult> ResendEmailConfirmationLink(ResendConfirmEmailCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Initiates recovery for a forgotten username or password.
-    /// Frontend: Provide the registered email.
-    /// On failure, errors may specify issues with the "Email" field.
-    /// </summary>
-    [HttpPost("forgot-username-or-password")]
-    [SwaggerOperation(
-        Summary = "Initiates password or username recovery",
-        Description = "**Sends an email to reset the password or retrieve the username.**")]
-    public async Task<IActionResult> ForgotUsernameOrPassword(ForgetPasswordCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Initiates recovery for a forgotten username or password.
+	/// Frontend: Provide the registered email.
+	/// On failure, errors may specify issues with the "Email" field.
+	/// </summary>
+	[HttpPost("forgot-username-or-password")]
+	[SwaggerOperation(
+		Summary = "Initiates password or username recovery",
+		Description = "**Sends an email to reset the password or retrieve the username.**")]
+	public async Task<IActionResult> ForgotUsernameOrPassword(ForgetPasswordCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Resets the user's password using a token.
-    /// Frontend: Provide the token (usually from an email link), email, new password, and confirm password.
-    /// On failure, errors may include issues with the "Token" or "Email" fields.
-    /// </summary>
-    [HttpPut("reset-password")]
-    [SwaggerOperation(
-        Summary = "Resets the user password",
-        Description = "**Allows a user to reset their password using a token.**")]
-    public async Task<IActionResult> ResetPassword(ResetPasswordCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Resets the user's password using a token.
+	/// Frontend: Provide the token (usually from an email link), email, new password, and confirm password.
+	/// On failure, errors may include issues with the "Token" or "Email" fields.
+	/// </summary>
+	[HttpPut("reset-password")]
+	[SwaggerOperation(
+		Summary = "Resets the user password",
+		Description = "**Allows a user to reset their password using a token.**")]
+	public async Task<IActionResult> ResetPassword(ResetPasswordCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Changes the password for a logged-in user.
-    /// Frontend: Provide the user Id, current password, new password, and confirm password.
-    /// On failure, errors may point to the "Password" field (e.g., if current password is incorrect).
-    /// </summary>
-    [HttpPut("ChangePassword")]
-    [SwaggerOperation(
-        Summary = "Changes the user's password",
-        Description = "**Allows a logged-in user to change their password.**")]
-    public async Task<IActionResult> ChangePassword(ChangeUserPasswordCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Changes the password for a logged-in user.
+	/// Frontend: Provide the user Id, current password, new password, and confirm password.
+	/// On failure, errors may point to the "Password" field (e.g., if current password is incorrect).
+	/// </summary>
+	[HttpPut("ChangePassword")]
+	[SwaggerOperation(
+		Summary = "Changes the user's password",
+		Description = "**Allows a logged-in user to change their password.**")]
+	public async Task<IActionResult> ChangePassword(ChangeUserPasswordCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Initiates recovery using a One-Time Password (OTP).
-    /// Frontend: Provide the registered email. An OTP code will be sent to the email.
-    /// On failure, errors will detail issues with the "Email" field.
-    /// </summary>
-    [HttpPost("forgot-username-or-password-using-OTP")]
-    [SwaggerOperation(
-        Summary = "Initiates recovery using OTP",
-        Description = "**Sends a One-Time Password (OTP) for recovery.**")]
-    public async Task<IActionResult> ForgotUsernameOrPasswordUsingOtpCode(ForgetPasswordUsingOTPCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Initiates recovery using a One-Time Password (OTP).
+	/// Frontend: Provide the registered email. An OTP code will be sent to the email.
+	/// On failure, errors will detail issues with the "Email" field.
+	/// </summary>
+	[HttpPost("forgot-username-or-password-using-OTP")]
+	[SwaggerOperation(
+		Summary = "Initiates recovery using OTP",
+		Description = "**Sends a One-Time Password (OTP) for recovery.**")]
+	public async Task<IActionResult> ForgotUsernameOrPasswordUsingOtpCode(ForgetPasswordUsingOTPCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Resets the password using an OTP code.
-    /// Frontend: Provide the OTP code and the registered email.
-    /// On failure, errors will include issues with the "Code" or "Email" fields.
-    /// </summary>
-    [HttpPost("reset-password-otp")]
-    [SwaggerOperation(
-        Summary = "Resets password using OTP",
-        Description = "**Allows a user to reset their password using an OTP.**")]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordUsingOTPQuery query)
-    {
-        return NewResult(await mediator.Send(query));
-    }
+	/// <summary>
+	/// Resets the password using an OTP code.
+	/// Frontend: Provide the OTP code and the registered email.
+	/// On failure, errors will include issues with the "Code" or "Email" fields.
+	/// </summary>
+	[HttpPost("reset-password-otp")]
+	[SwaggerOperation(
+		Summary = "Resets password using OTP",
+		Description = "**Allows a user to reset their password using an OTP.**")]
+	public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordUsingOTPQuery query)
+	{
+		return NewResult(await mediator.Send(query));
+	}
 
-    /// <summary>
-    /// Registers a new user using a third-party authentication provider (e.g., Google or Facebook).
-    /// Frontend: Provide first name, last name, access token, and provider.
-    /// On failure, errors may include issues with the "Email" or "AccessToken" fields.
-    /// </summary>
-    [HttpPost("register-with-third-party")]
-    [SwaggerOperation(
-        Summary = "Registers using a third-party provider",
-        Description = "**Creates a user account using external authentication providers like Google or Facebook.**")]
-    public async Task<IActionResult> RegisterWithThirdParty(RegisterWithExternalCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Registers a new user using a third-party authentication provider (e.g., Google or Facebook).
+	/// Frontend: Provide first name, last name, access token, and provider.
+	/// On failure, errors may include issues with the "Email" or "AccessToken" fields.
+	/// </summary>
+	[HttpPost("register-with-third-party")]
+	[SwaggerOperation(
+		Summary = "Registers using a third-party provider",
+		Description = "**Creates a user account using external authentication providers like Google or Facebook.**")]
+	public async Task<IActionResult> RegisterWithThirdParty(RegisterWithExternalCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 
-    /// <summary>
-    /// Logs in a user using a third-party authentication provider.
-    /// Frontend: Provide access token and provider.
-    /// On failure, errors may include issues with the "AccessToken" field.
-    /// </summary>
-    [HttpPost("login-with-third-party")]
-    [SwaggerOperation(
-        Summary = "Logs in using a third-party provider",
-        Description = "**Authenticates a user using external authentication providers like Google or Facebook.**")]
-    public async Task<IActionResult> LoginWithThirdParty(LoginWithExternalCommand command)
-    {
-        return NewResult(await mediator.Send(command));
-    }
+	/// <summary>
+	/// Logs in a user using a third-party authentication provider.
+	/// Frontend: Provide access token and provider.
+	/// On failure, errors may include issues with the "AccessToken" field.
+	/// </summary>
+	[HttpPost("login-with-third-party")]
+	[SwaggerOperation(
+		Summary = "Logs in using a third-party provider",
+		Description = "**Authenticates a user using external authentication providers like Google or Facebook.**")]
+	public async Task<IActionResult> LoginWithThirdParty(LoginWithExternalCommand command)
+	{
+		return NewResult(await mediator.Send(command));
+	}
 }
