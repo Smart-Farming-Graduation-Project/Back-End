@@ -15,5 +15,6 @@ namespace Croppilot.Date.Identity
 		public ApplicationUser User { get; set; } = null!;
 		[ForeignKey(nameof(User))]
 		public string UserId { get; set; } = null!;
+		public string JwtTokenId { get; set; } = null!;
 	}
 }
