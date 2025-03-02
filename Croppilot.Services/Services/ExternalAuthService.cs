@@ -1,67 +1,77 @@
 ﻿using Croppilot.Date.DTOS;
 using Croppilot.Date.Identity;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using RestSharp;
-using System.Text.Json;
+using System.Net.Http.Json;
 
 namespace Croppilot.Services.Services
 {
-    public class ExternalAuthService(HttpClient httpClient, IConfiguration config, UserManager<ApplicationUser?> userManager) : IExternalAuthService
+    public class ExternalAuthService : IExternalAuthService
     {
-        private readonly HttpClient _httpClient = httpClient;
-        private readonly IConfiguration _config = config;
-
-
-
-        public async Task<ExternalAuthUserDTO?> VerifyFacebookToken(string token)
+        private readonly IConfiguration _config;
+        private readonly HttpClient _facebookHttpClient;
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ExternalAuthService(UserManager<ApplicationUser> userManager, IConfiguration config)
         {
-            var client = new RestClient($"https://graph.facebook.com/me?fields=id,email,name&access_token={token}");
-            var request = new RestRequest();
-            var response = await client.ExecuteGetAsync(request);
-
-            if (!response.IsSuccessful || string.IsNullOrEmpty(response.Content))
-                return null;
-
-            var facebookUser = JsonSerializer.Deserialize<ExternalAuthUserDTO>(response.Content, new JsonSerializerOptions
+            _config = config;
+            _userManager = userManager;
+            _facebookHttpClient = new HttpClient
             {
-                PropertyNameCaseInsensitive = true
-            });
-            //return new ExternalAuthUserDTO
-            //{
-            //    Email = facebookUser.GetProperty("email").GetString(),
-            //    FirstName = facebookUser.GetProperty("first_name").GetString(),
-            //    LastName = facebookUser.GetProperty("last_name").GetString()
-            //};
+                BaseAddress = new Uri("https://graph.facebook.com")
+            };
+        }
 
-            return facebookUser;
+        public async Task<bool> FacebookValidatedAsync(string accessToken, string userId)
+        {
+            var facebookKeys = _config["Facebook:AppId"] + "|" + _config["Facebook:AppSecret"];
+            var fbResult = await _facebookHttpClient.GetFromJsonAsync<FacebookResultDto>($"debug_token?input_token={accessToken}&access_token={facebookKeys}");
+
+            if (fbResult == null || fbResult.Data.Is_Valid == false || !fbResult.Data.User_Id.Equals(userId))
+            {
+                return false;
+            }
+
+            return true;
         }
 
 
-        public async Task<ExternalAuthUserDTO?> VerifyGoogleTokenAsync(string token)
+
+        public async Task<bool> GoogleValidatedAsync(string accessToken, string userId)
         {
-            var client = new RestClient($"https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={token}");
-            var request = new RestRequest();
-            var response = await client.ExecuteGetAsync(request);
+            var payload = await GoogleJsonWebSignature.ValidateAsync(accessToken);
 
-            if (!response.IsSuccessful || string.IsNullOrEmpty(response.Content))
-                return null;
-
-            var googleUser = JsonSerializer.Deserialize<ExternalAuthUserDTO>(response.Content, new JsonSerializerOptions
+            if (!payload.Audience.Equals(_config["Google:ClientId"]))
             {
-                PropertyNameCaseInsensitive = true
-            });
-            //return new ExternalAuthUserDTO
-            //{
-            //    Email = googleUser.GetProperty("email").GetString(),
-            //    FirstName = googleUser.GetProperty("given_name").GetString(),
-            //    LastName = googleUser.GetProperty("family_name").GetString()
-            //   UserName = Email.Split('@')[0] // Extracts the username from email
-            //};
+                return false;
+            }
 
-            return googleUser;
+            if (!payload.Issuer.Equals("accounts.google.com") && !payload.Issuer.Equals("https://accounts.google.com"))
+            {
+                return false;
+            }
+
+            if (payload.ExpirationTimeSeconds == null)
+            {
+                return false;
+            }
+
+            DateTime now = DateTime.Now.ToUniversalTime();
+            DateTime expiration = DateTimeOffset.FromUnixTimeSeconds((long)payload.ExpirationTimeSeconds).DateTime;
+            if (now > expiration)
+            {
+                return false;
+            }
+
+            if (!payload.Subject.Equals(userId))
+            {
+                return false;
+            }
+
+            return true;
         }
+
 
         public async Task<bool?> GetUserByProviderAsync(string userId, string provider)
         {
@@ -78,12 +88,12 @@ namespace Croppilot.Services.Services
 
         public async Task<ApplicationUser?> GetUserById(string UserId)
         {
-            return await userManager.FindByNameAsync(UserId);
+            return await _userManager.FindByNameAsync(UserId);
         }
 
         public async Task<IdentityResult?> CreateUser(ApplicationUser user)
         {
-            var result = await userManager.CreateAsync(user);
+            var result = await _userManager.CreateAsync(user);
             return result;
         }
     }
