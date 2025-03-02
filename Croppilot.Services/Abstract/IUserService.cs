@@ -15,5 +15,7 @@ namespace Croppilot.Services.Abstract
 		Task<IdentityResult> ChangeUserRole(ApplicationUser user, string roleName, string newRoleName);
 		Task<List<ApplicationUser>> GetUsersAssignedToRole(string roleName);
 		Task<IdentityResult> RemoveUserRoleAsync(ApplicationUser user, string roleName);
+		Task<bool> IsUniqueUserName(string userName);
+		Task<bool> IsUniqueEmail(string email);
 	}
 }
