@@ -73,16 +73,12 @@ namespace Croppilot.Services.Services
         }
 
 
-        public async Task<bool?> GetUserByProviderAsync(string userId, string provider)
+        public async Task<ApplicationUser?> GetUserByProviderAsync(string userId, string provider)
         {
-            var user = await userManager.Users
+            var user = await _userManager.Users
                 .FirstOrDefaultAsync(x => x.UserName == userId && x.Provider == provider);
 
-            if (user == null)
-            {
-                return false;
-            }
-            return true;
+            return user;
 
         }
 

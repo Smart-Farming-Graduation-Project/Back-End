@@ -8,7 +8,6 @@ namespace Croppilot.Core.Features.Authentication.Commands.Handlers;
 public class AddUserCommandHandler(
     IAuthenticationService service,
     IEmailService emailService,
-    IUserService userService,
     IAuthorizationService authorizationService)
     : ResponseHandler, IRequestHandler<AddUserCommand, Response<string>>
 {

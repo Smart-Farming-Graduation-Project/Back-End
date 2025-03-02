@@ -6,57 +6,68 @@ namespace Croppilot.Core.Features.Authentication.Commands.Handlers;
 
 public class RegisterWithExternalHandlers(
     IExternalAuthService externalAuth,
-    IUserService userService,
-    IAuthenticationService authenticationService,
     IAuthorizationService authorizationService)
     : ResponseHandler, IRequestHandler<RegisterWithExternalCommand, Response<string>>
 {
     public async Task<Response<string>> Handle(RegisterWithExternalCommand request,
         CancellationToken cancellationToken)
     {
-        try
+        if (request.Provider.Equals(SD.Facebook))
         {
-            // Step 1: Validate external token and retrieve user info
-            var externalUser = request.Provider switch
+            try
             {
-                SD.Facebook => await externalAuth.VerifyFacebookToken(request.AccessToken),
-                SD.Google => await externalAuth.VerifyGoogleTokenAsync(request.AccessToken),
-                _ => throw new ArgumentException("Invalid provider")
-            };
-            if (externalUser == null)
-            {
-                return Unauthorized<string>($"Unable to authenticate with {request.Provider}");
+                if (!externalAuth.FacebookValidatedAsync(request.AccessToken, request.UserId).GetAwaiter().GetResult())
+                {
+                    return Unauthorized<string>("Unable to register with facebook");
+                }
             }
-            // Step 2: Check if the user already exists
-            var existingUser = await userService.GetUserByEmail(externalUser.Email);
-            if (existingUser is not null)
+            catch (Exception)
             {
-                return BadRequest<string>($"{externalUser.Name} Is Already Exit");
+                return Unauthorized<string>("Unable to register with facebook");
             }
-            var userToAdd = new ApplicationUser()
-            {
-                FirstName = request.FirstName.ToLower(),
-                LastName = request.LastName.ToLower(),
-                UserName = request.FirstName + request.LastName,
-                Provider = request.Provider,
-                Email = existingUser.Email,
-                EmailConfirmed = true
-            };
-            var result = await externalAuth.CreateUser(userToAdd);
-            if (!result.Succeeded)
-            {
-                return BadRequest<string>(result.Errors.FirstOrDefault()?.Description);
-            }
-
-            // Assign role
-            await authorizationService.AssignRolesToUser(userToAdd, [SD.UserRole]);
-
-            return Created("User Added successfully", "Your account has been created");
         }
-        catch (Exception ex)
+        else if (request.Provider.Equals(SD.Google))
         {
-            return InternalError<string>($"An error occurred: {ex.Message}");
-
+            try
+            {
+                if (!externalAuth.GoogleValidatedAsync(request.AccessToken, request.UserId).GetAwaiter().GetResult())
+                {
+                    return Unauthorized<string>("Unable to register with google");
+                }
+            }
+            catch (Exception)
+            {
+                return Unauthorized<string>("Unable to register with google");
+            }
         }
+        else
+        {
+            return BadRequest<string>("Invalid provider");
+        }
+        var user = await externalAuth.GetUserByProviderAsync(request.UserId, request.Provider);
+
+        if (user != null) return BadRequest<string>(
+            $"You have an account already. Please login with your {request.Provider}");
+        var userToAdd = new ApplicationUser()
+        {
+            FirstName = request.FirstName.ToLower(),
+            LastName = request.LastName.ToLower(),
+            UserName = request.UserId,
+            Provider = request.Provider,
+            Email = request.Email,
+            Address = request.Address,
+            EmailConfirmed = true
+        };
+        var result = await externalAuth.CreateUser(userToAdd);
+        if (!result.Succeeded)
+        {
+            return BadRequest<string>(result.Errors.FirstOrDefault()?.Description);
+        }
+
+        // Assign role
+        await authorizationService.AssignRolesToUser(userToAdd, [SD.UserRole]);
+
+        return Created("User Added successfully", "Your account has been created");
     }
+
 }

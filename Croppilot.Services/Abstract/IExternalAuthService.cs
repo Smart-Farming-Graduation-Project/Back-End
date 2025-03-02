@@ -7,7 +7,7 @@ namespace Croppilot.Services.Abstract
     {
         Task<bool> FacebookValidatedAsync(string accessToken, string userId);
         Task<bool> GoogleValidatedAsync(string accessToken, string userId);
-        Task<bool?> GetUserByProviderAsync(string userId, string provider);
+        Task<ApplicationUser?> GetUserByProviderAsync(string userId, string provider);
         Task<ApplicationUser?> GetUserById(string UserId);
         Task<IdentityResult?> CreateUser(ApplicationUser user);
     }
