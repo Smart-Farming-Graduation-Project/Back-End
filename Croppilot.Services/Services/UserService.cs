@@ -1,5 +1,4 @@
 ﻿using Croppilot.Date.Identity;
-using Croppilot.Services.Abstract;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,8 +18,11 @@ namespace Croppilot.Services.Services
 
 		public async Task<ApplicationUser?> GetUserByUserName(string userName)
 		{
-			return await userManager.Users.Include(u => u.RefreshTokens).Where(u => u.UserName.Equals(userName)).FirstOrDefaultAsync();
-			//return await _userManager.FindByNameAsync(userName);
+			return await userManager.Users
+				.Include(u => u.RefreshTokens)
+				.Where(u => u.UserName.Equals(userName))
+				.FirstOrDefaultAsync();
+			//return await userManager.FindByNameAsync(userName);
 		}
 
 		public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
@@ -58,6 +60,15 @@ namespace Croppilot.Services.Services
 		public async Task<IdentityResult> RemoveUserRoleAsync(ApplicationUser user, string roleName)
 		{
 			return await userManager.RemoveFromRoleAsync(user, roleName);
+		}
+
+		public async Task<bool> IsUniqueUserName(string userName)
+		{
+			return !await userManager.Users.AnyAsync(u => u.UserName.Equals(userName));
+		}
+		public async Task<bool> IsUniqueEmail(string email)
+		{
+			return !await userManager.Users.AnyAsync(u => u.Email.Equals(email));
 		}
 	}
 }
