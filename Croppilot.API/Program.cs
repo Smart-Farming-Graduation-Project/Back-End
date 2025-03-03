@@ -51,8 +51,8 @@ app.UseAuthorization();
 
 app.UseWatchDog(opt =>
 {
-    opt.WatchPageUsername = "admin";
-    opt.WatchPagePassword = "123";
+    opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
+    opt.WatchPagePassword = app.Configuration.GetValue<string>("WatchDogSettings:WatchPagePassword");
     // opt.Blacklist = "api/Authentication/SignIn";
     // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
 });
