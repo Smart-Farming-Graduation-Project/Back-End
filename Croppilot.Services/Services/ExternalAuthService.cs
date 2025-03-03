@@ -32,10 +32,8 @@ namespace Croppilot.Services.Services
                     return false;
                 }
 
-                //var appId = _config["Facebook:AppId"];
-                //var appSecret = _config["Facebook:AppSecret"];
-                var appId = "1163766375364809";
-                var appSecret = "be37206c56544dbe47a065e644914777";
+                var appId = _config["Authentication:Facebook:AppId"];
+                var appSecret = _config["Authentication:Facebook:AppSecret"];
                 if (string.IsNullOrWhiteSpace(appId) || string.IsNullOrWhiteSpace(appSecret))
                 {
                     return false;
@@ -60,8 +58,8 @@ namespace Croppilot.Services.Services
         public async Task<bool> GoogleValidatedAsync(string accessToken, string userId)
         {
             var payload = await GoogleJsonWebSignature.ValidateAsync(accessToken);
-            var ClientID = "806052617207-h9sqqe0q9ivl7g660deofptssgus6593.apps.googleusercontent.com";
-            if (!payload.Audience.Equals(ClientID))
+
+            if (!payload.Audience.Equals(_config["Authentication:Google:ClientId"]))
             {
                 return false;
             }
