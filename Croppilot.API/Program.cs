@@ -6,6 +6,7 @@ using Croppilot.Infrastructure;
 using Croppilot.Infrastructure.Data;
 using Croppilot.Infrastructure.Seeder;
 using Croppilot.Services;
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WatchDog;
@@ -19,6 +20,11 @@ builder.Services.AddInfrastructureDependencies(builder.Configuration).AddApiDepe
     .AddCoreDependencies().AddServicesDependencies(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseHangfireDashboard(app.Configuration.GetValue<string>("HangfireSettings:DashboardPath"), new DashboardOptions
+{
+    DashboardTitle = app.Configuration.GetValue<string>("HangfireSettings:Title"),
+});
 
 using (var scope = app.Services.CreateScope())
 {
