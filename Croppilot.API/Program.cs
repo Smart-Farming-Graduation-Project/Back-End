@@ -7,6 +7,7 @@ using Croppilot.Infrastructure.Data;
 using Croppilot.Infrastructure.Seeder;
 using Croppilot.Services;
 using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WatchDog;
@@ -23,6 +24,14 @@ var app = builder.Build();
 
 app.UseHangfireDashboard(app.Configuration.GetValue<string>("HangfireSettings:DashboardPath"), new DashboardOptions
 {
+    Authorization =
+    [
+        new HangfireCustomBasicAuthenticationFilter
+        {
+            User = app.Configuration.GetValue<string>("HangfireSettings:Username"),
+            Pass = app.Configuration.GetValue<string>("HangfireSettings:Password")
+        }
+    ],
     DashboardTitle = app.Configuration.GetValue<string>("HangfireSettings:Title"),
 });
 
