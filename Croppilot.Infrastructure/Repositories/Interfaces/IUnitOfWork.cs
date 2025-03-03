@@ -12,5 +12,6 @@
         ICartRepository CartRepository { get; }
         IWishlistRepository WishlistRepository { get; }
         IReviewRepository ReviewRepository { get; }
+        IChatRepository ChatRepository { get; }
     }
 }

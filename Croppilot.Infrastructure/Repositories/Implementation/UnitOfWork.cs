@@ -11,6 +11,7 @@
         public ICartRepository CartRepository { get; }
         public IWishlistRepository WishlistRepository { get; }
         public IReviewRepository ReviewRepository { get; }
+        public IChatRepository ChatRepository { get; }
 
 
         private readonly AppDbContext _context;
@@ -28,6 +29,7 @@
             CartRepository = new CartRepository(_context);
             WishlistRepository = new WishlistRepository(_context);
             ReviewRepository = new ReviewRepository(_context);
+            ChatRepository = new ChatRepository(_context);
         }
 
         public IGenericRepository<T> GenericRepository<T>() where T : class

@@ -26,7 +26,7 @@ namespace Croppilot.Services
             service.AddScoped<IExternalAuthService, ExternalAuthService>();
             service.AddScoped<IWishlistService, WishlistService>();
             service.AddScoped<IReviewService, ReviewService>();
-            
+            service.AddScoped<IChatService, ChatService>();
             service.AddHttpClient();
 
             return service;
