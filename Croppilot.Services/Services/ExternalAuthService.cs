@@ -25,15 +25,34 @@ namespace Croppilot.Services.Services
 
         public async Task<bool> FacebookValidatedAsync(string accessToken, string userId)
         {
-            var facebookKeys = _config["Facebook:AppId"] + "|" + _config["Facebook:AppSecret"];
-            var fbResult = await _facebookHttpClient.GetFromJsonAsync<FacebookResultDto>($"debug_token?input_token={accessToken}&access_token={facebookKeys}");
-
-            if (fbResult == null || fbResult.Data.Is_Valid == false || !fbResult.Data.User_Id.Equals(userId))
+            try
             {
+                if (string.IsNullOrWhiteSpace(accessToken) || string.IsNullOrWhiteSpace(userId))
+                {
+                    return false;
+                }
+
+                //var appId = _config["Facebook:AppId"];
+                //var appSecret = _config["Facebook:AppSecret"];
+                var appId = "1163766375364809";
+                var appSecret = "be37206c56544dbe47a065e644914777";
+                if (string.IsNullOrWhiteSpace(appId) || string.IsNullOrWhiteSpace(appSecret))
+                {
+                    return false;
+                }
+
+                var facebookKeys = $"{appId}|{appSecret}";
+                var fbResult = await _facebookHttpClient.GetFromJsonAsync<FacebookResultDto>(
+                    $"debug_token?input_token={accessToken}&access_token={facebookKeys}");
+
+                return fbResult?.Data?.Is_Valid == true && string.Equals(fbResult.Data.User_Id, userId, StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception ex)
+            {
+                // Log the error properly (e.g., using a logging framework)
+                Console.WriteLine($"Facebook validation error: {ex.Message}");
                 return false;
             }
-
-            return true;
         }
 
 
@@ -41,8 +60,8 @@ namespace Croppilot.Services.Services
         public async Task<bool> GoogleValidatedAsync(string accessToken, string userId)
         {
             var payload = await GoogleJsonWebSignature.ValidateAsync(accessToken);
-
-            if (!payload.Audience.Equals(_config["Google:ClientId"]))
+            var ClientID = "806052617207-h9sqqe0q9ivl7g660deofptssgus6593.apps.googleusercontent.com";
+            if (!payload.Audience.Equals(ClientID))
             {
                 return false;
             }
