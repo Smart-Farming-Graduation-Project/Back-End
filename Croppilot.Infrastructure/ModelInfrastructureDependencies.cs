@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
+using Hangfire;
 
 namespace Croppilot.Infrastructure
 {
@@ -17,6 +18,8 @@ namespace Croppilot.Infrastructure
         public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection service,
             IConfiguration confg)
         {
+            service.AddHangfireConfigurations(confg);
+            
             // service.AddTransient(typeof(IGenericRepository<>),typeof(GenericRepository<>));
             service.AddTransient<IProductRepository, ProductRepository>();
             service.AddTransient<ICategoryRepository, CategoryRepository>();
@@ -47,9 +50,9 @@ namespace Croppilot.Infrastructure
                     options.User.AllowedUserNameCharacters =
                         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                     options.User.RequireUniqueEmail = true;
-
                 }).AddRoles<ApplicationRole>()
-           .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
             #endregion
 
             #region JWTservice
@@ -91,7 +94,6 @@ namespace Croppilot.Infrastructure
             //    options.AppSecret = confg["Authentication:Facebook:AppSecret"];
             //});
 
-
             #endregion
 
             #region swagger Gn
@@ -108,7 +110,6 @@ namespace Croppilot.Infrastructure
                 // Enable annotations for Swagger
                 options.EnableAnnotations();
                 options.ExampleFilters();
-
 
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -140,11 +141,24 @@ namespace Croppilot.Infrastructure
                 });
             });
 
-
             #endregion
 
 
             return service;
+        }
+
+        private static IServiceCollection AddHangfireConfigurations(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.AddHangfire(c => c
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection")));
+
+            services.AddHangfireServer();
+
+            return services;
         }
     }
 }
