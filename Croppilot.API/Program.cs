@@ -6,6 +6,8 @@ using Croppilot.Infrastructure;
 using Croppilot.Infrastructure.Data;
 using Croppilot.Infrastructure.Seeder;
 using Croppilot.Services;
+using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WatchDog;
@@ -19,6 +21,19 @@ builder.Services.AddInfrastructureDependencies(builder.Configuration).AddApiDepe
     .AddCoreDependencies().AddServicesDependencies(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseHangfireDashboard(app.Configuration.GetValue<string>("HangfireSettings:DashboardPath"), new DashboardOptions
+{
+    Authorization =
+    [
+        new HangfireCustomBasicAuthenticationFilter
+        {
+            User = app.Configuration.GetValue<string>("HangfireSettings:Username"),
+            Pass = app.Configuration.GetValue<string>("HangfireSettings:Password")
+        }
+    ],
+    DashboardTitle = app.Configuration.GetValue<string>("HangfireSettings:Title"),
+});
 
 using (var scope = app.Services.CreateScope())
 {
@@ -51,8 +66,8 @@ app.UseAuthorization();
 
 app.UseWatchDog(opt =>
 {
-    opt.WatchPageUsername = "admin";
-    opt.WatchPagePassword = "123";
+    opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
+    opt.WatchPagePassword = app.Configuration.GetValue<string>("WatchDogSettings:WatchPagePassword");
     // opt.Blacklist = "api/Authentication/SignIn";
     // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
 });
