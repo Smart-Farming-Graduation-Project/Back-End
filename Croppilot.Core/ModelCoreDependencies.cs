@@ -11,6 +11,7 @@ public static class ModelCoreDependencies
 {
     public static IServiceCollection AddCoreDependencies(this IServiceCollection service)
     {
+        service.AddHttpContextAccessor();
         service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         service.AddFluentValidationServices().AddMapsterServices();
         service.AddSwaggerExamplesFromAssemblyOf<RegisterRequestExample>();

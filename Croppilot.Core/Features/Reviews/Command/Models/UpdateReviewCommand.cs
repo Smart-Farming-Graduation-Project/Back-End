@@ -7,7 +7,4 @@ public class UpdateReviewCommand : IRequest<Response<string>>
     public int Rating { get; set; }
 
     public string ReviewText { get; set; }
-
-    // This property will be set from the authenticated context
-    public string CurrentUserID { get; set; }
 }

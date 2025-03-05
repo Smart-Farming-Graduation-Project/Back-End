@@ -26,16 +26,5 @@ public class UpdateReviewCommandValidator : AbstractValidator<UpdateReviewComman
 
         RuleFor(x => x.ReviewText)
             .NotEmpty().WithMessage("Review text is required.");
-
-        RuleFor(x => x.CurrentUserID)
-            .NotEmpty().WithMessage("User is not authenticated.");
-
-        // Ensure the review belongs to the current user.
-        RuleFor(x => x).MustAsync(async (command, cancellationToken) =>
-        {
-            var review = await reviewRepository.GetAsync(r => r.ReviewID == command.ReviewID,
-                cancellationToken: cancellationToken);
-            return review != null && review.UserID == command.CurrentUserID;
-        }).WithMessage("You are not authorized to edit this review.");
     }
 }

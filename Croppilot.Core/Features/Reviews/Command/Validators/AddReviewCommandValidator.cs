@@ -7,8 +7,6 @@ public class AddReviewCommandValidator : AbstractValidator<AddReviewCommand>
 {
     public AddReviewCommandValidator(IProductServices productServices, IReviewRepository reviewRepository)
     {
-        RuleFor(x => x.UserID)
-            .NotEmpty().WithMessage("UserID is required.");
 
         RuleFor(x => x.ProductID)
             .GreaterThan(0).WithMessage("ProductID must be greater than 0.")
@@ -26,14 +24,5 @@ public class AddReviewCommandValidator : AbstractValidator<AddReviewCommand>
 
         RuleFor(x => x.ReviewText)
             .NotEmpty().WithMessage("ReviewText is required.");
-
-        // Check if the user has already submitted a review for this product.
-        RuleFor(x => x).MustAsync(async (command, cancellationToken) =>
-        {
-            var existingReview = await reviewRepository.GetAsync(
-                r => r.UserID == command.UserID && r.ProductID == command.ProductID,
-                cancellationToken: cancellationToken);
-            return existingReview == null;
-        }).WithMessage("User has already submitted a review for this product.");
     }
 }

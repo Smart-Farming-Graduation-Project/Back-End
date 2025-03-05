@@ -145,9 +145,9 @@ namespace Croppilot.Services.Services
 		{
 			var claims = new List<Claim>
 				{
-					new Claim(nameof(ClaimTypes.NameIdentifier),user.Id ?? string.Empty),
-					new Claim(nameof(ClaimTypes.Name),user.UserName ?? string.Empty),
-					new Claim(nameof(ClaimTypes.Email),user.Email ?? string.Empty),
+					new Claim(JwtRegisteredClaimNames.Sub,user.Id ?? string.Empty),
+					new Claim(JwtRegisteredClaimNames.GivenName,user.UserName ?? string.Empty),
+					new Claim(JwtRegisteredClaimNames.Email,user.Email ?? string.Empty),
 					new Claim(JwtRegisteredClaimNames.Jti , jwtTokenId)
 				};
 			var roles = await userManager.GetRolesAsync(user);
