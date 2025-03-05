@@ -3,5 +3,4 @@
 public class DeleteReviewCommand : IRequest<Response<string>>
 {
     public int ReviewID { get; set; }
-    public string CurrentUserID { get; set; }
 }

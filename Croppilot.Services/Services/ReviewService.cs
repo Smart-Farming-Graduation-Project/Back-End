@@ -16,6 +16,11 @@ public class ReviewService(IReviewRepository reviewRepository) : IReviewService
         return await reviewRepository.GetReviewsByProductIdAsync(productId, cancellationToken);
     }
 
+    public async Task<Review?> GetReviewByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await reviewRepository.GetAsync(r => r.ReviewID == id, cancellationToken: cancellationToken);
+    }
+
     public async Task<OperationResult> DeleteReviewAsync(int reviewId, string currentUserId,
         CancellationToken cancellationToken = default)
     {
@@ -46,5 +51,12 @@ public class ReviewService(IReviewRepository reviewRepository) : IReviewService
     public Task<double> GetAverageRatingByProductIdAsync(int productId, CancellationToken cancellationToken = default)
     {
         return reviewRepository.GetAverageRatingByProductIdAsync(productId, cancellationToken);
+    }
+
+    public async Task<bool> HasUserReviewedProductAsync(string userId, int productId,
+        CancellationToken cancellationToken = default)
+    {
+        return await reviewRepository.GetAsync(r => r.UserID == userId && r.ProductID == productId,
+            cancellationToken: cancellationToken) != null;
     }
 }

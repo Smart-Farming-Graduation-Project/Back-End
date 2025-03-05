@@ -22,10 +22,9 @@ public class ReviewsController(IMediator mediator)
     [HttpPost("CreateReview")]
     [Authorize(Policy = nameof(UserRoleEnum.User))]
     [SwaggerOperation(Summary = "Creates a new review",
-        Description = "**Creates a review for a product.**")]
+        Description = "**Creates a review for a product, user need to be authenticated.**")]
     public async Task<IActionResult> CreateReview([FromBody] AddReviewCommand command)
     {
-        command.UserID = User.GetUserId()!;
         var response = await mediator.Send(command);
         return NewResult(response);
     }
@@ -40,8 +39,8 @@ public class ReviewsController(IMediator mediator)
         var command = new DeleteReviewCommand
         {
             ReviewID = reviewId,
-            CurrentUserID = User.GetUserId()!
         };
+        
         var response = await mediator.Send(command);
         return NewResult(response);
     }
@@ -53,8 +52,6 @@ public class ReviewsController(IMediator mediator)
     public async Task<IActionResult> UpdateReview([FromRoute] int reviewId, [FromBody] UpdateReviewCommand command)
     {
         command.ReviewID = reviewId;
-        command.CurrentUserID = User.GetUserId()!;
-
         var response = await mediator.Send(command);
         return NewResult(response);
     }
