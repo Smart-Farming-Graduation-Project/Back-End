@@ -5,4 +5,4 @@ global using Microsoft.AspNetCore.Authorization;
 
 global using Croppilot.Date.Enum;
 global using Croppilot.API.Bases;
-global using Croppilot.API.Extensions;
+global using Croppilot.Infrastructure.Extensions;
