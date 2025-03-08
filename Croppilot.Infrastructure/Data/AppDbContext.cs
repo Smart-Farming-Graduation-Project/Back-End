@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Croppilot.Infrastructure.Data
 {
-
     public class AppDbContext(DbContextOptions<AppDbContext> options)
         : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
     {
@@ -21,6 +20,7 @@ namespace Croppilot.Infrastructure.Data
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<ChatHistory> ChatHistories { get; set; }
+        public DbSet<Post> Posts { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,7 +37,7 @@ namespace Croppilot.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new WishlistConfiguration());
             modelBuilder.ApplyConfiguration(new WishlistItemConfiguration());
             modelBuilder.ApplyConfiguration(new ReviewConfiguration());
-
+            modelBuilder.ApplyConfiguration(new PostConfiguration());
         }
     }
 }
