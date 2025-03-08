@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Croppilot.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class PostModel : Migration
+    public partial class postModel : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,8 +38,7 @@ namespace Croppilot.Infrastructure.Migrations
                         name: "FK_Posts_Posts_SharedPostId",
                         column: x => x.SharedPostId,
                         principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

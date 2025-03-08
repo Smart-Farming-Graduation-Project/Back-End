@@ -766,7 +766,7 @@ namespace Croppilot.Infrastructure.Migrations
                     b.HasOne("Croppilot.Date.Models.Post", "SharedPost")
                         .WithMany("Shares")
                         .HasForeignKey("SharedPostId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
                         .WithMany()

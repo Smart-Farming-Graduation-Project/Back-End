@@ -36,6 +36,6 @@ public class PostConfiguration : IEntityTypeConfiguration<Post>
         builder.HasOne(p => p.SharedPost)
             .WithMany(p => p.Shares)
             .HasForeignKey(p => p.SharedPostId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

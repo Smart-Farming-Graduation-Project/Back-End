@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Croppilot.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250308234557_PostModel")]
-    partial class PostModel
+    [Migration("20250308235857_postModel")]
+    partial class postModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -769,7 +769,7 @@ namespace Croppilot.Infrastructure.Migrations
                     b.HasOne("Croppilot.Date.Models.Post", "SharedPost")
                         .WithMany("Shares")
                         .HasForeignKey("SharedPostId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
                         .WithMany()
