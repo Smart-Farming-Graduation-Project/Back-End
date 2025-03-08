@@ -40,7 +40,7 @@ public class ReviewsController(IMediator mediator)
         {
             ReviewID = reviewId,
         };
-        
+
         var response = await mediator.Send(command);
         return NewResult(response);
     }
