@@ -13,5 +13,6 @@
         IWishlistRepository WishlistRepository { get; }
         IReviewRepository ReviewRepository { get; }
         IChatRepository ChatRepository { get; }
+        IPostRepository PostRepository { get; }
     }
 }
