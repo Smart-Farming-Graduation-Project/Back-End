@@ -1,13 +1,11 @@
 ﻿using Croppilot.Core.Features.Reviews.Command.Models;
-using Croppilot.Infrastructure.Repositories.Interfaces;
 
 namespace Croppilot.Core.Features.Reviews.Command.Validators;
 
 public class AddReviewCommandValidator : AbstractValidator<AddReviewCommand>
 {
-    public AddReviewCommandValidator(IProductServices productServices, IReviewRepository reviewRepository)
+    public AddReviewCommandValidator(IProductServices productServices)
     {
-
         RuleFor(x => x.ProductID)
             .GreaterThan(0).WithMessage("ProductID must be greater than 0.")
             // Check if the product exists.
