@@ -14,7 +14,7 @@ public class PostCommandHandler(
 {
     public async Task<Response<string>> Handle(AddPostCommand command, CancellationToken cancellationToken)
     {
-        var userId = GetCurrentAuthenticatedUserId();
+        var userId = contextAccessor.HttpContext?.User.GetUserId()!;
         var post = command.Adapt<Post>();
         post.UserId = userId;
 
@@ -26,7 +26,7 @@ public class PostCommandHandler(
 
     public async Task<Response<string>> Handle(UpdatePostCommand command, CancellationToken cancellationToken)
     {
-        var userId = GetCurrentAuthenticatedUserId();
+        var userId = contextAccessor.HttpContext?.User.GetUserId()!;
         var currentPost = await postService.GetPostByIdAsync(command.Id, cancellationToken);
         if (currentPost!.UserId != userId)
             return Unauthorized<string>("You are not authorized to update this post.");
@@ -41,7 +41,7 @@ public class PostCommandHandler(
 
     public async Task<Response<string>> Handle(DeletePostCommand command, CancellationToken cancellationToken)
     {
-        var userId = GetCurrentAuthenticatedUserId();
+        var userId = contextAccessor.HttpContext?.User.GetUserId()!;
         var post = await postService.GetPostByIdAsync(command.Id, cancellationToken);
         if (post!.UserId != userId)
             return Unauthorized<string>("You are not authorized to delete this post.");
@@ -50,13 +50,5 @@ public class PostCommandHandler(
         return result == OperationResult.Success
             ? Success<string>("Post deleted successfully.")
             : BadRequest<string>("Failed to delete post.");
-    }
-
-    private string GetCurrentAuthenticatedUserId()
-    {
-        var userId = contextAccessor.HttpContext?.User.GetUserId();
-        if (userId is null)
-            throw new UnauthorizedAccessException("User is not authenticated.");
-        return userId;
     }
 }
