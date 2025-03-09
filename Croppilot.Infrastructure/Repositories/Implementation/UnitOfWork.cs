@@ -13,6 +13,7 @@
         public IReviewRepository ReviewRepository { get; }
         public IChatRepository ChatRepository { get; }
         public IPostRepository PostRepository { get; }
+        public ICommentRepository CommentRepository { get; }
 
 
         private readonly AppDbContext _context;
@@ -32,6 +33,7 @@
             ReviewRepository = new ReviewRepository(_context);
             ChatRepository = new ChatRepository(_context);
             PostRepository = new PostRepository(_context);
+            CommentRepository = new CommentRepository(_context);
         }
 
         public IGenericRepository<T> GenericRepository<T>() where T : class

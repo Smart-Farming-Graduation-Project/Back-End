@@ -37,5 +37,10 @@ public class PostConfiguration : IEntityTypeConfiguration<Post>
             .WithMany(p => p.Shares)
             .HasForeignKey(p => p.SharedPostId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasMany(p => p.Comments)
+            .WithOne(c => c.Post)
+            .HasForeignKey(c => c.PostId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
