@@ -28,6 +28,7 @@ namespace Croppilot.Services
             service.AddScoped<IWishlistService, WishlistService>();
             service.AddScoped<IReviewService, ReviewService>();
             service.AddScoped<IChatService, ChatService>();
+            service.AddScoped<IPostService, PostService>();
             service.AddHttpClient();
 
             return service;
