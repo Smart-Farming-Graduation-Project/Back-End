@@ -8,7 +8,7 @@ namespace Croppilot.API.Controller;
 /// fetching a specific post by ID, creating a new post, updating an existing post, and deleting a post.
 /// </summary>
 /// <remarks>
-/// Some endpoints are available to all users while others require the user to be authenticated.
+/// Some endpoints are available to all users, while others require the user to be authenticated.
 /// </remarks>
 [SwaggerResponse(200, "Operation completed successfully")]
 [SwaggerResponse(400, "Invalid operation or input data")]
