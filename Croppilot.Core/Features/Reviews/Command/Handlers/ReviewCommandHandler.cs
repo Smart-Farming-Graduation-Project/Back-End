@@ -11,7 +11,7 @@ public class ReviewCommandHandler(IReviewService reviewService, IHttpContextAcce
 {
     public async Task<Response<string>> Handle(AddReviewCommand command, CancellationToken cancellationToken)
     {
-        var userId = GetCurrentAuthenticatedUserId();
+        var userId = contextAccessor.HttpContext?.User.GetUserId()!;
 
         if (await reviewService.HasUserReviewedProductAsync(userId, command.ProductID, cancellationToken))
             return BadRequest<string>("User has already submitted a review for this product.");
@@ -27,7 +27,7 @@ public class ReviewCommandHandler(IReviewService reviewService, IHttpContextAcce
 
     public async Task<Response<string>> Handle(DeleteReviewCommand command, CancellationToken cancellationToken)
     {
-        var userId = GetCurrentAuthenticatedUserId();
+        var userId = contextAccessor.HttpContext?.User.GetUserId()!;
 
         var review = await reviewService.GetReviewByIdAsync(command.ReviewID, cancellationToken);
 
@@ -44,7 +44,7 @@ public class ReviewCommandHandler(IReviewService reviewService, IHttpContextAcce
 
     public async Task<Response<string>> Handle(UpdateReviewCommand command, CancellationToken cancellationToken)
     {
-        var userId = GetCurrentAuthenticatedUserId();
+        var userId = contextAccessor.HttpContext?.User.GetUserId()!;
 
         var currentReview = await reviewService.GetReviewByIdAsync(command.ReviewID, cancellationToken);
         if (currentReview!.UserID != userId)
@@ -56,14 +56,5 @@ public class ReviewCommandHandler(IReviewService reviewService, IHttpContextAcce
         return result == OperationResult.Success
             ? Success<string>("Review updated successfully.")
             : BadRequest<string>("Failed to update review.");
-    }
-
-    private string GetCurrentAuthenticatedUserId()
-    {
-        var userId = contextAccessor.HttpContext?.User.GetUserId();
-        if (userId is null)
-            throw new UnauthorizedAccessException("User is not authenticated.");
-
-        return userId;
     }
 }
