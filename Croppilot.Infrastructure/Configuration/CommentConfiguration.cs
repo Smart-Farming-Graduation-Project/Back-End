@@ -21,13 +21,7 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
 
         builder.Property(c => c.UpdatedAt)
             .IsRequired(false);
-
-        // Relationship with Post
-        builder.HasOne(c => c.Post)
-            .WithMany()
-            .HasForeignKey(c => c.PostId)
-            .OnDelete(DeleteBehavior.Cascade);
-
+        
         // Relationship with User
         builder.HasOne(c => c.User)
             .WithMany()
