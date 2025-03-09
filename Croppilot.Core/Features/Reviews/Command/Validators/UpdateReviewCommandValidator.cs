@@ -25,6 +25,6 @@ public class UpdateReviewCommandValidator : AbstractValidator<UpdateReviewComman
             .InclusiveBetween(1, 5).WithMessage("Rating must be between 1 and 5.");
 
         RuleFor(x => x.ReviewText)
-            .NotEmpty().WithMessage("Review text is required.");
+            .MaximumLength(500).WithMessage("ReviewText cannot exceed 500 characters.");
     }
 }

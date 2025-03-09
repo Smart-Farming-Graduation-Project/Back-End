@@ -19,7 +19,7 @@ namespace Croppilot.Infrastructure
             IConfiguration confg)
         {
             service.AddHangfireConfigurations(confg);
-            
+
             // service.AddTransient(typeof(IGenericRepository<>),typeof(GenericRepository<>));
             service.AddTransient<IProductRepository, ProductRepository>();
             service.AddTransient<ICategoryRepository, CategoryRepository>();
@@ -30,6 +30,7 @@ namespace Croppilot.Infrastructure
             service.AddTransient<IWishlistRepository, WishlistRepository>();
             service.AddTransient<IReviewRepository, ReviewRepository>();
             service.AddTransient<IChatRepository, ChatRepository>();
+            service.AddTransient<IPostRepository, PostRepository>();
 
             #region Identity Service
 
