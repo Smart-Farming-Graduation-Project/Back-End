@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Comments\Query\Validators\" />
     <Folder Include="Mapping\Authentication\Command\" />
     <Folder Include="Mapping\Authentication\Query\" />
     <Folder Include="Mapping\Authorization\Command\" />
