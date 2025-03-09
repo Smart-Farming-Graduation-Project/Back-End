@@ -1,5 +1,4 @@
-﻿using Croppilot.Core.Features.Authentication.Queries.Models;
-using Croppilot.Core.Features.Carts.Command.Models;
+﻿using Croppilot.Core.Features.Carts.Command.Models;
 using Croppilot.Core.Features.Carts.Query.Models;
 
 
