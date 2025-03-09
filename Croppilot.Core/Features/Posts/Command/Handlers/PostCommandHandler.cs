@@ -15,8 +15,12 @@ public class PostCommandHandler(
     public async Task<Response<string>> Handle(AddPostCommand command, CancellationToken cancellationToken)
     {
         var userId = contextAccessor.HttpContext?.User.GetUserId()!;
+        if (command.SharedPostId == 0)
+            command.SharedPostId = null;
+
         var post = command.Adapt<Post>();
         post.UserId = userId;
+
 
         var result = await postService.AddPostAsync(post, cancellationToken);
         return result == OperationResult.Success
@@ -28,9 +32,15 @@ public class PostCommandHandler(
     {
         var userId = contextAccessor.HttpContext?.User.GetUserId()!;
         var currentPost = await postService.GetPostByIdAsync(command.Id, cancellationToken);
-        if (currentPost!.UserId != userId)
+
+        if (currentPost == null)
+            return NotFound<string>("Post not found.");
+
+        if (currentPost.UserId != userId)
             return Unauthorized<string>("You are not authorized to update this post.");
 
+        if (command.SharedPostId == 0)
+            command.SharedPostId = null;
         var post = command.Adapt<Post>();
         post.UserId = userId;
         var result = await postService.UpdatePostAsync(post, cancellationToken);
@@ -43,6 +53,7 @@ public class PostCommandHandler(
     {
         var userId = contextAccessor.HttpContext?.User.GetUserId()!;
         var post = await postService.GetPostByIdAsync(command.Id, cancellationToken);
+
         if (post!.UserId != userId)
             return Unauthorized<string>("You are not authorized to delete this post.");
 
