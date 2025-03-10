@@ -14,6 +14,7 @@
         public IChatRepository ChatRepository { get; }
         public IPostRepository PostRepository { get; }
         public ICommentRepository CommentRepository { get; }
+        public IVoteRepository VoteRepository { get; }
 
 
         private readonly AppDbContext _context;
@@ -34,6 +35,7 @@
             ChatRepository = new ChatRepository(_context);
             PostRepository = new PostRepository(_context);
             CommentRepository = new CommentRepository(_context);
+            VoteRepository = new VoteRepository(_context);
         }
 
         public IGenericRepository<T> GenericRepository<T>() where T : class

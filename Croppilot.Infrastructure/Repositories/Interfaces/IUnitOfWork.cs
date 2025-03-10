@@ -14,5 +14,7 @@
         IReviewRepository ReviewRepository { get; }
         IChatRepository ChatRepository { get; }
         IPostRepository PostRepository { get; }
+        ICommentRepository CommentRepository { get; }
+        IVoteRepository VoteRepository { get; }
     }
 }
