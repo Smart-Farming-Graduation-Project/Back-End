@@ -22,7 +22,7 @@ namespace Croppilot.Infrastructure.Data
         public DbSet<ChatHistory> ChatHistories { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
-
+        public DbSet<Vote> Votes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,6 +40,7 @@ namespace Croppilot.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new ReviewConfiguration());
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new CommentConfiguration());
+            modelBuilder.ApplyConfiguration(new VoteConfiguration());
         }
     }
 }
