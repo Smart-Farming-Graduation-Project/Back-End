@@ -11,7 +11,7 @@ namespace Croppilot.Services
             IConfiguration configuration)
         {
             service.AddSingleton(
-                u => new BlobServiceClient(configuration.GetSection("AzureKey:ConnectionString").Value));
+                _ => new BlobServiceClient(configuration.GetSection("AzureKey:ConnectionString").Value));
 
             service.AddScoped<IProductServices, ProductServices>();
             service.AddScoped<ICategoryService, CategoryService>();
@@ -30,6 +30,7 @@ namespace Croppilot.Services
             service.AddScoped<IChatService, ChatService>();
             service.AddScoped<IPostService, PostService>();
             service.AddScoped<ICommentService, CommentService>();
+            service.AddScoped<IVoteService, VoteService>();
             service.AddHttpClient();
 
             return service;

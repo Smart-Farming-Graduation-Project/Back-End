@@ -32,6 +32,7 @@ namespace Croppilot.Infrastructure
             service.AddTransient<IChatRepository, ChatRepository>();
             service.AddTransient<IPostRepository, PostRepository>();
             service.AddTransient<ICommentRepository, CommentRepository>();
+            service.AddTransient<IVoteRepository, VoteRepository>();
 
             #region Identity Service
 
