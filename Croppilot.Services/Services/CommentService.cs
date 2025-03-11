@@ -34,13 +34,18 @@ public class CommentService(ICommentRepository commentRepository) : ICommentServ
         );
     }
 
-    public async Task<OperationResult> DeleteCommentAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<OperationResult> DeleteCommentAsync(int commentId, CancellationToken cancellationToken = default)
     {
-        var comment = await commentRepository.GetAsync(c => c.Id == id, cancellationToken: cancellationToken);
+        // Fetch the comment to delete.
+        var comment = await commentRepository.GetAsync(c => c.Id == commentId, cancellationToken: cancellationToken);
         if (comment == null)
             return OperationResult.Failure;
 
-        await commentRepository.DeleteAsync(comment, cancellationToken);
+        // Recursively delete child comments.
+        await DeleteChildCommentsAsync(commentId, cancellationToken);
+
+        // Delete the comment itself.
+        await commentRepository.DeleteAsync(comment, CancellationToken.None);
         return OperationResult.Success;
     }
 
@@ -58,5 +63,21 @@ public class CommentService(ICommentRepository commentRepository) : ICommentServ
 
         await commentRepository.UpdateAsync(currentComment, cancellationToken);
         return OperationResult.Success;
+    }
+
+    private async Task DeleteChildCommentsAsync(int parentCommentId, CancellationToken cancellationToken)
+    {
+        // Retrieve all direct replies to the given comment.
+        var childComments = await commentRepository.GetAllAsync(
+            filter: c => c.ParentCommentId == parentCommentId,
+            cancellationToken: cancellationToken);
+
+        foreach (var child in childComments)
+        {
+            // Recursively delete any replies to this child comment.
+            await DeleteChildCommentsAsync(child.Id, CancellationToken.None);
+            // Delete the child comment.
+            await commentRepository.DeleteAsync(child, CancellationToken.None);
+        }
     }
 }
