@@ -4,6 +4,7 @@ using Croppilot.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Croppilot.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250311133804_VoteModel")]
+    partial class VoteModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,7 +173,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Cart", b =>
@@ -197,7 +200,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.CartItem", b =>
@@ -225,7 +228,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Category", b =>
@@ -248,7 +251,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.ChatHistory", b =>
@@ -272,7 +275,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ChatHistories", (string)null);
+                    b.ToTable("ChatHistories");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Comment", b =>
@@ -318,7 +321,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Leasing", b =>
@@ -346,7 +349,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Leasings", (string)null);
+                    b.ToTable("Leasings");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Order", b =>
@@ -457,7 +460,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Product", b =>
@@ -497,7 +500,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.ProductImage", b =>
@@ -519,7 +522,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Review", b =>
@@ -562,7 +565,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Reviews", null, t =>
+                    b.ToTable("Reviews", t =>
                         {
                             t.HasCheckConstraint("CK_Review_Rating", "[Rating] BETWEEN 1 AND 5");
                         });
@@ -601,7 +604,7 @@ namespace Croppilot.Infrastructure.Migrations
                     b.HasIndex("UserId", "TargetId", "TargetType")
                         .IsUnique();
 
-                    b.ToTable("Votes", null, t =>
+                    b.ToTable("Votes", t =>
                         {
                             t.HasCheckConstraint("CK_Vote_TargetType", "[TargetType] IN ('post', 'comment')");
 
@@ -634,7 +637,7 @@ namespace Croppilot.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Wishlists", (string)null);
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.WishlistItem", b =>
@@ -665,7 +668,7 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.HasIndex("WishlistId");
 
-                    b.ToTable("WishlistItems", (string)null);
+                    b.ToTable("WishlistItems");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
