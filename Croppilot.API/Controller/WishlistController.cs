@@ -1,5 +1,6 @@
 ﻿using Croppilot.Core.Features.WishLists.Command.Models;
 using Croppilot.Core.Features.WishLists.Query.Models;
+using Croppilot.Infrastructure.Extensions;
 
 namespace Croppilot.API.Controller;
 
