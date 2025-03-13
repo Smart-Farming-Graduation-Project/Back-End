@@ -26,6 +26,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
     /// Retrieves the complete list of products.
     /// Frontend: Use this endpoint to obtain all available products without pagination.
     /// </summary>
+    [ResponseCache(CacheProfileName = "LongCache")]
     [HttpGet("ProductsList")]
     [SwaggerOperation(
         Summary = "Retrieves all products",
@@ -40,6 +41,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
     /// Retrieves a paginated list of products.
     /// Frontend: Supply pagination parameters (e.g., page number, page size) via query parameters.
     /// </summary>
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("paginatedList")]
     [SwaggerOperation(
         Summary = "Retrieves paginated products",
@@ -56,6 +58,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
     /// Retrieves a specific product by its unique identifier.
     /// Frontend: Provide the product's ID in the route.
     /// </summary>
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("product/{id}")]
     [SwaggerOperation(
         Summary = "Retrieves a product by ID",

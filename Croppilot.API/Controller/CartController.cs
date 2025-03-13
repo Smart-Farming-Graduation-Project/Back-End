@@ -1,6 +1,5 @@
 ﻿using Croppilot.Core.Features.Carts.Command.Models;
 using Croppilot.Core.Features.Carts.Query.Models;
-using Croppilot.Infrastructure.Extensions;
 
 
 namespace Croppilot.API.Controller;
@@ -30,6 +29,7 @@ public class CartController : AppControllerBase
     /// Retrieves the current user's shopping cart.
     /// </summary>
     /// <returns>An <see cref="IActionResult"/> containing the cart data or an error response.</returns>
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("GetCart")]
     [SwaggerOperation(Summary = "Retrieves the current user's cart",
         Description = "**Fetches the shopping cart for the authenticated user.**")]

@@ -1,6 +1,5 @@
 ﻿using Croppilot.Core.Features.WishLists.Command.Models;
 using Croppilot.Core.Features.WishLists.Query.Models;
-using Croppilot.Infrastructure.Extensions;
 
 namespace Croppilot.API.Controller;
 
@@ -15,6 +14,7 @@ public class WishlistController(IMediator mediator)
     /// Retrieves the current user's wishlist.
     /// </summary>
     /// <returns>An <see cref="IActionResult"/> containing the wishlist data or an error response.</returns>
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("GetWishlist")]
     [SwaggerOperation(Summary = "Retrieves the current user's wishlist",
         Description = "**Fetches the wishlist for the authenticated user.**")]

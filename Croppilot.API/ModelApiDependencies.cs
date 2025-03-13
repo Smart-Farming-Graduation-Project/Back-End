@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using WatchDog;
 using WatchDog.src.Enums;
+using Enum = System.Enum;
 
 namespace Croppilot.API;
 
@@ -9,10 +11,38 @@ public static class ModelApiDependencies
 {
     public static IServiceCollection AddApiDependencies(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddControllers().AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        });
+        services.AddControllers(options =>
+            {
+                // Cache Profiles
+                options.CacheProfiles.Add("Default", new CacheProfile
+                {
+                    Duration = 30,
+                    Location = ResponseCacheLocation.Any
+                });
+
+                options.CacheProfiles.Add("NoCache", new CacheProfile
+                {
+                    NoStore = true,
+                    Location = ResponseCacheLocation.None
+                });
+
+                options.CacheProfiles.Add("LongCache", new CacheProfile
+                {
+                    Duration = 300,
+                    Location = ResponseCacheLocation.Client
+                });
+
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.Converters.Add(new HttpStatusCodeConverter());
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.WriteIndented = true;
+            })
+            .AddXmlSerializerFormatters();
+
         services.AddHttpContextAccessor().AddSwaggerServices().AddRolePolicy().AddCorSServices()
             .AddWatchDogConfigurations(configuration);
 

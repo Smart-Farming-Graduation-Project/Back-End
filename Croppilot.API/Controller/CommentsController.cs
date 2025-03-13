@@ -31,6 +31,7 @@ public class CommentsController : AppControllerBase
     /// </summary>
     /// <param name="postId">The unique identifier of the post.</param>
     /// <returns>An IActionResult containing the list of comments or an error response.</returns>
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("GetComments/{postId}")]
     [AllowAnonymous]
     [SwaggerOperation(Summary = "Retrieve comments for a post",
@@ -47,6 +48,7 @@ public class CommentsController : AppControllerBase
     /// </summary>
     /// <param name="id">The unique identifier of the comment.</param>
     /// <returns>An IActionResult containing the comment details or an error response.</returns>
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("GetComment/{id}")]
     [AllowAnonymous]
     [SwaggerOperation(Summary = "Retrieve a specific comment",
