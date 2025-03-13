@@ -117,7 +117,8 @@ namespace Croppilot.Services.Services
             if (!updateResult.Succeeded) return "FailedToUpdate";
 
             //  Generate a password reset token
-            string resetToken = await userManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
+            var resetToken = await userManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
+            resetToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetToken));
 
             return resetToken;
         }
