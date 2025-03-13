@@ -6,6 +6,9 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         builder.HasKey(p => p.Id);
 
+        builder.Property(p => p.Price)
+            .HasPrecision(18, 4);
+
         builder.HasMany(p => p.ProductImages)
             .WithOne(pI => pI.Product)
             .HasForeignKey(pI => pI.ProductId)
