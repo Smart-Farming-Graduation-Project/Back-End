@@ -1,0 +1,16 @@
+# .github/labeler.yml
+api:
+  - CroppilotAPI/**/*
+core:
+  - Croppilot.Core/**/*
+data:
+  - Croppilot.Data/**/*
+infrastructure:
+  - Croppilot.Infrastructure/**/*
+services:
+  - Croppilot.Services/**/*
+docs:
+  - README.md
+git:
+  - .gitattributes
+  - .gitignore
