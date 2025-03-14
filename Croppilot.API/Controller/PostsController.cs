@@ -21,6 +21,7 @@ public class PostsController(IMediator mediator) : AppControllerBase
     /// <returns>
     /// An <see cref="IActionResult"/> containing a list of posts or an error response.
     /// </returns>
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("GetPosts")]
     [AllowAnonymous]
     [SwaggerOperation(Summary = "Retrieve all posts",
@@ -39,6 +40,7 @@ public class PostsController(IMediator mediator) : AppControllerBase
     /// <returns>
     /// An <see cref="IActionResult"/> containing the post details or an error response.
     /// </returns>
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("GetPost/{id}")]
     [AllowAnonymous]
     [SwaggerOperation(Summary = "Retrieve a specific post",

@@ -7,20 +7,21 @@ namespace Croppilot.API.Controller;
 [Authorize(Policy = nameof(UserRoleEnum.User))]
 public class CategoryController(IMediator mediator) : AppControllerBase
 {
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("CategoryList")]
     public async Task<IActionResult> GetAllCategory()
     {
         var response = await mediator.Send(new GetAllCategoryQuery());
         return Ok(response);
     }
-
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("CategoryPaginatedList")]
     public async Task<IActionResult> Paginated([FromQuery] GetCategoryPaginatedQuery query)
     {
         var response = await mediator.Send(query);
         return Ok(response);
     }
-
+    [ResponseCache(CacheProfileName = "Default")]
     [HttpGet("Category/{id}")]
     public async Task<IActionResult> GetCategoryById([FromRoute] int id)
     {

@@ -1,5 +1,4 @@
 ﻿using Croppilot.Date.Identity;
-using Croppilot.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Croppilot.Infrastructure.Data
@@ -27,20 +26,25 @@ namespace Croppilot.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfiguration(new ProductConfiguration());
-            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
-            modelBuilder.ApplyConfiguration(new LeasingConfiguration());
-            modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
-            modelBuilder.ApplyConfiguration(new OrderConfiguration());
-            modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
-            modelBuilder.ApplyConfiguration(new CartConfiguration());
-            modelBuilder.ApplyConfiguration(new CartItemConfiguration());
-            modelBuilder.ApplyConfiguration(new WishlistConfiguration());
-            modelBuilder.ApplyConfiguration(new WishlistItemConfiguration());
-            modelBuilder.ApplyConfiguration(new ReviewConfiguration());
-            modelBuilder.ApplyConfiguration(new PostConfiguration());
-            modelBuilder.ApplyConfiguration(new CommentConfiguration());
-            modelBuilder.ApplyConfiguration(new VoteConfiguration());
+            //modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            //modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+            //modelBuilder.ApplyConfiguration(new LeasingConfiguration());
+            //modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
+            //modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            //modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+            //modelBuilder.ApplyConfiguration(new CartConfiguration());
+            //modelBuilder.ApplyConfiguration(new CartItemConfiguration());
+            //modelBuilder.ApplyConfiguration(new WishlistConfiguration());
+            //modelBuilder.ApplyConfiguration(new WishlistItemConfiguration());
+            //modelBuilder.ApplyConfiguration(new ReviewConfiguration());
+            //modelBuilder.ApplyConfiguration(new PostConfiguration());
+            //modelBuilder.ApplyConfiguration(new CommentConfiguration());
+            //modelBuilder.ApplyConfiguration(new VoteConfiguration());
+
+
+            //use this is better
+            // Automatically apply all IEntityTypeConfiguration implementations in the assembly
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
     }
 }

@@ -15,8 +15,14 @@ using WatchDog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"), sqlOptions => sqlOptions.EnableRetryOnFailure(
+        maxRetryCount: 5,
+        maxRetryDelay: TimeSpan.FromSeconds(10),
+        errorNumbersToAdd: null)));
 
+builder.Services.AddResponseCaching();
+
+//inject dependencies
 builder.Services.AddInfrastructureDependencies(builder.Configuration).AddApiDependencies(builder.Configuration)
     .AddCoreDependencies().AddServicesDependencies(builder.Configuration);
 
@@ -37,12 +43,20 @@ app.UseHangfireDashboard(app.Configuration.GetValue<string>("HangfireSettings:Da
 
 using (var scope = app.Services.CreateScope())
 {
-    // Apply Migrations Automatically
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
+    var serviceProvider = scope.ServiceProvider;
+    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
 
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+    // Apply Migrations Automatically with Resilience
+    var strategy = dbContext.Database.CreateExecutionStrategy();
+    await strategy.ExecuteAsync(async () =>
+    {
+        await dbContext.Database.MigrateAsync();
+    });
+
+    // Seed Roles and Users
+    var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
     await RoleSeeder.SeedAsync(roleManager);
     await UserSeeder.SeedAsync(userManager);
 }
