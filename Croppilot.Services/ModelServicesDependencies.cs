@@ -33,6 +33,7 @@ namespace Croppilot.Services
             service.AddScoped<IVoteService, VoteService>();
             service.AddHttpClient();
 
+
             return service;
         }
     }
