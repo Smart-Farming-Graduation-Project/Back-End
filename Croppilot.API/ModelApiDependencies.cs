@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Croppilot.Core.Bases;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using WatchDog;
