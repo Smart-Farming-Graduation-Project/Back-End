@@ -2,12 +2,11 @@
 
 namespace Croppilot.Core.Features.Carts.Command.Validators;
 
-public class AddProductToCartCommandValidator
-    : AbstractValidator<AddProductToCartCommand>
+public class RemoveProductFromCartCommandValidator : AbstractValidator<RemoveProductFromCartCommand>
 {
     private readonly IProductServices _productServices;
 
-    public AddProductToCartCommandValidator(IProductServices productServices)
+    public RemoveProductFromCartCommandValidator(IProductServices productServices)
     {
         _productServices = productServices;
         RuleFor(x => x.UserId)
@@ -19,10 +18,6 @@ public class AddProductToCartCommandValidator
             .WithMessage("ProductId must be greater than 0.")
             .MustAsync(ProductExists)
             .WithMessage("Product does not exist.");
-
-        RuleFor(x => x.Quantity)
-            .GreaterThan(0)
-            .WithMessage("Quantity must be greater than 0.");
     }
 
     private async Task<bool> ProductExists(int productId, CancellationToken cancellationToken)
