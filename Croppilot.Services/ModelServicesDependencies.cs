@@ -31,6 +31,7 @@ namespace Croppilot.Services
             service.AddScoped<IPostService, PostService>();
             service.AddScoped<ICommentService, CommentService>();
             service.AddScoped<IVoteService, VoteService>();
+            service.AddScoped<INotificationServices, NotificationServices>();
             service.AddHttpClient();
             return service;
         }
