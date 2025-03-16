@@ -4,40 +4,36 @@ using Croppilot.Core.Features.User.Queries.Models;
 
 namespace Croppilot.API.Controller;
 
-[Route("api/[controller]")]
-[ApiController]
-[Authorize(Policy = nameof(UserRoleEnum.Admin))]
+[Route("api/[controller]"), ApiController, Authorize(Policy = nameof(UserRoleEnum.Admin))]
 public class UserController(IMediator mediator) : AppControllerBase
 {
-    [ResponseCache(CacheProfileName = "NoCache")]
-    [HttpGet("GetUsers")]
+    [ResponseCache(CacheProfileName = "NoCache"), HttpGet("GetUsers")]
     public async Task<IActionResult> GetPaginatedUsers([FromQuery] int pageNumber, int pageSize)
     {
         return Ok(await mediator.Send(new GetUserPaginatedQuery(pageNumber, pageSize)));
     }
-    [ResponseCache(CacheProfileName = "Default")]
-    [HttpGet("GetById/{id:guid}")]
+
+    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetById/{id:guid}")]
     public async Task<IActionResult> GetById(string id)
     {
         var response = await mediator.Send(new GetUserByIdQuery(id));
         return NewResult(response);
     }
-    [ResponseCache(CacheProfileName = "Default")]
-    [HttpGet("GetByName/{userName:alpha}")]
+
+    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetByName/{userName:alpha}")]
     public async Task<IActionResult> GetByName(string userName)
     {
         var response = await mediator.Send(new GetUserByUserNameQuery(userName));
         return NewResult(response);
     }
-    [ResponseCache(CacheProfileName = "Default")]
-    [HttpGet("user-roles/Get/{userName:alpha}")]
+
+    [ResponseCache(CacheProfileName = "Default"), HttpGet("user-roles/Get/{userName:alpha}")]
     public async Task<IActionResult> GetUserRoles(string userName)
     {
         return NewResult(await mediator.Send(new GetUserRolesQuery() { UserName = userName }));
     }
 
-    [HttpPut("user-role/change")]
-    [Authorize(Policy = nameof(UserRoleEnum.SuperAdmin))]
+    [HttpPut("user-role/change"), Authorize(Policy = nameof(UserRoleEnum.SuperAdmin))]
     public async Task<IActionResult> ChangeUserRole(ChangeUserRoleCommand command)
     {
         return NewResult(await mediator.Send(command));
@@ -61,14 +57,13 @@ public class UserController(IMediator mediator) : AppControllerBase
         return NewResult(await mediator.Send(new DeleteUserCommand(id)));
     }
 
-    [HttpDelete("user-role/remove")]
-    [Authorize(Policy = nameof(UserRoleEnum.SuperAdmin))]
+    [HttpDelete("user-role/remove"), Authorize(Policy = nameof(UserRoleEnum.SuperAdmin))]
     public async Task<IActionResult> RemoveUserRole(RemoveUserFromRoleCommand command)
     {
         return NewResult(await mediator.Send(command));
     }
-    [AllowAnonymous]
-    [HttpPost("IsValidUserNameAndEmail")]
+
+    [AllowAnonymous, HttpPost("IsValidUserNameAndEmail")]
     public async Task<IActionResult> IsValidUserNameAndEmail(CheckUserValidCommand command)
     {
         return NewResult(await mediator.Send(command));

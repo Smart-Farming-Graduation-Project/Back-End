@@ -5,22 +5,21 @@ namespace Croppilot.API.Controller;
 
 public class OrderController(IMediator mediator) : AppControllerBase
 {
-    [ResponseCache(CacheProfileName = "Default")]
-    [HttpGet("OrdersList")]
+    [ResponseCache(CacheProfileName = "Default"), HttpGet("OrdersList")]
     public async Task<IActionResult> GetOrders()
     {
         var response = await mediator.Send(new GetAllOrdersQuery());
         return Ok(response);
     }
-    [ResponseCache(CacheProfileName = "Default")]
-    [HttpGet("{id}")]
+
+    [ResponseCache(CacheProfileName = "Default"), HttpGet("{id}")]
     public async Task<IActionResult> GetOrderById([FromRoute] int id)
     {
         var response = await mediator.Send(new GetOrderByIdQuery { OrderId = id });
         return NewResult(response);
     }
-    [ResponseCache(CacheProfileName = "Default")]
-    [HttpGet("user/{userId}")]
+
+    [ResponseCache(CacheProfileName = "Default"), HttpGet("user/{userId}")]
     public async Task<IActionResult> GetUserOrders([FromRoute] string userId)
     {
         /* todo : Fix later :

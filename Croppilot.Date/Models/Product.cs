@@ -18,19 +18,16 @@ public class Product
 
     public Availability Availability { get; set; }
 
-    [Required(ErrorMessage = "Creation date is required")]
-    [DataType(DataType.DateTime)]
+    [Required(ErrorMessage = "Creation date is required"), DataType(DataType.DateTime)]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    [Required(ErrorMessage = "Update date is required")]
-    [DataType(DataType.DateTime)]
+    [Required(ErrorMessage = "Update date is required"), DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     // todo : change to nullable update date should be null firstly when product is created and when it added it should be updated
 
     public int CategoryId { get; set; }
 
-    [ForeignKey("CategoryId")]
-    [ValidateNever]
+    [ForeignKey("CategoryId"), ValidateNever]
     public Category Category { get; set; }
 
     [ValidateNever] public List<ProductImage> ProductImages { get; set; }
