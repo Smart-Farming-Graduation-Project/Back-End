@@ -1,6 +1,5 @@
 ﻿using Croppilot.Core.Bases;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using WatchDog;
 using WatchDog.src.Enums;
@@ -38,8 +37,6 @@ public static class ModelApiDependencies
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new HttpStatusCodeConverter());
-                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 options.JsonSerializerOptions.WriteIndented = true;
             })
             .AddXmlSerializerFormatters();

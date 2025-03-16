@@ -7,5 +7,5 @@ public class AddProductCommand : IRequest<Response<string>>
     public decimal Price { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public Availability Availability { get; set; }
-    public IFormFileCollection Images { get; set; } = new FormFileCollection();
+    public List<IFormFile> Images { get; set; } = new();
 }

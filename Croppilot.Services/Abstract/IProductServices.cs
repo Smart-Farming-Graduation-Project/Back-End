@@ -1,6 +1,4 @@
-﻿using Croppilot.Date.Enum;
-
-namespace Croppilot.Services.Abstract
+﻿namespace Croppilot.Services.Abstract
 {
     public interface IProductServices
     {
@@ -10,10 +8,10 @@ namespace Croppilot.Services.Abstract
         Task<Product?> GetByIdAsync(int id, string[]? includeProperties = null,
             CancellationToken cancellationToken = default);
 
-        Task<OperationResult> CreateAsync(Product product, List<string> iamgeList,
+        Task<OperationResult> CreateAsync(Product product,
             CancellationToken cancellationToken = default);
 
-        Task<OperationResult> UpdateAsync(Product product, List<string> imageList,
+        Task<OperationResult> UpdateAsync(Product product,
             CancellationToken cancellationToken = default);
 
         Task<bool> Delete(int id, CancellationToken cancellationToken = default);

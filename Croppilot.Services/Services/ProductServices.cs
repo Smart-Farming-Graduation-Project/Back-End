@@ -1,6 +1,4 @@
-﻿using Croppilot.Date.Enum;
-using Croppilot.Infrastructure.Repositories.Interfaces;
-using Croppilot.Services.Abstract;
+﻿using Croppilot.Infrastructure.Repositories.Interfaces;
 
 namespace Croppilot.Services.Services;
 
@@ -30,51 +28,22 @@ public class ProductServices(
         return product;
     }
 
-    public async Task<OperationResult> CreateAsync(Product product, List<string> imageList,
+    public async Task<OperationResult> CreateAsync(Product product,
         CancellationToken cancellationToken = default)
     {
-        //var category = await categoryService.GetByNameAsync(productDto.CategoryName);
-        //if (category == null)
-        //{
-        //    await categoryService.CreateAsync(new Category
-        //    {
-        //        Name = productDto.CategoryName,
-        //        Description = productDto.CategoryName
-        //    }, cancellationToken);
-        //}
-        //var imageUrls = await azureBlobStorage.UploadImagesAsync(productDto.Images, productDto.Name);
-        //var product = new Product
-        //{
-        //    Name = productDto.Name,
-        //    Description = productDto.Description,
-        //    Price = productDto.Price,
-        //    Availability = productDto.Availability,
-        //    CategoryId = category.Id,
-        //    ProductImages = imageUrls.Select(url => new ProductImage { ImageUrl = url }).ToList(),
-        //    CreatedAt = DateTime.UtcNow,
-        //    UpdatedAt = DateTime.UtcNow
-        //};
+
         var productExist = await unit.ProductRepository.GetProductsById(product.Id);
 
+
         if (productExist is not null)
-            return OperationResult.NotFound;
+            return OperationResult.IsAlreadyExist;
 
         await unit.ProductRepository.AddAsync(product, cancellationToken);
-        var productImages = imageList.Select(url => new ProductImage
-        {
-            ImageUrl = url,
-            ProductId = product.Id
-        }).ToList();
-
-        foreach (var productImage in productImages)
-        {
-            await unit.ProductImageRepository.AddAsync(productImage, cancellationToken);
-        }
 
         return OperationResult.Success;
     }
 
-    public async Task<OperationResult> UpdateAsync(Product product, List<string> imageList,
+    public async Task<OperationResult> UpdateAsync(Product product,
         CancellationToken cancellationToken = default)
     {
         var existingImages = await imageServices.GetByProductIdAsync(product.Id, cancellationToken);
@@ -86,14 +55,6 @@ public class ProductServices(
             product.ProductImages.Clear();
         }
 
-        // Add new images to the product
-        var newProductImages = imageList.Select(url => new ProductImage
-        {
-            ImageUrl = url,
-            ProductId = product.Id
-        }).ToList();
-
-        await unit.ProductImageRepository.AddRangeAsync(newProductImages, cancellationToken);
         await unit.ProductRepository.UpdateAsync(product, cancellationToken);
 
         return OperationResult.Success;
