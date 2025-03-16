@@ -1,7 +1,5 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Croppilot.Services.Abstract;
-using Microsoft.AspNetCore.Http;
 
 namespace Croppilot.Services.Services
 {
@@ -12,27 +10,49 @@ namespace Croppilot.Services.Services
 
 
 
-        public async Task<List<string>> UploadImagesAsync(IFormFileCollection files, string? imageNamePrefix)
+        public async Task<List<string>> UploadImagesAsync(List<string> filePaths, string? imageNamePrefix)
         {
             var uploadedUrls = new List<string>();
             var container = client.GetBlobContainerClient(containerName);
             await container.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
-            foreach (var file in files)
+            foreach (var filePath in filePaths)
             {
-                var blobName = $"{imageNamePrefix}_{Path.GetFileNameWithoutExtension(file.FileName)}{Path.GetExtension(file.FileName)}";
+                var fileName = Path.GetFileName(filePath);
+                var blobName = $"{imageNamePrefix}_{Path.GetFileNameWithoutExtension(fileName)}{Path.GetExtension(fileName)}";
 
-                using var memoryStream = new MemoryStream();
-                await file.CopyToAsync(memoryStream);
-                memoryStream.Position = 0;
-
+                using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
                 var blobClient = container.GetBlobClient(blobName);
-                await blobClient.UploadAsync(memoryStream, overwrite: true);
+                await blobClient.UploadAsync(stream, overwrite: true);
 
                 uploadedUrls.Add(blobClient.Uri.ToString());
             }
 
             return uploadedUrls;
+        }
+
+        public async Task<string> UploadImagesAsync(string oldImageUrl, string newFilePath, string productName)
+        {
+
+            var container = client.GetBlobContainerClient(containerName);
+            await container.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+            // Extract blob name from old image URL
+            var oldBlobName = oldImageUrl.Split('/').Last();
+            var oldBlobClient = container.GetBlobClient(oldBlobName);
+
+            // Delete old image from Azure
+            await oldBlobClient.DeleteIfExistsAsync();
+
+            // Upload new image to Azure
+            var newFileName = Path.GetFileName(newFilePath);
+            var newBlobName = $"{productName}_{Path.GetFileNameWithoutExtension(newFileName)}{Path.GetExtension(newFileName)}";
+            var newBlobClient = container.GetBlobClient(newBlobName);
+            using var stream = new FileStream(newFilePath, FileMode.Open, FileAccess.Read);
+            await newBlobClient.UploadAsync(stream, overwrite: true);
+
+            return newBlobClient.Uri.ToString();
+
         }
 
 

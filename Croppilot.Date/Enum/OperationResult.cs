@@ -9,4 +9,5 @@ public enum OperationResult
     NotAvailable,
     InvalidDate,
     AlreadyEnded,
+    IsAlreadyExist
 }
