@@ -10,9 +10,8 @@ namespace Croppilot.API.Controller;
 /// <remarks>
 /// Some endpoints are available to all users, while others require the user to be authenticated.
 /// </remarks>
-[SwaggerResponse(200, "Operation completed successfully")]
-[SwaggerResponse(400, "Invalid operation or input data")]
-[SwaggerResponse(401, "User is not authorized to perform this operation")]
+[SwaggerResponse(200, "Operation completed successfully"), SwaggerResponse(400, "Invalid operation or input data"),
+ SwaggerResponse(401, "User is not authorized to perform this operation")]
 public class PostsController(IMediator mediator) : AppControllerBase
 {
     /// <summary>
@@ -21,11 +20,9 @@ public class PostsController(IMediator mediator) : AppControllerBase
     /// <returns>
     /// An <see cref="IActionResult"/> containing a list of posts or an error response.
     /// </returns>
-    [ResponseCache(CacheProfileName = "Default")]
-    [HttpGet("GetPosts")]
-    [AllowAnonymous]
-    [SwaggerOperation(Summary = "Retrieve all posts",
-        Description = "**Fetches all posts available in the system.**")]
+    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetPosts"), AllowAnonymous, SwaggerOperation(
+         Summary = "Retrieve all posts",
+         Description = "**Fetches all posts available in the system.**")]
     public async Task<IActionResult> GetPosts()
     {
         var query = new GetPostsQuery();
@@ -40,11 +37,9 @@ public class PostsController(IMediator mediator) : AppControllerBase
     /// <returns>
     /// An <see cref="IActionResult"/> containing the post details or an error response.
     /// </returns>
-    [ResponseCache(CacheProfileName = "Default")]
-    [HttpGet("GetPost/{id}")]
-    [AllowAnonymous]
-    [SwaggerOperation(Summary = "Retrieve a specific post",
-        Description = "**Fetches the details of a post by its ID.**")]
+    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetPost/{id}"), AllowAnonymous, SwaggerOperation(
+         Summary = "Retrieve a specific post",
+         Description = "**Fetches the details of a post by its ID.**")]
     public async Task<IActionResult> GetPostById([FromRoute] int id)
     {
         var query = new GetPostByIdQuery { Id = id };
@@ -59,11 +54,10 @@ public class PostsController(IMediator mediator) : AppControllerBase
     /// <returns>
     /// An <see cref="IActionResult"/> indicating whether the post was created successfully.
     /// </returns>
-    [HttpPost("CreatePost")]
-    [Authorize(Policy = nameof(UserRoleEnum.User))]
-    [SwaggerOperation(Summary = "Create a new post",
-        Description =
-            "**Creates a new post by the authenticated user. If the post is a share, provide a valid SharedPostId; otherwise, use 0 or null.**")]
+    [HttpPost("CreatePost"), Authorize(Policy = nameof(UserRoleEnum.User)), SwaggerOperation(
+         Summary = "Create a new post",
+         Description =
+             "**Creates a new post by the authenticated user. If the post is a share, provide a valid SharedPostId; otherwise, use 0 or null.**")]
     public async Task<IActionResult> CreatePost([FromBody] AddPostCommand command)
     {
         var response = await mediator.Send(command);
@@ -78,10 +72,9 @@ public class PostsController(IMediator mediator) : AppControllerBase
     /// <returns>
     /// An <see cref="IActionResult"/> indicating whether the post was updated successfully.
     /// </returns>
-    [HttpPut("UpdatePost/{id}")]
-    [Authorize(Policy = nameof(UserRoleEnum.User))]
-    [SwaggerOperation(Summary = "Update an existing post",
-        Description = "**Updates an existing post if the authenticated user is the creator.**")]
+    [HttpPut("UpdatePost/{id}"), Authorize(Policy = nameof(UserRoleEnum.User)), SwaggerOperation(
+         Summary = "Update an existing post",
+         Description = "**Updates an existing post if the authenticated user is the creator.**")]
     public async Task<IActionResult> UpdatePost([FromRoute] int id, [FromBody] UpdatePostCommand command)
     {
         command.Id = id;
@@ -96,10 +89,9 @@ public class PostsController(IMediator mediator) : AppControllerBase
     /// <returns>
     /// An <see cref="IActionResult"/> indicating whether the post was deleted successfully.
     /// </returns>
-    [HttpDelete("DeletePost/{id}")]
-    [Authorize(Policy = nameof(UserRoleEnum.User))]
-    [SwaggerOperation(Summary = "Delete a post",
-        Description = "**Deletes a post if the authenticated user is the creator.**")]
+    [HttpDelete("DeletePost/{id}"), Authorize(Policy = nameof(UserRoleEnum.User)), SwaggerOperation(
+         Summary = "Delete a post",
+         Description = "**Deletes a post if the authenticated user is the creator.**")]
     public async Task<IActionResult> DeletePost([FromRoute] int id)
     {
         var command = new DeletePostCommand { Id = id };

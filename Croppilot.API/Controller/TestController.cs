@@ -3,8 +3,7 @@ using Croppilot.Services.Abstract;
 
 namespace Croppilot.API.Controller;
 
-[Route("api/[controller]")]
-[ApiController]
+[Route("api/[controller]"), ApiController]
 public class TestController(IProductServices _productServices, IEmailService emailService, IAuthenticationService _authenticationService)
     : ControllerBase
 {

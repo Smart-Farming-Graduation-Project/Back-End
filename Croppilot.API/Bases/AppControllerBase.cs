@@ -1,11 +1,9 @@
 ﻿using Croppilot.Core.Bases;
-using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace Croppilot.API.Bases;
 
-[Route("api/[controller]")]
-[ApiController]
+[Route("api/[controller]"), ApiController]
 public class AppControllerBase : ControllerBase
 {
     public ObjectResult NewResult<T>(Response<T> response)
