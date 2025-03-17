@@ -3,7 +3,7 @@ using Croppilot.Date.Models;
 
 namespace Croppilot.Core.Features.Carts.Command.Handlers;
 
-public class CartCommandHandler(ICartService cartService, IProductServices productServices) : ResponseHandler,
+public class CartCommandHandler(ICartService cartService) : ResponseHandler,
     IRequestHandler<AddProductToCartCommand, Response<string>>,
     IRequestHandler<RemoveProductFromCartCommand, Response<string>>
 {
@@ -15,11 +15,6 @@ public class CartCommandHandler(ICartService cartService, IProductServices produ
             CreatedAt = DateTime.UtcNow,
             CartItems = new List<CartItem>()
         };
-
-        var isProductExists = await IsProductExistsAsync(command.ProductId, cancellationToken);
-        if (!isProductExists)
-            return BadRequest<string>($"Product with ID {command.ProductId} does not exist.");
-       
         
         var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == command.ProductId);
         if (existingItem != null)
@@ -65,11 +60,5 @@ public class CartCommandHandler(ICartService cartService, IProductServices produ
         return result == OperationResult.Success
             ? Success<string>("Product removed from cart successfully.")
             : BadRequest<string>("Failed to remove product from cart.");
-    }
-    
-    private async Task<bool> IsProductExistsAsync(int productId, CancellationToken cancellationToken)
-    {
-        var product = await productServices.GetByIdAsync(productId, cancellationToken: cancellationToken);
-        return product != null;
     }
 }
