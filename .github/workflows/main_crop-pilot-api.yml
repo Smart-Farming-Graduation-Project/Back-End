@@ -34,6 +34,7 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
+          retention-days: 7  # Automatically delete artifacts after 7 days
 
   deploy:
     runs-on: windows-latest
@@ -65,4 +66,14 @@ jobs:
           app-name: 'Crop-Pilot-Api'
           slot-name: 'Production'
           package: .
-          
+  
+  cleanup:
+    runs-on: windows-latest
+    steps:
+      - name: Cleanup old workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          retain_days: 7
+          keep_minimum_runs: 5
