@@ -1,4 +1,5 @@
 ﻿using Croppilot.Core.Bases;
+using Microsoft.Azure.Cosmos;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using WatchDog;
@@ -43,6 +44,15 @@ public static class ModelApiDependencies
 
         services.AddHttpContextAccessor().AddSwaggerServices().AddRolePolicy().AddCorSServices()
             .AddWatchDogConfigurations(configuration);
+
+
+        services.AddSingleton<CosmosClient>(sp =>
+        {
+            var endpointUri = configuration["AzureService:CosmosDb:EndpointUri"];
+            var primaryKey = configuration["AzureService:CosmosDb:PrimaryKey"];
+
+            return new CosmosClient(endpointUri, primaryKey);
+        });
 
         return services;
     }

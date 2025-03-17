@@ -10,7 +10,7 @@ namespace Croppilot.API.Controller
     public class NotificationController(IMediator mediator) : AppControllerBase
     {
         [HttpPost("Send-Sms"), SwaggerOperation(
-             Summary = "Send an SMS Using Twilio",
+             Summary = "Send an SMS Using Twilio  **donot use before tell me Mohamed Zonkol**",
              Description = "**Sends an SMS message to the specified recipient using Twilio.**\n\n" +
                            "**Parameters:**\n" +
                            "- **To**: The recipient's phone number in E.164 format (e.g., +1234567890).\n" +
@@ -26,7 +26,7 @@ namespace Croppilot.API.Controller
 
 
         [HttpPost("Send-Notification"), SwaggerOperation(
-             Summary = "Send a Notification Using Pushbullet",
+             Summary = "Send a Notification Using Pushbullet   **donot use before tell me Mohamed Zonkol**",
              Description = "**Sends a notification to the specified device using Pushbullet.**\n\n" +
                            "**Parameters:**\n" +
                            "- **Title**: The title of the notification.\n" +
