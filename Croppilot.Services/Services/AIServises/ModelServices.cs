@@ -26,8 +26,7 @@ namespace Croppilot.Services.Services.AIServises
             _configuration = configuration;
 
             // Load the Models
-            // var yoloModelPath = Path.Combine(_configuration["AiModels:YoloModelPath"]);
-            var yoloModelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AiModels", "best.onnx");
+            var yoloModelPath = Path.Combine(_configuration["AiModels:YoloModelPath"]);
             var mobilenetModelPath = Path.Combine(_configuration["AiModels:MobileNetModelPath"]);
             _yolov8 = new Yolov8(yoloModelPath, useCuda: false);
 
