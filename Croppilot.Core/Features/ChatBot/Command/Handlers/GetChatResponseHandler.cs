@@ -1,4 +1,5 @@
 ﻿using Croppilot.Core.Features.ChatBot.Command.Models;
+using Croppilot.Services.Abstract.AiSerives;
 
 namespace Croppilot.Core.Features.ChatBot.Command.Handlers
 {

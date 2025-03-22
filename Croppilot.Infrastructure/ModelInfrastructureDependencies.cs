@@ -1,6 +1,9 @@
 ﻿using Croppilot.Date.Helpers;
 using Croppilot.Date.Identity;
 using Croppilot.Infrastructure.Repositories.Implementation;
+using Croppilot.Infrastructure.Repositories.Implementation.AiRepository;
+using Croppilot.Infrastructure.Repositories.Interfaces.AiRepository;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +12,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
-using Hangfire;
 
 namespace Croppilot.Infrastructure
 {
@@ -33,6 +35,8 @@ namespace Croppilot.Infrastructure
             service.AddTransient<IPostRepository, PostRepository>();
             service.AddTransient<ICommentRepository, CommentRepository>();
             service.AddTransient<IVoteRepository, VoteRepository>();
+            service.AddTransient<IModelRepository, ModelRepository>();
+            service.AddTransient<IFeedbackRepository, FeedbackRepository>();
 
             #region Identity Service
 

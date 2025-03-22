@@ -1,5 +1,6 @@
 ﻿using Croppilot.Core.Features.ChatBot.Query.Models;
 using Croppilot.Core.Features.ChatBot.Query.Result;
+using Croppilot.Services.Abstract.AiSerives;
 
 namespace Croppilot.Core.Features.ChatBot.Query.Handlers
 {

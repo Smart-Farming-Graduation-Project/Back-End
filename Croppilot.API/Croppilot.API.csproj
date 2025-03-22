@@ -23,4 +23,15 @@
     <ProjectReference Include="..\Croppilot.Infrastructure\Croppilot.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	  <Folder Include="images\" />
+	  <None Include="AiModels\best.onnx" >
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </None>
+	  <None Include="AiModels\mobilenet_model.onnx" >
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </None>
+  </ItemGroup>
 </Project>
