@@ -1,5 +1,9 @@
 ﻿using Azure.Storage.Blobs;
+using Croppilot.Services.Abstract.AiSerives;
+using Croppilot.Services.Abstract.EmbbeddedServices;
 using Croppilot.Services.Services;
+using Croppilot.Services.Services.AIServises;
+using Croppilot.Services.Services.EmbbeddedSerivces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,7 +36,11 @@ namespace Croppilot.Services
             service.AddScoped<ICommentService, CommentService>();
             service.AddScoped<IVoteService, VoteService>();
             service.AddScoped<INotificationServices, NotificationServices>();
+
+
             service.AddScoped<ICosmosDbService, CosmosDbService>();
+            service.AddScoped<IModelServices, ModelServices>();
+
             service.AddHttpClient();
             return service;
         }

@@ -1,4 +1,6 @@
-﻿namespace Croppilot.Infrastructure.Repositories.Interfaces
+﻿using Croppilot.Infrastructure.Repositories.Interfaces.AiRepository;
+
+namespace Croppilot.Infrastructure.Repositories.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -16,5 +18,8 @@
         IPostRepository PostRepository { get; }
         ICommentRepository CommentRepository { get; }
         IVoteRepository VoteRepository { get; }
+        IFeedbackRepository FeedbackRepository { get; }
+        IModelRepository ModelRepository { get; }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Croppilot.Date.Identity;
+using Croppilot.Date.Models.AiModel;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Croppilot.Infrastructure.Data
@@ -22,6 +23,9 @@ namespace Croppilot.Infrastructure.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Vote> Votes { get; set; }
+
+        public DbSet<ModelResult> AIModelResults { get; set; }
+        public DbSet<FeedbackEntry> FeedbackEntries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

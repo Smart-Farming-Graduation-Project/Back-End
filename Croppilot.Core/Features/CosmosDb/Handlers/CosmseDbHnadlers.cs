@@ -1,5 +1,6 @@
 ﻿using Croppilot.Core.Features.CosmosDb.Models;
 using Croppilot.Core.Features.CosmosDb.Result;
+using Croppilot.Services.Abstract.EmbbeddedServices;
 
 namespace Croppilot.Core.Features.CosmosDb.Handlers
 {
