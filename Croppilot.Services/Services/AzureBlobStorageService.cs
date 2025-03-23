@@ -31,6 +31,20 @@ namespace Croppilot.Services.Services
             return uploadedUrls;
         }
 
+
+        public async Task<string> UploadImageAsync(Stream imageStream, string containerName, string blobName)
+        {
+            var containerClient = client.GetBlobContainerClient(containerName);
+            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+            var blobClient = containerClient.GetBlobClient(blobName);
+            await blobClient.UploadAsync(imageStream, overwrite: true);
+
+            return blobClient.Uri.ToString();
+        }
+
+
+
         public async Task<string> UploadImagesAsync(string oldImageUrl, string newFilePath, string productName)
         {
 

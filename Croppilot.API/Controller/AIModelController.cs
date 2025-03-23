@@ -13,7 +13,7 @@ namespace Croppilot.API.Controller
             var result = await mediator.Send(command);
             return NewResult(result);
         }
-        [HttpGet("feedback/{ImageId}")]
+        [ResponseCache(CacheProfileName = "NoCache"), HttpGet("feedback/{ImageId}")]
         public async Task<IActionResult> Feedback(Guid ImageId)
         {
             var result = await mediator.Send(new GetFeedback(ImageId));
