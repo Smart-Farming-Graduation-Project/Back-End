@@ -15,14 +15,16 @@ namespace Croppilot.Services.Services.AIServises
     {
         private readonly IUnitOfWork _unit;
         private readonly IChatService _chatService;
+        private readonly IAzureBlobStorageService _azureBlobStorageService;
         private readonly IConfiguration _configuration;
         private readonly Yolov8 _yolov8;
         private readonly InferenceSession _mobilenetSession;
         private readonly string[] _customLabels;
-        public ModelServices(IUnitOfWork unit, IChatService chatService, IConfiguration configuration)
+        public ModelServices(IUnitOfWork unit, IChatService chatService, IAzureBlobStorageService azureBlobStorageService, IConfiguration configuration)
         {
             _unit = unit;
             _chatService = chatService;
+            _azureBlobStorageService = azureBlobStorageService;
             _configuration = configuration;
 
             // Load the Models
@@ -47,7 +49,7 @@ namespace Croppilot.Services.Services.AIServises
 
             using (var stream = new MemoryStream())
             {
-                image.CopyTo(stream);
+                await image.CopyToAsync(stream);
                 var fileBytes = stream.ToArray();
 
                 using (var skImage = SKImage.FromEncodedData(fileBytes))
@@ -59,7 +61,7 @@ namespace Croppilot.Services.Services.AIServises
 
                     var imageId = Guid.NewGuid();
 
-                    BackgroundJob.Enqueue(() => GetFeedbackFromBot(imageId));
+
 
                     var modelResult = new ModelResult
                     {
@@ -107,20 +109,12 @@ namespace Croppilot.Services.Services.AIServises
                         }
                     }
 
-                    if (!Directory.Exists("images"))
-                    {
-                        Directory.CreateDirectory("images");
-                    }
+                    modelResult.ImageUrl = await SaveImage(skBitmap, imageId.ToString());
 
-
-                    var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmssfff");
-                    var filename = Path.Combine("images", $"{timestamp}.jpg");
-
-                    SaveImage(skBitmap, filename);
-
-                    modelResult.ImageUrl = Path.GetFullPath(filename); ;
                     // Save to database
                     await _unit.ModelRepository.AddAsync(modelResult);
+
+                    BackgroundJob.Enqueue(() => GetFeedbackFromBot(imageId));
 
                     return modelResult;
 
@@ -172,7 +166,8 @@ namespace Croppilot.Services.Services.AIServises
         private async Task<string> GetFeedbackFromAI(string disease)
         {
 
-            var prompt = $"What are the best solutions for treating {disease} in plants?";
+            var prompt = $@"Provide a short, specific, and actionable solution for treating {disease} in plants.Focus only on the most effective treatments and steps to resolve the issue quickly. Avoid unnecessary details.
+";
             var response = await _chatService.GetChatResponseAsync(prompt);
             return response;
         }
@@ -264,13 +259,15 @@ namespace Croppilot.Services.Services.AIServises
             }
         }
 
-        private void SaveImage(SKBitmap bitmap, string filename)
+        private async Task<string> SaveImage(SKBitmap bitmap, string filename)
         {
-            using (var image = SKImage.FromBitmap(bitmap))
-            using (var data = image.Encode(SKEncodedImageFormat.Jpeg, 95))
-            using (var fileStream = new FileStream(filename, FileMode.Create, FileAccess.Write))
+            using (var imageStream = new MemoryStream())
             {
-                data.SaveTo(fileStream);
+                bitmap.Encode(imageStream, SKEncodedImageFormat.Jpeg, 100);
+                imageStream.Position = 0;
+
+                var blobName = $"{filename}.jpg";
+                return await _azureBlobStorageService.UploadImageAsync(imageStream, "model-result-images", blobName);
             }
         }
     }
