@@ -28,6 +28,8 @@
 
   <ItemGroup>
     <Folder Include="Features\Comments\Query\Validators\" />
+    <Folder Include="Features\Dashbored\Equipment\Models\" />
+    <Folder Include="Features\Dashbored\Equipment\Result\" />
     <Folder Include="Features\Votes\Query\Handlers\" />
     <Folder Include="Features\Votes\Query\Models\" />
     <Folder Include="Features\Votes\Query\Result\" />

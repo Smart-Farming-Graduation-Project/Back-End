@@ -1,4 +1,5 @@
 ﻿using Croppilot.Infrastructure.Repositories.Interfaces.AiRepository;
+using Croppilot.Infrastructure.Repositories.Interfaces.Dashbored;
 
 namespace Croppilot.Infrastructure.Repositories.Interfaces
 {
@@ -18,8 +19,14 @@ namespace Croppilot.Infrastructure.Repositories.Interfaces
         IPostRepository PostRepository { get; }
         ICommentRepository CommentRepository { get; }
         IVoteRepository VoteRepository { get; }
+
+        //Ai Repositories
         IFeedbackRepository FeedbackRepository { get; }
         IModelRepository ModelRepository { get; }
+
+        //Dashbord Repositories
+        IWeatherDataRepository WeatherDataRepository { get; }
+        IWeatherForcastRepository WeatherForecastRepository { get; }
 
     }
 }

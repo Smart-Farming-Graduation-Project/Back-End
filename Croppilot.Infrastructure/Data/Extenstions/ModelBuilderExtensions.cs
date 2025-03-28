@@ -1,4 +1,6 @@
 ﻿using Croppilot.Date.Enum;
+using Croppilot.Date.Helpers.Dashboard.Enum;
+using Croppilot.Date.Models.DashboardModels;
 
 namespace Croppilot.Infrastructure.Data.Extensions
 {
@@ -79,6 +81,25 @@ namespace Croppilot.Infrastructure.Data.Extensions
                 new ProductImage { Id = 22, ImageUrl = "https://example.com/mini-tractor.jpg", ProductId = 22 },
                 new ProductImage { Id = 23, ImageUrl = "https://example.com/tomato-seeds.jpg", ProductId = 23 },
                 new ProductImage { Id = 24, ImageUrl = "https://example.com/chemical-fertilizer.jpg", ProductId = 24 }
+            );
+            // Seed Initial Equipment Data
+            modelBuilder.Entity<Equipment>().HasData(
+               new Equipment { Id = 1, EquipmentId = "EQ-001", Name = "Tractor A", Status = EquipmentStatus.Active, LastMaintenance = DateTime.UtcNow.AddDays(-30), HoursUsed = 120, Battery = 85, Connectivity = EquipmentConnectivity.Online },
+               new Equipment { Id = 2, EquipmentId = "EQ-002", Name = "Drone B", Status = EquipmentStatus.Idle, LastMaintenance = DateTime.UtcNow.AddDays(-15), HoursUsed = 50, Battery = 60, Connectivity = EquipmentConnectivity.Offline },
+               new Equipment { Id = 3, EquipmentId = "EQ-003", Name = "Sprinkler C", Status = EquipmentStatus.Maintenance, LastMaintenance = DateTime.UtcNow.AddDays(-10), HoursUsed = 30, Battery = 95, Connectivity = EquipmentConnectivity.Online },
+               new Equipment { Id = 4, EquipmentId = "EQ-004", Name = "Harvester D", Status = EquipmentStatus.Active, LastMaintenance = DateTime.UtcNow.AddDays(-45), HoursUsed = 200, Battery = 75, Connectivity = EquipmentConnectivity.Online },
+               new Equipment { Id = 5, EquipmentId = "EQ-005", Name = "Seeder E", Status = EquipmentStatus.Idle, LastMaintenance = DateTime.UtcNow.AddDays(-5), HoursUsed = 20, Battery = 100, Connectivity = EquipmentConnectivity.Offline },
+               new Equipment { Id = 6, EquipmentId = "EQ-006", Name = "Plow F", Status = EquipmentStatus.Maintenance, LastMaintenance = DateTime.UtcNow.AddDays(-20), HoursUsed = 90, Battery = 50, Connectivity = EquipmentConnectivity.Online }
+             );
+
+            // Seed Initial Field Data
+            modelBuilder.Entity<Field>().HasData(
+              new Field { Id = 1, Name = "Field Alpha", Size = 10.5, Crop = "Wheat", PlantingDate = DateTime.UtcNow.AddMonths(-3), HarvestDate = DateTime.UtcNow.AddMonths(2), Irrigation = IrrigationType.Drip, Status = FieldStatus.Planted },
+              new Field { Id = 2, Name = "Field Beta", Size = 15.2, Crop = "Corn", PlantingDate = DateTime.UtcNow.AddMonths(-2), HarvestDate = DateTime.UtcNow.AddMonths(3), Irrigation = IrrigationType.Sprinkler, Status = FieldStatus.Planted },
+              new Field { Id = 3, Name = "Field Gamma", Size = 8.0, Crop = "Rice", PlantingDate = DateTime.UtcNow.AddMonths(-4), HarvestDate = DateTime.UtcNow.AddMonths(1), Irrigation = IrrigationType.Flood, Status = FieldStatus.Planted },
+              new Field { Id = 4, Name = "Field Delta", Size = 12.7, Crop = "Soybeans", PlantingDate = DateTime.UtcNow.AddMonths(-1), HarvestDate = DateTime.UtcNow.AddMonths(5), Irrigation = IrrigationType.Drip, Status = FieldStatus.Preparing },
+              new Field { Id = 5, Name = "Field Epsilon", Size = 20.3, Crop = "Barley", PlantingDate = DateTime.UtcNow.AddMonths(-5), HarvestDate = DateTime.UtcNow.AddMonths(3), Irrigation = IrrigationType.CenterPivot, Status = FieldStatus.Planted },
+              new Field { Id = 6, Name = "Field Zeta", Size = 9.5, Crop = "Oats", PlantingDate = DateTime.UtcNow.AddMonths(-6), HarvestDate = DateTime.UtcNow.AddMonths(4), Irrigation = IrrigationType.Manual, Status = FieldStatus.Fallow }
             );
         }
     }

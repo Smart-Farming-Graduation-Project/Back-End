@@ -1,5 +1,7 @@
 ﻿using Croppilot.Date.Identity;
 using Croppilot.Date.Models.AiModel;
+using Croppilot.Date.Models.DashboardModels;
+using Croppilot.Infrastructure.Data.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Croppilot.Infrastructure.Data
@@ -27,9 +29,17 @@ namespace Croppilot.Infrastructure.Data
         public DbSet<ModelResult> AIModelResults { get; set; }
         public DbSet<FeedbackEntry> FeedbackEntries { get; set; }
 
+        //Dashborad Models
+        public DbSet<WeatherData> WeatherDatas { get; set; }
+        public DbSet<WeatherForecast> WeatherForecasts { get; set; }
+        public DbSet<Field> Fields { get; set; }
+        public DbSet<Equipment> Equipments { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            ModelBuilderExtensions.SeedData(modelBuilder);
             //modelBuilder.ApplyConfiguration(new ProductConfiguration());
             //modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             //modelBuilder.ApplyConfiguration(new LeasingConfiguration());

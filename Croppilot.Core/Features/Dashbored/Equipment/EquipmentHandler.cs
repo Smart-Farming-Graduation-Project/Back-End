@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Croppilot.Infrastructure.Data.Extenstions
+namespace Croppilot.Core.Features.Dashbored.Equipment
 {
-    internal class InitialData
+    class EquipmentHandler
     {
     }
 }

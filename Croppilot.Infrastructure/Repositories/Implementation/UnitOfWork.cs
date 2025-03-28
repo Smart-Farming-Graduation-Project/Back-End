@@ -1,5 +1,7 @@
 ﻿using Croppilot.Infrastructure.Repositories.Implementation.AiRepository;
+using Croppilot.Infrastructure.Repositories.Implementation.Dashbored;
 using Croppilot.Infrastructure.Repositories.Interfaces.AiRepository;
+using Croppilot.Infrastructure.Repositories.Interfaces.Dashbored;
 
 namespace Croppilot.Infrastructure.Repositories.Implementation
 {
@@ -21,6 +23,9 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
         public IFeedbackRepository FeedbackRepository { get; }
         public IModelRepository ModelRepository { get; }
 
+        public IWeatherDataRepository WeatherDataRepository { get; }
+
+        public IWeatherForcastRepository WeatherForecastRepository { get; }
 
         private readonly AppDbContext _context;
         private bool _disposed;
@@ -43,6 +48,9 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
             VoteRepository = new VoteRepository(_context);
             FeedbackRepository = new FeedbackRepository(_context);
             ModelRepository = new ModelRepository(_context);
+
+            WeatherDataRepository = new WeatherDataRepository(_context);
+            WeatherForecastRepository = new WeatherForcastRepository(_context);
         }
 
         public IGenericRepository<T> GenericRepository<T>() where T : class

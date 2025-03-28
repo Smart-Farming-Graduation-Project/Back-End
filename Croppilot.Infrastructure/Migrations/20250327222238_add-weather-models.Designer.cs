@@ -4,6 +4,7 @@ using Croppilot.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Croppilot.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250327222238_add-weather-models")]
+    partial class addweathermodels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -295,26 +298,6 @@ namespace Croppilot.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 20,
-                            Description = "High-quality seeds for farming",
-                            Name = "Seeds"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Description = "Organic and chemical fertilizers",
-                            Name = "Fertilizers"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Description = "Tractors, plows, and other farming tools",
-                            Name = "Farming Equipment"
-                        });
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.ChatHistory", b =>
@@ -387,214 +370,6 @@ namespace Croppilot.Infrastructure.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.Equipment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("Battery")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Connectivity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EquipmentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("HoursUsed")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("LastMaintenance")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Equipments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Battery = 85.0,
-                            Connectivity = 0,
-                            EquipmentId = "EQ-001",
-                            HoursUsed = 120.0,
-                            LastMaintenance = new DateTime(2025, 2, 26, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2477),
-                            Name = "Tractor A",
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Battery = 60.0,
-                            Connectivity = 1,
-                            EquipmentId = "EQ-002",
-                            HoursUsed = 50.0,
-                            LastMaintenance = new DateTime(2025, 3, 13, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2491),
-                            Name = "Drone B",
-                            Status = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Battery = 95.0,
-                            Connectivity = 0,
-                            EquipmentId = "EQ-003",
-                            HoursUsed = 30.0,
-                            LastMaintenance = new DateTime(2025, 3, 18, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2493),
-                            Name = "Sprinkler C",
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Battery = 75.0,
-                            Connectivity = 0,
-                            EquipmentId = "EQ-004",
-                            HoursUsed = 200.0,
-                            LastMaintenance = new DateTime(2025, 2, 11, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2495),
-                            Name = "Harvester D",
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Battery = 100.0,
-                            Connectivity = 1,
-                            EquipmentId = "EQ-005",
-                            HoursUsed = 20.0,
-                            LastMaintenance = new DateTime(2025, 3, 23, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2497),
-                            Name = "Seeder E",
-                            Status = 2
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Battery = 50.0,
-                            Connectivity = 0,
-                            EquipmentId = "EQ-006",
-                            HoursUsed = 90.0,
-                            LastMaintenance = new DateTime(2025, 3, 8, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2498),
-                            Name = "Plow F",
-                            Status = 1
-                        });
-                });
-
-            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.Field", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Crop")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("HarvestDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Irrigation")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("PlantingDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Size")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Fields");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Crop = "Wheat",
-                            HarvestDate = new DateTime(2025, 5, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2527),
-                            Irrigation = 1,
-                            Name = "Field Alpha",
-                            PlantingDate = new DateTime(2024, 12, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2523),
-                            Size = 10.5,
-                            Status = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Crop = "Corn",
-                            HarvestDate = new DateTime(2025, 6, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2532),
-                            Irrigation = 2,
-                            Name = "Field Beta",
-                            PlantingDate = new DateTime(2025, 1, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2531),
-                            Size = 15.199999999999999,
-                            Status = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Crop = "Rice",
-                            HarvestDate = new DateTime(2025, 4, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2534),
-                            Irrigation = 3,
-                            Name = "Field Gamma",
-                            PlantingDate = new DateTime(2024, 11, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2533),
-                            Size = 8.0,
-                            Status = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Crop = "Soybeans",
-                            HarvestDate = new DateTime(2025, 8, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2536),
-                            Irrigation = 1,
-                            Name = "Field Delta",
-                            PlantingDate = new DateTime(2025, 2, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2536),
-                            Size = 12.699999999999999,
-                            Status = 4
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Crop = "Barley",
-                            HarvestDate = new DateTime(2025, 6, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2539),
-                            Irrigation = 5,
-                            Name = "Field Epsilon",
-                            PlantingDate = new DateTime(2024, 10, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2538),
-                            Size = 20.300000000000001,
-                            Status = 2
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Crop = "Oats",
-                            HarvestDate = new DateTime(2025, 7, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2541),
-                            Irrigation = 4,
-                            Name = "Field Zeta",
-                            PlantingDate = new DateTime(2024, 9, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2540),
-                            Size = 9.5,
-                            Status = 3
-                        });
-                });
-
             modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.WeatherData", b =>
                 {
                     b.Property<int>("Id")
@@ -649,28 +424,14 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Day")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("High")
                         .HasColumnType("float");
-
-                    b.Property<int>("Humidity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Icon")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Low")
                         .HasColumnType("float");
 
                     b.Property<double>("Precipitation")
                         .HasColumnType("float");
-
-                    b.Property<int>("Pressure")
-                        .HasColumnType("int");
 
                     b.Property<double>("Wind")
                         .HasColumnType("float");
@@ -858,63 +619,6 @@ namespace Croppilot.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 20,
-                            Availability = 0,
-                            CategoryId = 20,
-                            CreatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2398),
-                            Description = "High-yield wheat seeds suitable for all climates",
-                            Name = "Wheat Seeds",
-                            Price = 19.99m,
-                            UpdatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2399)
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Availability = 0,
-                            CategoryId = 21,
-                            CreatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2401),
-                            Description = "Natural compost-based fertilizer for better crop growth",
-                            Name = "Organic Fertilizer",
-                            Price = 49.99m,
-                            UpdatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2402)
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Availability = 1,
-                            CategoryId = 22,
-                            CreatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2404),
-                            Description = "Compact tractor for small to medium-sized farms",
-                            Name = "Mini Tractor",
-                            Price = 4999.99m,
-                            UpdatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2405)
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Availability = 0,
-                            CategoryId = 20,
-                            CreatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2407),
-                            Description = "High-quality tomato seeds for high-yield crops",
-                            Name = "Tomato Seeds",
-                            Price = 15.99m,
-                            UpdatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2407)
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Availability = 0,
-                            CategoryId = 21,
-                            CreatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2409),
-                            Description = "Boosts plant growth with essential nutrients",
-                            Name = "Chemical Fertilizer",
-                            Price = 39.99m,
-                            UpdatedAt = new DateTime(2025, 3, 28, 17, 33, 58, 300, DateTimeKind.Utc).AddTicks(2410)
-                        });
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.ProductImage", b =>
@@ -937,38 +641,6 @@ namespace Croppilot.Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductImages");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 20,
-                            ImageUrl = "https://example.com/wheat-seeds.jpg",
-                            ProductId = 20
-                        },
-                        new
-                        {
-                            Id = 21,
-                            ImageUrl = "https://example.com/organic-fertilizer.jpg",
-                            ProductId = 21
-                        },
-                        new
-                        {
-                            Id = 22,
-                            ImageUrl = "https://example.com/mini-tractor.jpg",
-                            ProductId = 22
-                        },
-                        new
-                        {
-                            Id = 23,
-                            ImageUrl = "https://example.com/tomato-seeds.jpg",
-                            ProductId = 23
-                        },
-                        new
-                        {
-                            Id = 24,
-                            ImageUrl = "https://example.com/chemical-fertilizer.jpg",
-                            ProductId = 24
-                        });
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Review", b =>
