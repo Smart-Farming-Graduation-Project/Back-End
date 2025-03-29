@@ -6,10 +6,10 @@ namespace Croppilot.Services.Services.DashboredServices
 {
     public class EquipmentService(IEquipmentRepository equipmentRepository) : IEquipmentService
     {
-        public async Task<Equipment> CreateAsync(Equipment equipment)
+        public async Task<OperationResult> CreateAsync(Equipment equipment)
         {
             await equipmentRepository.AddAsync(equipment);
-            return equipment;
+            return OperationResult.Success;
         }
 
         public async Task<bool> DeleteAsync(string equipmentId)
@@ -19,6 +19,14 @@ namespace Croppilot.Services.Services.DashboredServices
 
             await equipmentRepository.DeleteAsync(equipment);
             return true;
+        }
+
+        public async Task<bool> UpdateEquipmentStatus(string id, string status)
+        {
+            var result = await equipmentRepository.UpdateStatus(id, status);
+            if (result is true)
+                return true;
+            return false;
         }
 
         public async Task<IEnumerable<Equipment>> GetAllAsync()
