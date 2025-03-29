@@ -12,7 +12,10 @@ public class CreateOrderCommand : IRequest<Response<CreateOrderResponse>>
     // Example using HttpContext.User
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 */
-	//public string UserId { get; set; }
+	/*
+        Done: UserId removed from the request body.
+     */
+
 	public string ShippingAddress { get; set; } = string.Empty;
 	public List<CreateOrderItemCommand> OrderItems { get; set; } = new();
 }

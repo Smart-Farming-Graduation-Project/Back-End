@@ -14,5 +14,7 @@ namespace Croppilot.Date.Identity
 		public List<RefreshToken>? RefreshTokens { get; set; }
 		public string? Provider { get; set; }
 		public Wishlist? Wishlist { get; set; }
+		public ICollection<Product> Products { get; set; }
+		public ICollection<Cupon> Cupons { get; set; }
 	}
 }

@@ -28,6 +28,8 @@
 
   <ItemGroup>
     <Folder Include="Features\Comments\Query\Validators\" />
+    <Folder Include="Features\Cupon\Query\" />
+    <Folder Include="Features\Payment\Query\" />
     <Folder Include="Features\Votes\Query\Handlers\" />
     <Folder Include="Features\Votes\Query\Models\" />
     <Folder Include="Features\Votes\Query\Result\" />
@@ -35,6 +37,7 @@
     <Folder Include="Mapping\Authentication\Command\" />
     <Folder Include="Mapping\Authentication\Query\" />
     <Folder Include="Mapping\Authorization\Command\" />
+    <Folder Include="Mapping\Cupon\Query\" />
     <Folder Include="Mapping\User\Command\" />
     <Folder Include="Features\Orders\Query\Validators\" />
 

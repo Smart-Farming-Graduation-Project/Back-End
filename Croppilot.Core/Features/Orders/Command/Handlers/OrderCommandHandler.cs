@@ -8,6 +8,7 @@ namespace Croppilot.Core.Features.Orders.Command.Handlers;
 public class OrderCommandHandler(
 	IOrderService orderService,
 	IProductServices productService,
+	ICuponService cuponService,
 	IHttpContextAccessor httpContextAccessor
 ) : ResponseHandler,
 	IRequestHandler<CreateOrderCommand, Response<CreateOrderResponse>>,
@@ -21,11 +22,24 @@ public class OrderCommandHandler(
 
 		foreach (var item in command.OrderItems)
 		{
+			Date.Models.Cupon? cupon = null;
 			var product = await productService.GetByIdAsync(item.ProductId, cancellationToken: cancellationToken);
 			if (product is null)
 				return BadRequest<CreateOrderResponse>($"Product with ID {item.ProductId} does not exist.");
-
-			var itemPrice = product.Price;
+			if (item.Cupon is not null)
+			{
+				cupon = await cuponService.GetCuponByCodeAsync(item.Cupon, tracked: true);
+				if (cupon is null || !cupon.IsActive || product.CuponId != cupon.Id)
+					return BadRequest<CreateOrderResponse>($"{item.Cupon} is invalid");
+				cupon.UsageCount++;
+			}
+			decimal discount = cupon?.Discount_Type switch
+			{
+				Discount_Type.Percentage => product.Price * cupon.Discount_Value / 100,
+				Discount_Type.Fixed => cupon.Discount_Value,
+				_ => 0
+			};
+			var itemPrice = product.Price - discount;
 			totalAmount += itemPrice * item.Quantity;
 
 			orderItems.Add(new OrderItem
