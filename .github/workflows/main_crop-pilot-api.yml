@@ -28,13 +28,18 @@ jobs:
 
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
-
+        
+      - name: Delete old artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: .net-app
+          
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
-
+          retention-days: 4
   deploy:
     runs-on: windows-latest
     needs: build
@@ -54,9 +59,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BB542544344648F58FD74C0081E1783B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D61A0274EA16428BAC15851B8FF9C901 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2313FC6F147A4EF19F144CEE6BB115C3 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_295FD61C86CA4A538D222B065094EC76 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1981EF39D91645F4B3235A1E7A9CB87A }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_ECFA94BC45CC4009B7CF77849CA60A59 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp

@@ -29,9 +29,8 @@ public class Product
 
 	public int CategoryId { get; set; }
 
-	[ForeignKey("CategoryId")]
-	[ValidateNever]
-	public Category Category { get; set; }
+    [ForeignKey("CategoryId"), ValidateNever]
+    public Category Category { get; set; }
 
 	[ValidateNever] public List<ProductImage> ProductImages { get; set; }
 	[ValidateNever] public ICollection<Leasing> Leasings { get; set; } = new List<Leasing>();

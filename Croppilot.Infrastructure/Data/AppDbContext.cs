@@ -1,4 +1,5 @@
 ﻿using Croppilot.Date.Identity;
+using Croppilot.Date.Models.AiModel;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Croppilot.Infrastructure.Data
@@ -24,23 +25,26 @@ namespace Croppilot.Infrastructure.Data
 		public DbSet<Vote> Votes { get; set; }
 		public DbSet<Cupon> Cupons { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
-			//modelBuilder.ApplyConfiguration(new ProductConfiguration());
-			//modelBuilder.ApplyConfiguration(new CategoryConfiguration());
-			//modelBuilder.ApplyConfiguration(new LeasingConfiguration());
-			//modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
-			//modelBuilder.ApplyConfiguration(new OrderConfiguration());
-			//modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
-			//modelBuilder.ApplyConfiguration(new CartConfiguration());
-			//modelBuilder.ApplyConfiguration(new CartItemConfiguration());
-			//modelBuilder.ApplyConfiguration(new WishlistConfiguration());
-			//modelBuilder.ApplyConfiguration(new WishlistItemConfiguration());
-			//modelBuilder.ApplyConfiguration(new ReviewConfiguration());
-			//modelBuilder.ApplyConfiguration(new PostConfiguration());
-			//modelBuilder.ApplyConfiguration(new CommentConfiguration());
-			//modelBuilder.ApplyConfiguration(new VoteConfiguration());
+        public DbSet<ModelResult> AIModelResults { get; set; }
+        public DbSet<FeedbackEntry> FeedbackEntries { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            //modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            //modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+            //modelBuilder.ApplyConfiguration(new LeasingConfiguration());
+            //modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
+            //modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            //modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+            //modelBuilder.ApplyConfiguration(new CartConfiguration());
+            //modelBuilder.ApplyConfiguration(new CartItemConfiguration());
+            //modelBuilder.ApplyConfiguration(new WishlistConfiguration());
+            //modelBuilder.ApplyConfiguration(new WishlistItemConfiguration());
+            //modelBuilder.ApplyConfiguration(new ReviewConfiguration());
+            //modelBuilder.ApplyConfiguration(new PostConfiguration());
+            //modelBuilder.ApplyConfiguration(new CommentConfiguration());
+            //modelBuilder.ApplyConfiguration(new VoteConfiguration());
 
 
 			//use this is better

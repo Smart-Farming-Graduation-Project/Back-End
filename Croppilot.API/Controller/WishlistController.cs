@@ -3,10 +3,10 @@ using Croppilot.Core.Features.WishLists.Query.Models;
 
 namespace Croppilot.API.Controller;
 
-[SwaggerResponse(200, "Operation is done successfully")]
-[SwaggerResponse(400, "Invalid operation or something is invalid")]
-[SwaggerResponse(401, "User is not authorized to perform this operation")]
-[Authorize(Policy = nameof(UserRoleEnum.User))]
+[SwaggerResponse(200, "Operation is done successfully"),
+ SwaggerResponse(400, "Invalid operation or something is invalid"),
+ SwaggerResponse(401, "User is not authorized to perform this operation"),
+ Authorize(Policy = nameof(UserRoleEnum.User))]
 public class WishlistController(IMediator mediator)
     : AppControllerBase
 {
@@ -14,10 +14,9 @@ public class WishlistController(IMediator mediator)
     /// Retrieves the current user's wishlist.
     /// </summary>
     /// <returns>An <see cref="IActionResult"/> containing the wishlist data or an error response.</returns>
-    [ResponseCache(CacheProfileName = "Default")]
-    [HttpGet("GetWishlist")]
-    [SwaggerOperation(Summary = "Retrieves the current user's wishlist",
-        Description = "**Fetches the wishlist for the authenticated user.**")]
+    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetWishlist"), SwaggerOperation(
+         Summary = "Retrieves the current user's wishlist",
+         Description = "**Fetches the wishlist for the authenticated user.**")]
     public async Task<IActionResult> GetWishlist()
     {
         var userId = User.GetUserId();
@@ -31,10 +30,9 @@ public class WishlistController(IMediator mediator)
     /// </summary>
     /// <param name="productId">The ID of the product to add to the wishlist.</param>
     /// <returns>An <see cref="IActionResult"/> indicating whether the product was successfully added or not.</returns>
-    [HttpPost("AddProduct/{productId}")]
-    [SwaggerOperation(Summary = "Adds a product to the wishlist",
-        Description =
-            "**Adds a specified product to the user's wishlist.Need ID of the product to add to the wishlist.**")]
+    [HttpPost("AddProduct/{productId}"), SwaggerOperation(Summary = "Adds a product to the wishlist",
+         Description =
+             "**Adds a specified product to the user's wishlist.Need ID of the product to add to the wishlist.**")]
     public async Task<IActionResult> AddProductToWishlist([FromRoute] int productId)
     {
         var command = new AddProductToWishlistCommand
@@ -52,10 +50,9 @@ public class WishlistController(IMediator mediator)
     /// </summary>
     /// <param name="productId">The ID of the product to remove from the wishlist.</param>
     /// <returns>An <see cref="IActionResult"/> indicating whether the product was successfully removed or not.</returns>
-    [HttpDelete("RemoveProduct/{productId}")]
-    [SwaggerOperation(Summary = "Removes a product from the wishlist",
-        Description =
-            "**Removes the specified product from the user's wishlist.Need the ID of the product to remove from the wishlist.**")]
+    [HttpDelete("RemoveProduct/{productId}"), SwaggerOperation(Summary = "Removes a product from the wishlist",
+         Description =
+             "**Removes the specified product from the user's wishlist.Need the ID of the product to remove from the wishlist.**")]
     public async Task<IActionResult> RemoveProductFromWishlist([FromRoute] int productId)
     {
         var command = new RemoveProductFromWishlistCommand

@@ -1,4 +1,7 @@
-﻿namespace Croppilot.Infrastructure.Repositories.Implementation
+﻿using Croppilot.Infrastructure.Repositories.Implementation.AiRepository;
+using Croppilot.Infrastructure.Repositories.Interfaces.AiRepository;
+
+namespace Croppilot.Infrastructure.Repositories.Implementation
 {
 	public class UnitOfWork : IUnitOfWork
 	{
@@ -16,6 +19,8 @@
 		public ICommentRepository CommentRepository { get; }
 		public IVoteRepository VoteRepository { get; }
 		public ICuponRepository CuponRepository { get; }
+    public IFeedbackRepository FeedbackRepository { get; }
+    public IModelRepository ModelRepository { get; }
 
 		private readonly AppDbContext _context;
 		private bool _disposed;
@@ -37,6 +42,8 @@
 			CommentRepository = new CommentRepository(_context);
 			VoteRepository = new VoteRepository(_context);
 			CuponRepository = new CuponRepository(_context);
+       FeedbackRepository = new FeedbackRepository(_context);
+       ModelRepository = new ModelRepository(_context);
 		}
 
 		public IGenericRepository<T> GenericRepository<T>() where T : class
