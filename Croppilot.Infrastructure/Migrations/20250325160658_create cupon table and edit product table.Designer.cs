@@ -4,6 +4,7 @@ using Croppilot.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Croppilot.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250325160658_create cupon table and edit product table")]
+    partial class createcupontableandeditproducttable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,52 +174,6 @@ namespace Croppilot.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
-                });
-
-            modelBuilder.Entity("Croppilot.Date.Models.AiModel.FeedbackEntry", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Disease")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ModelResultId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Solution")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ModelResultId");
-
-                    b.ToTable("FeedbackEntries");
-                });
-
-            modelBuilder.Entity("Croppilot.Date.Models.AiModel.ModelResult", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid>("ImageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AIModelResults");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Cart", b =>
@@ -383,9 +340,8 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Discount_Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Discount_Type")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Discount_Value")
                         .HasColumnType("decimal(18,3)");
@@ -904,17 +860,6 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Croppilot.Date.Models.AiModel.FeedbackEntry", b =>
-                {
-                    b.HasOne("Croppilot.Date.Models.AiModel.ModelResult", "ModelResult")
-                        .WithMany("FeedbackEntries")
-                        .HasForeignKey("ModelResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ModelResult");
-                });
-
             modelBuilder.Entity("Croppilot.Date.Models.Cart", b =>
                 {
                     b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
@@ -1190,11 +1135,6 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("Wishlist");
-                });
-
-            modelBuilder.Entity("Croppilot.Date.Models.AiModel.ModelResult", b =>
-                {
-                    b.Navigation("FeedbackEntries");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Cart", b =>
