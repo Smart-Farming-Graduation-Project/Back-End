@@ -40,6 +40,7 @@ namespace Croppilot.Services
             service.AddScoped<INotificationServices, NotificationServices>();
 
 
+
             service.AddScoped<ICosmosDbService, CosmosDbService>();
             service.AddScoped<IModelServices, ModelServices>();
 
