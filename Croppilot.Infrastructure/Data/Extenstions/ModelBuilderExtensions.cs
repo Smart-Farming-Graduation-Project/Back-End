@@ -1,4 +1,4 @@
-﻿using Croppilot.Date.Enum;
+using Croppilot.Date.Enum;
 using Croppilot.Date.Helpers.Dashboard.Enum;
 using Croppilot.Date.Models.DashboardModels;
 

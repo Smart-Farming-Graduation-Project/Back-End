@@ -18,9 +18,9 @@ namespace Croppilot.Infrastructure.Repositories.Interfaces
         IChatRepository ChatRepository { get; }
         IPostRepository PostRepository { get; }
         ICommentRepository CommentRepository { get; }
-        IVoteRepository VoteRepository { get; }
+		IVoteRepository VoteRepository { get; }
+		ICuponRepository CuponRepository { get; }
 
-        //Ai Repositories
         IFeedbackRepository FeedbackRepository { get; }
         IModelRepository ModelRepository { get; }
 

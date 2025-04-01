@@ -1,4 +1,4 @@
-﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs;
 using Croppilot.Services.Abstract.AiSerives;
 using Croppilot.Services.Abstract.DashboredServices;
 using Croppilot.Services.Abstract.EmbbeddedServices;
@@ -19,6 +19,9 @@ namespace Croppilot.Services
             service.AddSingleton(
                 _ => new BlobServiceClient(configuration.GetSection("AzureKey:ConnectionString").Value));
 
+            service.Configure<StripeSettings>(configuration.GetSection("Stripe"));
+
+
             service.AddScoped<IProductServices, ProductServices>();
             service.AddScoped<ICategoryService, CategoryService>();
             service.AddScoped<ILeasingService, LeasingService>();
@@ -37,6 +40,11 @@ namespace Croppilot.Services
             service.AddScoped<IPostService, PostService>();
             service.AddScoped<ICommentService, CommentService>();
             service.AddScoped<IVoteService, VoteService>();
+
+            service.AddScoped<INotificationServices, NotificationServices>();
+
+            service.AddScoped<IPaymentService, PaymentService>();
+            service.AddScoped<ICuponService, CuponService>();
             service.AddScoped<INotificationServices, NotificationServices>();
 
 
@@ -44,12 +52,18 @@ namespace Croppilot.Services
             service.AddScoped<ICosmosDbService, CosmosDbService>();
             service.AddScoped<IModelServices, ModelServices>();
 
+
+
             service.AddScoped<IWeatherServices, WeatherServices>();
             service.AddScoped<IFarmStatusService, FarmStatusService>();
             service.AddScoped<IFieldService, FieldService>();
             service.AddScoped<IEquipmentService, EquipmentService>();
             service.AddHttpClient();
+
+
+
             return service;
         }
     }
 }
+

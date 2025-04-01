@@ -39,6 +39,7 @@ namespace Croppilot.Infrastructure
             service.AddTransient<IVoteRepository, VoteRepository>();
             service.AddTransient<IModelRepository, ModelRepository>();
             service.AddTransient<IFeedbackRepository, FeedbackRepository>();
+          service.AddTransient<ICuponRepository, CuponRepository>();
 
             service.AddTransient<IWeatherDataRepository, WeatherDataRepository>();
             service.AddTransient<IWeatherForcastRepository, WeatherForcastRepository>();

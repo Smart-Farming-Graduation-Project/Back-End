@@ -1,126 +1,128 @@
 ﻿using Croppilot.Date.Models;
 using Hangfire;
+using System.Security.Claims;
 
 namespace Croppilot.Core.Features.Product.Command.Handlers;
 
 public class ProductCommandHandler(
-    IProductServices productServices,
-    ICategoryService categoryService,
-    IProductImageServices productImageServices,
-    IAzureBlobStorageService azureService)
-    : ResponseHandler,
-        IRequestHandler<AddProductCommand, Response<string>>,
-        IRequestHandler<EditProductCommand, Response<string>>,
-        IRequestHandler<DeleteProductCommand, Response<string>>
+	IProductServices productServices,
+	ICategoryService categoryService,
+	IProductImageServices productImageServices,
+	IAzureBlobStorageService azureService,
+	IHttpContextAccessor httpContextAccessor)
+	: ResponseHandler,
+		IRequestHandler<AddProductCommand, Response<string>>,
+		IRequestHandler<EditProductCommand, Response<string>>,
+		IRequestHandler<DeleteProductCommand, Response<string>>
 {
-    public async Task<Response<string>> Handle(AddProductCommand command, CancellationToken cancellationToken)
-    {
-        var category = await EnsureCategoryExists(command.CategoryName, cancellationToken);
+	public async Task<Response<string>> Handle(AddProductCommand command, CancellationToken cancellationToken)
+	{
+		var category = await EnsureCategoryExists(command.CategoryName, cancellationToken);
+
+		var userId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+		var product = command.Adapt<Date.Models.Product>();
+		product.CategoryId = category.Id;
+		product.UserId = userId;
+		product.CreatedAt = DateTime.UtcNow;
+		product.UpdatedAt = default;
+		var result = await productServices.CreateAsync(product, cancellationToken);
+		if (result is not OperationResult.Success)
+			return BadRequest<string>("Product creation failed");
+
+		var tempFilePaths = await productImageServices.SaveFilesTemporarily(command.Images);
 
 
-        var product = command.Adapt<Date.Models.Product>();
-        product.CategoryId = category.Id;
+		BackgroundJob.Enqueue(() => productImageServices.UploadImagesAndUpdateProduct(product.Id, tempFilePaths, product.Name));
 
-        product.CreatedAt = DateTime.UtcNow;
-        product.UpdatedAt = default;
-        var result = await productServices.CreateAsync(product, cancellationToken);
-        if (result is not OperationResult.Success)
-            return BadRequest<string>("Product creation failed");
+		return result is OperationResult.Success
+			? Created("Product Added Successfully")
+			: BadRequest<string>("Product creation failed");
+	}
 
-        var tempFilePaths = await productImageServices.SaveFilesTemporarily(command.Images);
+	public async Task<Response<string>> Handle(EditProductCommand command, CancellationToken cancellationToken)
+	{
+		var product = await productServices.GetByIdAsync(command.Id, ["Category", "ProductImages"], cancellationToken);
+		if (product == null)
+			return NotFound<string>("Product Not Found");
 
+		var category = await EnsureCategoryExists(command.CategoryName, cancellationToken);
 
-        BackgroundJob.Enqueue(() => productImageServices.UploadImagesAndUpdateProduct(product.Id, tempFilePaths, product.Name));
+		var oldImageUrls = product.ProductImages.Select(pi => pi.ImageUrl).ToList();
 
-        return result is OperationResult.Success
-            ? Created("Product Added Successfully")
-            : BadRequest<string>("Product creation failed");
-    }
+		product = command.Adapt(product); // update product with new values from command
 
-    public async Task<Response<string>> Handle(EditProductCommand command, CancellationToken cancellationToken)
-    {
-        var product = await productServices.GetByIdAsync(command.Id, ["Category", "ProductImages"], cancellationToken);
-        if (product == null)
-            return NotFound<string>("Product Not Found");
+		product.CategoryId = category.Id;
 
-        var category = await EnsureCategoryExists(command.CategoryName, cancellationToken);
-
-        var oldImageUrls = product.ProductImages.Select(pi => pi.ImageUrl).ToList();
-
-        product = command.Adapt(product); // update product with new values from command
-
-        product.CategoryId = category.Id;
-
-        product.UpdatedAt = DateTime.UtcNow;
-        //delete old image
-        if (product.ProductImages is not null)
-            await RemoveProductImagesFromStorage(product.ProductImages, product.Id);
+		product.UpdatedAt = DateTime.UtcNow;
+		//delete old image
+		if (product.ProductImages is not null)
+			await RemoveProductImagesFromStorage(product.ProductImages, product.Id);
 
 
-        var tempFilePaths = await productImageServices.SaveFilesTemporarily(command.Images);
-        var result = await productServices.UpdateAsync(product, cancellationToken);
-        BackgroundJob.Enqueue(() => productImageServices.UploadImagesAndUpdateProduct(product.Id, tempFilePaths, product.Name));
+		var tempFilePaths = await productImageServices.SaveFilesTemporarily(command.Images);
+		var result = await productServices.UpdateAsync(product, cancellationToken);
+		BackgroundJob.Enqueue(() => productImageServices.UploadImagesAndUpdateProduct(product.Id, tempFilePaths, product.Name));
 
-        return result is OperationResult.Success
-            ? Success("Product Updated Successfully")
-            : BadRequest<string>("Failed to Update Product");
-    }
+		return result is OperationResult.Success
+			? Success("Product Updated Successfully")
+			: BadRequest<string>("Failed to Update Product");
+	}
 
-    public async Task<Response<string>> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
-    {
-
-
-        var existingProduct = await productServices.GetByIdAsync(command.Id, ["ProductImages"]);
+	public async Task<Response<string>> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
+	{
 
 
-        if (existingProduct is null)
-            return NotFound<string>($"Product {command.Id} not found");
+		var existingProduct = await productServices.GetByIdAsync(command.Id, ["ProductImages"]);
 
-        await RemoveProductImagesFromStorage(existingProduct.ProductImages, command.Id);
-        var result = await productServices.Delete(command.Id, cancellationToken);
-        return result
-            ? Deleted<string>($"Product {command.Id} Deleted Successfully")
-            : BadRequest<string>("Deletion failed");
-    }
 
-    private async Task<Date.Models.Category> EnsureCategoryExists(string categoryName,
-        CancellationToken cancellationToken)
-    {
-        var category = await categoryService.GetByNameAsync(categoryName, cancellationToken);
+		if (existingProduct is null)
+			return NotFound<string>($"Product {command.Id} not found");
 
-        if (category != null) return category;
+		await RemoveProductImagesFromStorage(existingProduct.ProductImages, command.Id);
+		var result = await productServices.Delete(command.Id, cancellationToken);
+		return result
+			? Deleted<string>($"Product {command.Id} Deleted Successfully")
+			: BadRequest<string>("Deletion failed");
+	}
 
-        var newCategory = new Date.Models.Category
-        {
-            Name = categoryName,
-            Description = "No description",
-        };
+	private async Task<Date.Models.Category> EnsureCategoryExists(string categoryName,
+		CancellationToken cancellationToken)
+	{
+		var category = await categoryService.GetByNameAsync(categoryName, cancellationToken);
 
-        var result = await categoryService.CreateAsync(newCategory, cancellationToken);
-        return result is OperationResult.Success ? newCategory : throw new Exception("Category creation failed.");
-    }
+		if (category != null) return category;
 
-    //private async Task<List<string>> HandleProductImageUpdates(Date.Models.Product product,
-    //    List<string>? newImages)
-    //{
-    //    if (newImages is { Count: > 0 })
-    //    {
-    //        await RemoveProductImagesFromStorage(product.ProductImages);
-    //        return await azureService.UploadImagesAsync(newImages, product.Name);
-    //    }
+		var newCategory = new Date.Models.Category
+		{
+			Name = categoryName,
+			Description = "No description",
+		};
 
-    //    return product.ProductImages.Select(pi => pi.ImageUrl).ToList();
-    //}
+		var result = await categoryService.CreateAsync(newCategory, cancellationToken);
+		return result is OperationResult.Success ? newCategory : throw new Exception("Category creation failed.");
+	}
 
-    private async Task RemoveProductImagesFromStorage(List<ProductImage> productImages, int productId)
-    {
-        await productImageServices.DeleteImagesAsync(productId);
+	//private async Task<List<string>> HandleProductImageUpdates(Date.Models.Product product,
+	//    List<string>? newImages)
+	//{
+	//    if (newImages is { Count: > 0 })
+	//    {
+	//        await RemoveProductImagesFromStorage(product.ProductImages);
+	//        return await azureService.UploadImagesAsync(newImages, product.Name);
+	//    }
 
-        await Parallel.ForEachAsync(productImages, async (productImage, _) =>
-        {
-            var path = Path.GetFileName(new Uri(productImage.ImageUrl).AbsolutePath);
-            await azureService.DeleteImageAsync(path);
-        });
-    }
+	//    return product.ProductImages.Select(pi => pi.ImageUrl).ToList();
+	//}
+
+	private async Task RemoveProductImagesFromStorage(List<ProductImage> productImages, int productId)
+	{
+		await productImageServices.DeleteImagesAsync(productId);
+
+		await Parallel.ForEachAsync(productImages, async (productImage, _) =>
+		{
+			var path = Path.GetFileName(new Uri(productImage.ImageUrl).AbsolutePath);
+			await azureService.DeleteImageAsync(path);
+		});
+	}
 
 }
