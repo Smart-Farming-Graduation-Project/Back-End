@@ -65,15 +65,12 @@ public static class ModelApiDependencies
             {
                 o.AddPolicy(role, policy => policy.RequireClaim(nameof(ClaimTypes.Role), role));
             }
-            //o.AddPolicy(UserRoleEnum.Admin.ToString(), policy => policy.RequireClaim(nameof(ClaimTypes.Role), UserRoleEnum.Admin.ToString()));
-            //o.AddPolicy(UserRoleEnum.User.ToString(), policy => policy.RequireClaim(nameof(ClaimTypes.Role), UserRoleEnum.User.ToString()));
         });
         return services;
     }
 
     private static IServiceCollection AddSwaggerServices(this IServiceCollection services)
     {
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
@@ -82,8 +79,6 @@ public static class ModelApiDependencies
 
     private static IServiceCollection AddCorSServices(this IServiceCollection services)
     {
-        //todo: modify it later to add specific origins
-
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(builder =>

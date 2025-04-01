@@ -19,5 +19,15 @@
         public const long ConfirmEmailTemplateId = 6754025;
         public const long ResetPasswordTemplateId = 6754405;
         public const long SendOtpTemplateId = 6754453;
+
+
+        //Weather API
+        public const string WeatherAPIBase = "https://api.openweathermap.org/data/2.5";
+        public const string DefaultCity = "Cairo";
+
+        //soil
+        public const double Longitude = 30.802498;
+        public const double Latitude = 26.820553;
+
     }
 }
