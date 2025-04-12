@@ -1,11 +1,12 @@
 ﻿using Croppilot.Date.Helpers.Dashboard;
+using Croppilot.Infrastructure.Comman;
 using Croppilot.Services.Abstract.DashboredServices;
 using Croppilot.Services.Services.DashboredServices.Helper;
 using System.Net.Http.Json;
 
 namespace Croppilot.Services.Services.DashboredServices
 {
-    public class FarmStatusService(IHttpClientFactory clientFactory) : IFarmStatusService
+    public class FarmStatusService(IHttpClientFactory clientFactory, IEquipmentService equipmentService, IFieldService fieldService) : IFarmStatusService
     {
         public async Task<SoilQualityReport> GetSoilQualityReportAsync(double latitude, double longitude)
         {
@@ -29,6 +30,40 @@ namespace Croppilot.Services.Services.DashboredServices
                     await phTask,
                     await clayTask,
                     await organicTask)
+            };
+        }
+
+        public async Task<FarmStatusDto> GetFarmStatus()
+        {
+            var soilTask = await GetSoilQualityReportAsync(SD.Latitude, SD.Longitude);
+            var equipmentTask = await equipmentService.GetActiveEquipmentCount();
+            var irrigationTask = await fieldService.GetMostUsedIrrigationTypeAsync();
+            ////await Task.WhenAll(soilTask, equipmentTask, irrigationTask);
+            //var soilQuality = soilTask.QualityRating;
+            //var activeEquipment = equipmentTask;
+            //var irrigationStatus = irrigationTask;
+
+            if (soilTask == null)
+            {
+                return new FarmStatusDto
+                {
+                    ActiveMachines = 0,
+                    IrrigationStatus = "Inactive",
+                    SoilQuality = "Unknown",
+                    CropHealth = "Unknown",
+                    PestRisk = "Unknown",
+                    WaterReservoir = 0
+                };
+            }
+
+            return new FarmStatusDto
+            {
+                ActiveMachines = equipmentTask,
+                IrrigationStatus = irrigationTask?.ToString() ?? "Unknown",
+                SoilQuality = soilTask.QualityRating,
+                CropHealth = "Good",
+                PestRisk = "Low",
+                WaterReservoir = 80
             };
         }
 

@@ -1,4 +1,5 @@
-﻿using Croppilot.Date.Models.DashboardModels;
+﻿using Croppilot.Date.Helpers.Dashboard.Enum;
+using Croppilot.Date.Models.DashboardModels;
 using Croppilot.Infrastructure.Repositories.Interfaces.Dashbored;
 using Croppilot.Services.Abstract.DashboredServices;
 
@@ -21,6 +22,19 @@ namespace Croppilot.Services.Services.DashboredServices
             }
             await fieldRepository.DeleteAsync(existingField);
             return true;
+        }
+
+        public async Task<IrrigationType?> GetMostUsedIrrigationTypeAsync()
+        {
+
+            var fields = await fieldRepository.GetAllAsync();
+
+            return fields
+                .GroupBy(f => f.Irrigation)
+                .OrderByDescending(g => g.Count())
+                .Select(g => (IrrigationType?)g.Key)
+                .FirstOrDefault();
+
         }
 
         public async Task<IEnumerable<Field>> GetAllAsync()

@@ -1,4 +1,5 @@
-﻿using Croppilot.Date.Models.DashboardModels;
+﻿using Croppilot.Date.Helpers.Dashboard.Enum;
+using Croppilot.Date.Models.DashboardModels;
 using Croppilot.Infrastructure.Repositories.Interfaces.Dashbored;
 using Croppilot.Services.Abstract.DashboredServices;
 
@@ -27,6 +28,14 @@ namespace Croppilot.Services.Services.DashboredServices
             if (result is true)
                 return true;
             return false;
+        }
+
+        public async Task<int> GetActiveEquipmentCount()
+        {
+            var equipmentList = await equipmentRepository.GetAllAsync(x => x.Status == EquipmentStatus.Active);
+
+            if (equipmentList == null) return 0;
+            return equipmentList.Count();
         }
 
         public async Task<IEnumerable<Equipment>> GetAllAsync()

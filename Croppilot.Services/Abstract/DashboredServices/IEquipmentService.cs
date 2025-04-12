@@ -10,5 +10,6 @@ namespace Croppilot.Services.Abstract.DashboredServices
         Task<bool> UpdateAsync(Equipment equipment);
         Task<bool> DeleteAsync(string equipmentId);
         Task<bool> UpdateEquipmentStatus(string id, string status);
+        Task<int> GetActiveEquipmentCount();
     }
 }

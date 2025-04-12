@@ -1,4 +1,5 @@
 ﻿using Croppilot.Core.Features.Dashbored.Equipment.Models;
+using Croppilot.Core.Features.Dashbored.FarmStatues;
 using Croppilot.Core.Features.Dashbored.FarmStatus.Soil;
 using Croppilot.Core.Features.Dashbored.Field.Models;
 using Croppilot.Core.Features.Dashbored.Weather.Models;
@@ -87,6 +88,12 @@ namespace Croppilot.API.Controller
         public async Task<IActionResult> UpdateEquipmentStatus(UpdateEquipmentStatusModel command)
         {
             var result = await mediator.Send(command);
+            return NewResult(result);
+        }
+        [HttpGet("FarmStatus")]
+        public async Task<IActionResult> GetFarmStatus()
+        {
+            var result = await mediator.Send(new GetFarmStatusModel());
             return NewResult(result);
         }
 
