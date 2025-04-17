@@ -19,8 +19,7 @@ public class CartCommandHandler(ICartService cartService) : ResponseHandler,
         var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == command.ProductId);
         if (existingItem != null)
         {
-            // Increase the quantity.
-            existingItem.Quantity += command.Quantity;
+            existingItem.Quantity = command.Quantity;
         }
         else
         {
