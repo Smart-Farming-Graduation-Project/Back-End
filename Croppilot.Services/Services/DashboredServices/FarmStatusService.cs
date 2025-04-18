@@ -38,10 +38,7 @@ namespace Croppilot.Services.Services.DashboredServices
             var soilTask = await GetSoilQualityReportAsync(SD.Latitude, SD.Longitude);
             var equipmentTask = await equipmentService.GetActiveEquipmentCount();
             var irrigationTask = await fieldService.GetMostUsedIrrigationTypeAsync();
-            ////await Task.WhenAll(soilTask, equipmentTask, irrigationTask);
-            //var soilQuality = soilTask.QualityRating;
-            //var activeEquipment = equipmentTask;
-            //var irrigationStatus = irrigationTask;
+
 
             if (soilTask == null)
             {
@@ -76,9 +73,18 @@ namespace Croppilot.Services.Services.DashboredServices
                 var url = $"https://rest.isric.org/soilgrids/v2.0/properties/query?" +
                          $"lon={lon}&lat={lat}&property={property}&depth=0-5cm&value=mean";
 
-                var response = await clientFactory.CreateClient()
-                    .GetFromJsonAsync<SoilGridsResponse>(url);
+                //var response = await clientFactory.CreateClient()
+                //    .GetFromJsonAsync<SoilGridsResponse>(url);
 
+                var client = clientFactory.CreateClient();
+                var httpResponse = await client.GetAsync(url);
+
+                if (!httpResponse.IsSuccessStatusCode)
+                {
+                    return new SoilProperty { Value = 0, Available = false };
+                }
+
+                var response = await httpResponse.Content.ReadFromJsonAsync<SoilGridsResponse>();
                 var meanValue = response?.Properties?.Layers?
                     .FirstOrDefault()?
                     .Depths?
