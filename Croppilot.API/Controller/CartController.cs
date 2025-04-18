@@ -48,7 +48,9 @@ public class CartController : AppControllerBase
     /// <returns>An <see cref="IActionResult"/> indicating whether the product was successfully added.</returns>
     [HttpPost("AddProduct/{productId}"), SwaggerOperation(Summary = "Add a product to the cart",
          Description =
-             "**Adds a specified product to the authenticated user's shopping cart. Provide the product ID and optionally specify the quantity (default is 1).**")]
+             "**Adds a specified product to the authenticated user's shopping cart" +
+             ". Provide the product ID and optionally specify the quantity (default is 1) ," +
+             " if you want to update quantity for any product exist in cart you should send productId and the new quantity.**")]
     public async Task<IActionResult> AddProductToCart([FromRoute] int productId, [FromQuery] int quantity = 1)
     {
         var command = new AddProductToCartCommand
