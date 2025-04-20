@@ -12,5 +12,10 @@ namespace Croppilot.Date.Models.DashboardModels
         public DateTime HarvestDate { get; set; }
         public IrrigationType Irrigation { get; set; } = IrrigationType.None;
         public FieldStatus Status { get; set; } = FieldStatus.Planted;
+
+        //public int FarmerAdminDashboardId { get; set; }
+        //public FarmerAdminDashboard FarmerAdminDashboard { get; set; }
+        //public ICollection<CropYield> CropYields { get; set; }
+        public ICollection<SoilMoisture> SoilMoistureReadings { get; set; }
     }
 }

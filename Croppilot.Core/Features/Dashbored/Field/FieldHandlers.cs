@@ -84,7 +84,7 @@ namespace Croppilot.Core.Features.Dashbored.Field
             if (fields is null)
                 return NotFound<IEnumerable<GetAllFieldResults>>("Field Not Found");
             var response = fields.Select(f => new GetAllFieldResults(f.Id, f.Name, f.Size, f.Crop, f.PlantingDate, f.HarvestDate, f.Irrigation.ToString(), f.Status.ToString()));
-            var result = Success(response, "Field forecast fetched successfully!");
+            var result = Success(response, "Field fetched successfully!");
             result.Meta = new Dictionary<string, object> { { "count", response.Count() } };
             return result;
 

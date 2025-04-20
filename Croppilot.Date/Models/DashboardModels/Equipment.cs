@@ -23,5 +23,8 @@ namespace Croppilot.Date.Models.DashboardModels
             set => _battery = Math.Clamp(value, 0, 100); // Ensure 0-100 range
         }
         public EquipmentConnectivity Connectivity { get; set; } = EquipmentConnectivity.Offline;
+
+        //public int FarmerAdminDashboardId { get; set; }
+        //public FarmerAdminDashboard FarmerAdminDashboard { get; set; }
     }
 }

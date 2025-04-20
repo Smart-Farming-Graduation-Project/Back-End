@@ -14,5 +14,8 @@
         public int Pressure { get; set; }
         public string Icon { get; set; }
 
+        //public int FarmerAdminDashboardId { get; set; }
+        //public FarmerAdminDashboard FarmerAdminDashboard { get; set; }
+
     }
 }

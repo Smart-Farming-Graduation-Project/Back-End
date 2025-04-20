@@ -59,6 +59,7 @@ namespace Croppilot.Services
             service.AddScoped<IFieldService, FieldService>();
             service.AddScoped<IEquipmentService, EquipmentService>();
             service.AddScoped<IFarmStatusService, FarmStatusService>();
+            service.AddScoped<ISoilServices, SoilServices>();
 
             service.AddHttpClient();
 

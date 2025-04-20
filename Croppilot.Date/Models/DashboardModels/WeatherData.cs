@@ -11,5 +11,9 @@
         public DateTime LastUpdated { get; set; }
         public double UvIndex { get; set; }
         public double Pressure { get; set; }
+
+
+        //public int FarmerAdminDashboardId { get; set; }
+        //public FarmerAdminDashboard FarmerAdminDashboard { get; set; }
     }
 }

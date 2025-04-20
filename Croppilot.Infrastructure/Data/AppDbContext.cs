@@ -34,6 +34,10 @@ namespace Croppilot.Infrastructure.Data
         public DbSet<WeatherForecast> WeatherForecasts { get; set; }
         public DbSet<Field> Fields { get; set; }
         public DbSet<Equipment> Equipments { get; set; }
+        public DbSet<SoilMoisture> SoilMoistures { get; set; }
+        //public DbSet<FarmerAdminDashboard> FarmerAdminDashboards { get; set; }
+        //public DbSet<CropYield> CropYields { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
