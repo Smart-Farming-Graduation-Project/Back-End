@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 namespace Croppilot.Infrastructure
@@ -125,9 +124,6 @@ namespace Croppilot.Infrastructure
                 });
                 // Enable annotations for Swagger
                 options.EnableAnnotations();
-                options.ExampleFilters();
-
-
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description =

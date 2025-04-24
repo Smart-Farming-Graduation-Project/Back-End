@@ -4,5 +4,6 @@ namespace Croppilot.Infrastructure.Repositories.Interfaces.Dashbored
 {
     public interface IWeatherDataRepository : IGenericRepository<WeatherData>
     {
+        Task<WeatherData?> GetLastRecord();
     }
 }

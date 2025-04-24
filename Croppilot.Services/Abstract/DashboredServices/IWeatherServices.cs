@@ -6,5 +6,6 @@ namespace Croppilot.Services.Abstract.DashboredServices
     {
         Task<IEnumerable<WeatherForecast>> GetWeatherForecastAsync(string city);
         Task<WeatherData> GetWeatherDataAsync(string city);
+        Task<WeatherData> GetCurrentTempAndHim();
     }
 }

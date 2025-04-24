@@ -35,7 +35,6 @@ namespace Croppilot.Services.Services.DashboredServices
 
         public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastAsync(string city)
         {
-
             var response = await httpClient.GetStringAsync($"{BaseUrl}/forecast?q={city}&units=metric&appid={apiKey}");
             var json = JObject.Parse(response);
 
@@ -66,6 +65,11 @@ namespace Croppilot.Services.Services.DashboredServices
             return dailyForecasts;
         }
 
+        public async Task<WeatherData> GetCurrentTempAndHim()
+        {
+            //geet last recod in db "this is for today make scence"
+            return await unit.WeatherDataRepository.GetLastRecord();
+        }
         private string GetMostCommonCondition(IEnumerable<JToken> forecastItems)
         {
             return forecastItems

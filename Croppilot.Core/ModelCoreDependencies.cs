@@ -1,7 +1,5 @@
 ﻿using Beheviors;
-using Croppilot.Core.RequestExample;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 
 
@@ -14,7 +12,7 @@ public static class ModelCoreDependencies
         service.AddHttpContextAccessor();
         service.AddMediatR(con => con.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         service.AddFluentValidationServices().AddMapsterServices();
-        service.AddSwaggerExamplesFromAssemblyOf<RegisterRequestExample>();
+
         return service;
     }
 

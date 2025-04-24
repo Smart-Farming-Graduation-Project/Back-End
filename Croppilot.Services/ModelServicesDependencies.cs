@@ -52,7 +52,7 @@ namespace Croppilot.Services
 
             service.AddScoped<ICosmosDbService, CosmosDbService>();
             service.AddScoped<IModelServices, ModelServices>();
-
+            service.AddScoped<IRlPredictServices, RlPredictServices>();
 
 
             service.AddScoped<IWeatherServices, WeatherServices>();
