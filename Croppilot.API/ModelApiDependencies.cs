@@ -32,6 +32,22 @@ public static class ModelApiDependencies
                     Duration = 300,
                     Location = ResponseCacheLocation.Client
                 });
+                options.CacheProfiles.Add("LongCache", new CacheProfile
+                {
+                    Duration = 300,
+                    Location = ResponseCacheLocation.Client
+                });
+                options.CacheProfiles.Add("OneDayCache", new CacheProfile
+                {
+                    Duration = 86400, // 60 * 60 * 24 = 86400 seconds = 1 day
+                    Location = ResponseCacheLocation.Client
+                });
+
+                options.CacheProfiles.Add("FiveDayCache", new CacheProfile
+                {
+                    Duration = 432000, // 60 * 60 * 24 * 5 = 432000 seconds = 5 days
+                    Location = ResponseCacheLocation.Client
+                });
 
             })
             .AddJsonOptions(options =>

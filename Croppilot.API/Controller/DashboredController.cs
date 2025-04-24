@@ -12,19 +12,19 @@ namespace Croppilot.API.Controller
     [ApiController]
     public class DashboredController(IMediator mediator) : AppControllerBase
     {
-        [HttpGet("Weather/current")]
+        [ResponseCache(CacheProfileName = "OneDayCache"), HttpGet("Weather/current")]
         public async Task<IActionResult> GetCurrentWeather(string city = SD.DefaultCity)
         {
             var result = await mediator.Send(new WeatherDataModel(city));
             return NewResult(result);
         }
-        [HttpGet("Weather/forecast")]
+        [ResponseCache(CacheProfileName = "FiveDayCache"), HttpGet("Weather /forecast")]
         public async Task<IActionResult> GetWeatherForecast(string? city = SD.DefaultCity)
         {
             var result = await mediator.Send(new WeatherForcastModel(city));
             return NewResult(result);
         }
-        [HttpGet("Soil/Report")]
+        [ResponseCache(CacheProfileName = "OneDayCache"), HttpGet("Soil/Report")]
         public async Task<IActionResult> GetSoilData(double latitude = SD.Latitude, double longitude = SD.Longitude)
         {
             var result = await mediator.Send(new SoilModel(latitude, longitude));
@@ -36,7 +36,7 @@ namespace Croppilot.API.Controller
             var result = await mediator.Send(new GetFieldById(id));
             return NewResult(result);
         }
-        [HttpGet("Fields")]
+        [ResponseCache(CacheProfileName = "LongCache"), HttpGet("Fields")]
         public async Task<IActionResult> GetAllFields()
         {
             var result = await mediator.Send(new GetAllFieldModel());
@@ -61,7 +61,7 @@ namespace Croppilot.API.Controller
             return NewResult(result);
         }
 
-        [HttpGet("Equipments")]
+        [ResponseCache(CacheProfileName = "LongCache"), HttpGet("Equipments")]
         public async Task<IActionResult> GetAllEquipments()
         {
             var result = await mediator.Send(new GetAllEquipmentModel());
@@ -91,13 +91,13 @@ namespace Croppilot.API.Controller
             var result = await mediator.Send(command);
             return NewResult(result);
         }
-        [HttpGet("FarmStatus")]
+        [ResponseCache(CacheProfileName = "LongCache"), HttpGet("FarmStatus")]
         public async Task<IActionResult> GetFarmStatus()
         {
             var result = await mediator.Send(new GetFarmStatusModel());
             return NewResult(result);
         }
-        [HttpGet("SoilMoisture")]
+        [ResponseCache(CacheProfileName = "LongCache"), HttpGet("SoilMoisture")]
         public async Task<IActionResult> GetSoilMoisture()
         {
             var result = await mediator.Send(new SoilMoistureModel());
