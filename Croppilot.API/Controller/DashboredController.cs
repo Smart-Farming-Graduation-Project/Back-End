@@ -18,7 +18,7 @@ namespace Croppilot.API.Controller
             var result = await mediator.Send(new WeatherDataModel(city));
             return NewResult(result);
         }
-        [ResponseCache(CacheProfileName = "FiveDayCache"), HttpGet("Weather /forecast")]
+        [ResponseCache(CacheProfileName = "FiveDayCache"), HttpGet("Weather/forecast")]
         public async Task<IActionResult> GetWeatherForecast(string? city = SD.DefaultCity)
         {
             var result = await mediator.Send(new WeatherForcastModel(city));
