@@ -15,62 +15,63 @@ using WatchDog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("Default"), sqlOptions => sqlOptions.EnableRetryOnFailure(
-		maxRetryCount: 5,
-		maxRetryDelay: TimeSpan.FromSeconds(10),
-		errorNumbersToAdd: null)));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"), sqlOptions =>
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null)));
 
 builder.Services.AddResponseCaching();
 
 //inject dependencies
 builder.Services.AddInfrastructureDependencies(builder.Configuration).AddApiDependencies(builder.Configuration)
-	.AddCoreDependencies().AddServicesDependencies(builder.Configuration);
+    .AddCoreDependencies().AddServicesDependencies(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 app.UseHangfireDashboard(app.Configuration.GetValue<string>("HangfireSettings:DashboardPath"), new DashboardOptions
 {
-	Authorization =
-	[
-		new HangfireCustomBasicAuthenticationFilter
-		{
-			User = app.Configuration.GetValue<string>("HangfireSettings:Username"),
-			Pass = app.Configuration.GetValue<string>("HangfireSettings:Password")
-		}
-	],
-	DashboardTitle = app.Configuration.GetValue<string>("HangfireSettings:Title"),
+    Authorization =
+    [
+        new HangfireCustomBasicAuthenticationFilter
+        {
+            User = app.Configuration.GetValue<string>("HangfireSettings:Username"),
+            Pass = app.Configuration.GetValue<string>("HangfireSettings:Password")
+        }
+    ],
+    DashboardTitle = app.Configuration.GetValue<string>("HangfireSettings:Title"),
 });
 
 using (var scope = app.Services.CreateScope())
 {
-	var serviceProvider = scope.ServiceProvider;
-	var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+    var serviceProvider = scope.ServiceProvider;
+    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
 
 
-	// Apply Migrations Automatically with Resilience
-	var strategy = dbContext.Database.CreateExecutionStrategy();
-	await strategy.ExecuteAsync(async () =>
-	{
-		await dbContext.Database.MigrateAsync();
-	});
+    // Apply Migrations Automatically with Resilience
+    var strategy = dbContext.Database.CreateExecutionStrategy();
+    await strategy.ExecuteAsync(async () => { await dbContext.Database.MigrateAsync(); });
 
-	// Seed Roles and Users
-	var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-	var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-	await RoleSeeder.SeedAsync(roleManager);
-	await UserSeeder.SeedAsync(userManager);
+    // Seed Roles and Users
+    var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+    await RoleSeeder.SeedAsync(roleManager);
+    await UserSeeder.SeedAsync(userManager);
 }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseWatchDogExceptionLogger();
+
+app.UseRouting();
+app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 app.UseCors();
@@ -80,10 +81,10 @@ app.UseAuthorization();
 
 app.UseWatchDog(opt =>
 {
-	opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
-	opt.WatchPagePassword = app.Configuration.GetValue<string>("WatchDogSettings:WatchPagePassword");
-	// opt.Blacklist = "api/Authentication/SignIn";
-	// //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
+    opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
+    opt.WatchPagePassword = app.Configuration.GetValue<string>("WatchDogSettings:WatchPagePassword");
+    // opt.Blacklist = "api/Authentication/SignIn";
+    // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
 });
 
 app.MapControllers();

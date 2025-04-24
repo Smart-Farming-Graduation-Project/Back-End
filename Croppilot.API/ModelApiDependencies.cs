@@ -2,6 +2,7 @@
 using Microsoft.Azure.Cosmos;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using WatchDog;
 using WatchDog.src.Enums;
 using Enum = System.Enum;
@@ -43,7 +44,6 @@ public static class ModelApiDependencies
                     Duration = 432000, // 60 * 60 * 24 * 5 = 432000 seconds = 5 days
                     Location = ResponseCacheLocation.Client
                 });
-
             })
             .AddJsonOptions(options =>
             {
@@ -54,7 +54,8 @@ public static class ModelApiDependencies
             .AddXmlSerializerFormatters();
 
         services.AddHttpContextAccessor().AddSwaggerServices().AddRolePolicy().AddCorSServices()
-            .AddWatchDogConfigurations(configuration);
+            .AddWatchDogConfigurations(configuration)
+            .AddRateLimitConfigurations();
 
 
         services.AddSingleton<CosmosClient>(sp =>
@@ -113,6 +114,46 @@ public static class ModelApiDependencies
             opt.SetExternalDbConnString = configuration.GetConnectionString("WatchDog");
             opt.DbDriverOption = WatchDogDbDriverEnum.MSSQL;
         });
+
+        return services;
+    }
+
+    public static IServiceCollection AddRateLimitConfigurations(this IServiceCollection services)
+    {
+        services.AddRateLimiter(rateLimiterOptions =>
+        {
+            rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            rateLimiterOptions.AddConcurrencyLimiter(RateLimiters.ConcurrencyLimit, options =>
+            {
+                options.PermitLimit = 1500;
+                options.QueueLimit = 250;
+                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            });
+
+            rateLimiterOptions.AddPolicy(RateLimiters.IpRateLimit,
+                httpContext => RateLimitPartition.GetSlidingWindowLimiter(
+                    partitionKey: httpContext.Connection.RemoteIpAddress?.ToString(),
+                    factory: _ => new SlidingWindowRateLimiterOptions
+                    {
+                        PermitLimit = 7,
+                        Window = TimeSpan.FromSeconds(60),
+                        SegmentsPerWindow = 2,
+                    }
+                ));
+
+            rateLimiterOptions.AddPolicy(RateLimiters.UserIdRateLimit, httpContext =>
+                RateLimitPartition.GetSlidingWindowLimiter(
+                    partitionKey: httpContext.User.GetUserId(),
+                    factory: _ => new SlidingWindowRateLimiterOptions
+                    {
+                        PermitLimit = 7,
+                        Window = TimeSpan.FromSeconds(60),
+                        SegmentsPerWindow = 2,
+                    }
+                ));
+        });
+
 
         return services;
     }
