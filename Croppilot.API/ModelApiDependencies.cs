@@ -32,11 +32,6 @@ public static class ModelApiDependencies
                     Duration = 300,
                     Location = ResponseCacheLocation.Client
                 });
-                options.CacheProfiles.Add("LongCache", new CacheProfile
-                {
-                    Duration = 300,
-                    Location = ResponseCacheLocation.Client
-                });
                 options.CacheProfiles.Add("OneDayCache", new CacheProfile
                 {
                     Duration = 86400, // 60 * 60 * 24 = 86400 seconds = 1 day
