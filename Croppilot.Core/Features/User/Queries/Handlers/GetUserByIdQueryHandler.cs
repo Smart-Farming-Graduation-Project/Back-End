@@ -1,6 +1,5 @@
 ﻿using Croppilot.Core.Features.User.Queries.Models;
 using Croppilot.Core.Features.User.Queries.Result;
-using Croppilot.Services.Abstract;
 
 namespace Croppilot.Core.Features.User.Queries.Handlers
 {

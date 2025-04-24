@@ -70,7 +70,7 @@ namespace Croppilot.Services.Services
 		}
 
 
-		public async Task<bool> DeleteImageAsync(string fileName)
+		public async Task<bool> DeleteImageAsync(string fileName, string containerName)
 		{
 			var blobContainerClient = client.GetBlobContainerClient(containerName);
 			var blobClient = blobContainerClient.GetBlobClient(fileName);
