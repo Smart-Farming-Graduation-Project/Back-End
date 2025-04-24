@@ -56,6 +56,12 @@ namespace Croppilot.Core.Features.Authentication.Commands.Validators
 				.MaximumLength(200).WithMessage("Address cannot exceed 200 characters.")
 				.When(x => !string.IsNullOrWhiteSpace(x.Address));
 
+			RuleFor(x => x.Image)
+				.NotEmpty().WithMessage("Image is required.")
+				.Must(x => x.Length > 0).WithMessage("Uploaded image cannot be empty.")
+				.Must(x => x.ContentType == "image/jpeg" || x.ContentType == "image/png")
+				.WithMessage("Only JPEG and PNG formats are allowed.");
+
 		}
 
 		private void ApplyCustomValidationRules()

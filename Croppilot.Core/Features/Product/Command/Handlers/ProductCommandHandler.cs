@@ -121,7 +121,7 @@ public class ProductCommandHandler(
 		await Parallel.ForEachAsync(productImages, async (productImage, _) =>
 		{
 			var path = Path.GetFileName(new Uri(productImage.ImageUrl).AbsolutePath);
-			await azureService.DeleteImageAsync(path);
+			await azureService.DeleteImageAsync(path, "product-images");
 		});
 	}
 

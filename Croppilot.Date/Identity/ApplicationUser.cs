@@ -16,5 +16,7 @@ namespace Croppilot.Date.Identity
 		public Wishlist? Wishlist { get; set; }
 		public ICollection<Product> Products { get; set; }
 		public ICollection<Cupon> Cupons { get; set; }
+		[Required(ErrorMessage = "Image Url is required")]
+		public string ImageUrl { get; set; } = null!;
 	}
 }
