@@ -125,32 +125,17 @@ public static class ModelApiDependencies
         {
             rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-            // Global fallback limiter - applies to any request not covered by specific policies
-            rateLimiterOptions.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
-            {
-                var key = httpContext.User.Identity?.IsAuthenticated == true
-                    ? httpContext.User.GetUserId() ?? "unknown-user"
-                    : httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
-
-                return RateLimitPartition.GetSlidingWindowLimiter(
-                    partitionKey: key,
-                    factory: _ => new SlidingWindowRateLimiterOptions
+            // Global fallback limiter
+            rateLimiterOptions.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+                RateLimitPartition.GetConcurrencyLimiter(
+                    partitionKey: "GlobalLimit",
+                    factory: _ => new ConcurrencyLimiterOptions
                     {
-                        PermitLimit = 60,
-                        Window = TimeSpan.FromMinutes(1),
-                        SegmentsPerWindow = 6,
-                        AutoReplenishment = true,
-                        QueueLimit = 0
-                    });
-            });
+                        PermitLimit = 2000, // Max concurrent requests
+                        QueueLimit = 500, // Max queued requests
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                    }));
 
-            // Concurrency limiter to prevent server overload
-            rateLimiterOptions.AddConcurrencyLimiter(RateLimiters.ConcurrencyRateLimit, options =>
-            {
-                options.PermitLimit = 2000;
-                options.QueueLimit = 500;
-                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-            });
 
             // General IP-based rate limit for anonymous users
             rateLimiterOptions.AddPolicy(RateLimiters.IpRateLimit, httpContext =>

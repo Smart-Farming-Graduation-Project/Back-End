@@ -87,6 +87,6 @@ app.UseWatchDog(opt =>
     // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
 });
 
-app.MapControllers();
+app.MapControllers().RequireRateLimiting(RateLimiters.ConcurrencyRateLimit);
 
 app.Run();
