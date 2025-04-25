@@ -5,6 +5,7 @@ namespace Croppilot.API.Controller
 	[Route("api/[controller]")]
 	[ApiController]
 	[Authorize]
+	[EnableRateLimiting(RateLimiters.PaymentEndpointsLimit)]
 	public class PaymentController(IMediator mediator) : AppControllerBase
 	{
 

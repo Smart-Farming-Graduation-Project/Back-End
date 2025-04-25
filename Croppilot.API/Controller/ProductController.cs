@@ -28,6 +28,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
     [ResponseCache(CacheProfileName = "LongCache"), HttpGet("ProductsList"), SwaggerOperation(
          Summary = "Retrieves all products",
          Description = "**Fetches a complete list of products.**")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetProducts()
     {
         var response = await mediator.Send(new GetAllProductQuery());
@@ -43,6 +44,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Description =
              "**Fetches a paginated list of products based on query parameters." +
              "Frontend: Supply pagination parameters (e.g., page number, page size) via query parameters**")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> Paginated([FromQuery] GetProductPaginatedQuery query)
     {
         var response = await mediator.Send(query);
@@ -57,6 +59,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Summary = "Retrieves a product by ID",
          Description =
              "**Fetches the details of a product using its unique identifier. Frontend: Provide the product's ID in the route**")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetProductById([FromRoute] int id)
     {
         var response = await mediator.Send(new GetProductByIdQuery(id));
@@ -71,6 +74,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Summary = "Creates a new product",
          Description =
              "**Adds a new product with the provided details.Frontend: Provide product details (e.g., name, description, price, etc.) in the request body.**")]
+    [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
     public async Task<IActionResult> Create(AddProductCommand command)
     {
         var response = await mediator.Send(command);
@@ -84,6 +88,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
     [HttpPut("Product/Update"), SwaggerOperation(
          Summary = "Updates an existing product",
          Description = "**Modifies the details of an existing product.**")]
+    [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
     public async Task<IActionResult> Edit(EditProductCommand command)
     {
         var response = await mediator.Send(command);
@@ -98,6 +103,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Summary = "Deletes a product",
          Description = "**Removes a product from the system using its unique identifier." +
                        "Frontend: Provide the product's ID in the route to delete the product.**")]
+    [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var response = await mediator.Send(new DeleteProductCommand(id));

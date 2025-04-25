@@ -11,6 +11,7 @@ namespace Croppilot.API.Controller;
 /// </remarks>
 [SwaggerResponse(200, "Operation completed successfully"), SwaggerResponse(400, "Invalid operation or input data"),
  SwaggerResponse(401, "User is not authorized to perform this operation")]
+[EnableRateLimiting(RateLimiters.SocialEndpointsLimit)]
 public class VotesController(IMediator mediator) : AppControllerBase
 {
     /// <summary>

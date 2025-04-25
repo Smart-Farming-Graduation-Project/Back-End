@@ -19,6 +19,7 @@ namespace Croppilot.API.Controller;
 /// Frontend developers should check the 'Succeeded' flag and, if false, read the 'Errors' list to determine the exact issues.
 /// </summary>
 [Route("api/[controller]"), ApiController]
+[EnableRateLimiting(RateLimiters.AuthenticationEndpointsLimit)]
 public class AuthenticationController(IMediator mediator) : AppControllerBase
 {
 	/// <summary>

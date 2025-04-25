@@ -4,6 +4,7 @@ using Croppilot.Core.Features.ChatBot.Query.Models;
 namespace Croppilot.API.Controller
 {
     [Route("api/[controller]"), ApiController]
+    [EnableRateLimiting(RateLimiters.ChatBotEndpointsLimit)]
     public class ChatBotController(IMediator mediator) : AppControllerBase
     {
         [HttpGet("ChatHistory")]

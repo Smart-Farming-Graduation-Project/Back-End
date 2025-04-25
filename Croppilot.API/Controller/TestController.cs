@@ -4,7 +4,10 @@ using Croppilot.Services.Abstract;
 namespace Croppilot.API.Controller;
 
 [Route("api/[controller]"), ApiController]
-public class TestController(IProductServices _productServices, IEmailService emailService, IAuthenticationService _authenticationService)
+public class TestController(
+    IProductServices _productServices,
+    IEmailService emailService,
+    IAuthenticationService _authenticationService)
     : ControllerBase
 {
     [HttpPost("send-test")]
@@ -26,6 +29,14 @@ public class TestController(IProductServices _productServices, IEmailService ema
             return StatusCode(500, new { error = "Failed to send email." });
         }
     }
+
+    [HttpGet("test")]
+    [EnableRateLimiting(RateLimiters.IpRateLimit)]
+    public IActionResult Test()
+    {
+        return Ok("Test endpoint is working!");
+    }
+
     //[HttpGet("ProductList")]
     //public async Task<IActionResult> GetProduct()
     //{
