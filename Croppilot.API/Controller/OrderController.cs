@@ -6,6 +6,7 @@ namespace Croppilot.API.Controller;
 public class OrderController(IMediator mediator) : AppControllerBase
 {
     [ResponseCache(CacheProfileName = "Default"), HttpGet("OrdersList")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetOrders()
     {
         var response = await mediator.Send(new GetAllOrdersQuery());
@@ -13,6 +14,7 @@ public class OrderController(IMediator mediator) : AppControllerBase
     }
 
     [ResponseCache(CacheProfileName = "Default"), HttpGet("{id}")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetOrderById([FromRoute] int id)
     {
         var response = await mediator.Send(new GetOrderByIdQuery { OrderId = id });
@@ -20,6 +22,7 @@ public class OrderController(IMediator mediator) : AppControllerBase
     }
 
     [ResponseCache(CacheProfileName = "Default"), HttpGet("user/{userId}")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetUserOrders([FromRoute] string userId)
     {
         /* todo : Fix later :
@@ -36,6 +39,7 @@ public class OrderController(IMediator mediator) : AppControllerBase
     }
 
     [HttpPost("Create")]
+    [EnableRateLimiting(RateLimiters.PaymentEndpointsLimit)]
     public async Task<IActionResult> Create(CreateOrderCommand command)
     {
         var response = await mediator.Send(command);
@@ -43,6 +47,7 @@ public class OrderController(IMediator mediator) : AppControllerBase
     }
 
     [HttpPut("Update")]
+    [EnableRateLimiting(RateLimiters.PaymentEndpointsLimit)]
     public async Task<IActionResult> Update(UpdateOrderCommand command)
     {
         var response = await mediator.Send(command);
@@ -50,6 +55,7 @@ public class OrderController(IMediator mediator) : AppControllerBase
     }
 
     [HttpDelete("Delete/{id}")]
+    [EnableRateLimiting(RateLimiters.PaymentEndpointsLimit)]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var response = await mediator.Send(new DeleteOrderCommand(id));

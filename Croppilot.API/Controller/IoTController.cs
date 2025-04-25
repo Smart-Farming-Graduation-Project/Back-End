@@ -4,6 +4,7 @@ namespace Croppilot.API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting(RateLimiters.IoTEndpointsLimit)]
     public class IoTController(IMediator mediator) : AppControllerBase
     {
         [HttpGet("latest-reading")]
