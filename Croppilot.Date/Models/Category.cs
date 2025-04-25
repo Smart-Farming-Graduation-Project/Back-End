@@ -11,6 +11,8 @@ public class Category
     [StringLength(500, ErrorMessage = "Description cannot be longer than 500 characters")]
     public string Description { get; set; } = default!;
 
+    public string ImageUrl { get; set; } = string.Empty;
+
     [ValidateNever]
     public ICollection<Product> Products { get; set; } = new List<Product>();
 }

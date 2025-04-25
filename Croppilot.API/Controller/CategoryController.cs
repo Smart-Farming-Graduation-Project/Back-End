@@ -4,7 +4,7 @@ using Croppilot.Core.Features.Category.Query.Models;
 
 namespace Croppilot.API.Controller;
 
-[Authorize(Policy = nameof(UserRoleEnum.User))]
+//[Authorize(Policy = nameof(UserRoleEnum.User))]
 public class CategoryController(IMediator mediator) : AppControllerBase
 {
     [ResponseCache(CacheProfileName = "Default"), HttpGet("CategoryList")]

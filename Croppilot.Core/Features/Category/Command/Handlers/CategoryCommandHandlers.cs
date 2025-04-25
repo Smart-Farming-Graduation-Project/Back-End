@@ -1,9 +1,8 @@
 ﻿using Croppilot.Core.Features.Category.Command.Models;
-using Croppilot.Services.Abstract;
 
 namespace Croppilot.Core.Features.Category.Command.Handlers
 {
-    public class CategoryCommandHandlers(ICategoryService categoryService) : ResponseHandler,
+    public class CategoryCommandHandlers(ICategoryService categoryService, IAzureBlobStorageService azureBlobStorageService) : ResponseHandler,
         IRequestHandler<AddCategoryCommand, Response<string>>
         , IRequestHandler<DeleteCategoryCommand, Response<string>>,
         IRequestHandler<EditCategoryCommand, Response<string>>
@@ -15,10 +14,15 @@ namespace Croppilot.Core.Features.Category.Command.Handlers
             {
                 return BadRequest<string>("This Category Name Is Already Exist");
             }
+            var imageUrl = await azureBlobStorageService.UploadImageAsync(command.Image.OpenReadStream(),
+                "user-images",
+                $"{Guid.NewGuid().ToString()}_{command.Name}{Path.GetExtension(command.Image.FileName)}");
+
             category = new Date.Models.Category
             {
                 Name = command.Name,
-                Description = command.Description
+                Description = command.Description,
+                ImageUrl = imageUrl
             };
             var result = await categoryService.CreateAsync(category, cancellationToken);
             return result is OperationResult.Success ? Created("Category Added Successfully") : BadRequest<string>();

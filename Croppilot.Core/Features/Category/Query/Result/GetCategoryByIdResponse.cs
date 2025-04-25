@@ -1,6 +1,4 @@
-﻿using Croppilot.Core.Bases;
-using Croppilot.Core.Features.Category.Query.Models;
-using MediatR;
+﻿using Croppilot.Core.Features.Category.Query.Models;
 
 namespace Croppilot.Core.Features.Category.Query.Result
 {
@@ -9,6 +7,8 @@ namespace Croppilot.Core.Features.Category.Query.Result
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string CategoryDescription { get; set; }
+        public string CategoryImage { get; set; } = string.Empty;
+
         public List<ProductDto> Products { get; set; } = new();
 
     }

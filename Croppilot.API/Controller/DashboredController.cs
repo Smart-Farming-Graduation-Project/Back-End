@@ -41,7 +41,7 @@ namespace Croppilot.API.Controller
             var result = await mediator.Send(new GetFieldById(id));
             return NewResult(result);
         }
-        [ResponseCache(CacheProfileName = "LongCache"), HttpGet("Fields")]
+        [ResponseCache(CacheProfileName = "NoCache"), HttpGet("Fields")]
         [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetAllFields()
         {
@@ -70,7 +70,7 @@ namespace Croppilot.API.Controller
             return NewResult(result);
         }
 
-        [ResponseCache(CacheProfileName = "LongCache"), HttpGet("Equipments")]
+        [ResponseCache(CacheProfileName = "NoCache"), HttpGet("Equipments")]
         [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetAllEquipments()
         {

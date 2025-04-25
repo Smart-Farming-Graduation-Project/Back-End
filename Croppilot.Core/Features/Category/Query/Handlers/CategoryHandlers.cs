@@ -19,7 +19,8 @@ public class CategoryHandlers(ICategoryService categoryService)
         {
             CategoryId = x.Id,
             CategoryName = x.Name,
-            CategoryDescription = x.Description
+            CategoryDescription = x.Description,
+            CategoryImage = x.ImageUrl,
         }).ToList();
 
         var result = Success(categoryResult);
@@ -41,7 +42,7 @@ public class CategoryHandlers(ICategoryService categoryService)
             return NotFound<GetCategoryByIdResponse>("This category Is Not Found");
 
         var categoryResult = category.Adapt<GetCategoryByIdResponse>();
-
+        categoryResult.CategoryImage = category.ImageUrl;
         return Success(categoryResult);
     }
 
