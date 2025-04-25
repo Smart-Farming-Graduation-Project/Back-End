@@ -11,14 +11,14 @@ public class CategoryController(IMediator mediator) : AppControllerBase
     public async Task<IActionResult> GetAllCategory()
     {
         var response = await mediator.Send(new GetAllCategoryQuery());
-        return Ok(response);
+        return NewResult(response);
     }
 
     [ResponseCache(CacheProfileName = "Default"), HttpGet("CategoryPaginatedList")]
     public async Task<IActionResult> Paginated([FromQuery] GetCategoryPaginatedQuery query)
     {
         var response = await mediator.Send(query);
-        return Ok(response);
+        return NewResult(response);
     }
 
     [ResponseCache(CacheProfileName = "Default"), HttpGet("Category/{id}")]

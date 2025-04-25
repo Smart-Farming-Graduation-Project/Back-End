@@ -9,7 +9,7 @@ public class OrderController(IMediator mediator) : AppControllerBase
     public async Task<IActionResult> GetOrders()
     {
         var response = await mediator.Send(new GetAllOrdersQuery());
-        return Ok(response);
+        return NewResult(response);
     }
 
     [ResponseCache(CacheProfileName = "Default"), HttpGet("{id}")]

@@ -1,11 +1,8 @@
 ﻿using Croppilot.Core.Features.Category.Query.Result;
-using Croppilot.Date.Enum;
-using Croppilot.Infrastructure.Comman;
-using MediatR;
 
 namespace Croppilot.Core.Features.Category.Query.Models
 {
-    public class GetCategoryPaginatedQuery : IRequest<PaginatedResult<GetCategoryPaginatedResponse>>
+    public class GetCategoryPaginatedQuery : IRequest<Response<List<GetCategoryPaginatedResponse>>>
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }

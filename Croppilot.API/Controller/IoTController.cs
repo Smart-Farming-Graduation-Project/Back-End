@@ -10,7 +10,7 @@ namespace Croppilot.API.Controller
         public async Task<IActionResult> GetLatestIoTData()
         {
             var response = await mediator.Send(new GetIoTData());
-            return Ok(response);
+            return NewResult(response);
 
         }
         [HttpGet("GetIotData/{id}/{partitionKey}")]

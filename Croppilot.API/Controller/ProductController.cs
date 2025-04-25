@@ -31,7 +31,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
     public async Task<IActionResult> GetProducts()
     {
         var response = await mediator.Send(new GetAllProductQuery());
-        return Ok(response);
+        return NewResult(response);
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
     public async Task<IActionResult> Paginated([FromQuery] GetProductPaginatedQuery query)
     {
         var response = await mediator.Send(query);
-        return Ok(response);
+        return NewResult(response);
     }
 
     /// <summary>

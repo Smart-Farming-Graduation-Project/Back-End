@@ -10,14 +10,14 @@ namespace Croppilot.API.Controller
         public async Task<IActionResult> GetAllChatHistory()
         {
             var response = await mediator.Send(new GetChatHistory());
-            return Ok(response);
+            return NewResult(response);
         }
 
         [HttpPost("Chat")]
         public async Task<IActionResult> GetChatResponse([FromBody] MessageRequestModel command)
         {
             var response = await mediator.Send(command);
-            return Ok(response);
+            return NewResult(response);
         }
     }
 }

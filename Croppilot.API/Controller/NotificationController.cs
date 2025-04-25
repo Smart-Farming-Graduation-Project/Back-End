@@ -21,7 +21,7 @@ namespace Croppilot.API.Controller
         public async Task<IActionResult> SendSms([FromBody] SmsRequest command)
         {
             var response = await mediator.Send(command);
-            return Ok(response);
+            return NewResult(response);
         }
 
 
@@ -37,7 +37,7 @@ namespace Croppilot.API.Controller
         public async Task<IActionResult> SendNotification([FromBody] PushbulletRequest command)
         {
             var response = await mediator.Send(command);
-            return Ok(response);
+            return NewResult(response);
         }
 
     }

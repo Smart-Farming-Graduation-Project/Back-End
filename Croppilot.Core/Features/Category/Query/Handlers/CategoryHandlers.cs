@@ -1,7 +1,7 @@
-﻿using System.Linq.Expressions;
-using Croppilot.Core.Features.Category.Query.Models;
+﻿using Croppilot.Core.Features.Category.Query.Models;
 using Croppilot.Core.Features.Category.Query.Result;
 using Croppilot.Infrastructure.Comman;
+using System.Linq.Expressions;
 
 namespace Croppilot.Core.Features.Category.Query.Handlers;
 
@@ -9,7 +9,7 @@ public class CategoryHandlers(ICategoryService categoryService)
     : ResponseHandler
         , IRequestHandler<GetAllCategoryQuery, Response<List<GetAllCategoryResponse>>>,
         IRequestHandler<GetCategoryByIdQuery, Response<GetCategoryByIdResponse>>,
-        IRequestHandler<GetCategoryPaginatedQuery, PaginatedResult<GetCategoryPaginatedResponse>>
+        IRequestHandler<GetCategoryPaginatedQuery, Response<List<GetCategoryPaginatedResponse>>>
 {
     public async Task<Response<List<GetAllCategoryResponse>>> Handle(GetAllCategoryQuery request,
         CancellationToken cancellationToken)
@@ -45,7 +45,7 @@ public class CategoryHandlers(ICategoryService categoryService)
         return Success(categoryResult);
     }
 
-    public async Task<PaginatedResult<GetCategoryPaginatedResponse>> Handle(GetCategoryPaginatedQuery request,
+    public async Task<Response<List<GetCategoryPaginatedResponse>>> Handle(GetCategoryPaginatedQuery request,
         CancellationToken cancellationToken)
     {
         Expression<Func<Date.Models.Category, GetCategoryPaginatedResponse>> expression = c =>
@@ -72,12 +72,19 @@ public class CategoryHandlers(ICategoryService categoryService)
 
         var paginatedList = await filterQueryable.Select(expression)
             .ToPaginatedListAsync(request.PageNumber, request.PageSize);
-
-        paginatedList.Meta = new
+        var categoryMeta = new Dictionary<string, object>
         {
-            Count = paginatedList.Data.Count()
+            {"Current Page", paginatedList.CurrentPage},
+            {"Total Pages", paginatedList.TotalPages},
+            {"Page Size", paginatedList.PageSize},
+            {"Total Count", paginatedList.TotalCount},
+            {"Has Next", paginatedList.HasNextPage},
+            {"Has Previous", paginatedList.HasPreviousPage},
+            {"Meta", paginatedList.Meta},
+            {"Succeeded", paginatedList.Succeeded},
+            {"Message", paginatedList.Messages}
         };
 
-        return paginatedList;
+        return Success(paginatedList.Data, meta: categoryMeta);
     }
 }

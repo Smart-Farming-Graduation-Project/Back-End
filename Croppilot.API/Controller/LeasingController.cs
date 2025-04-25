@@ -33,7 +33,7 @@ public class LeasingController(IMediator mediator) : AppControllerBase
     public async Task<IActionResult> GetAllLeasing()
     {
         var result = await mediator.Send(new GetAllLeasingsQuery());
-        return Ok(result);
+        return NewResult(result);
     }
 
     [HttpGet("GetLeasingByProductId/{productId}")]

@@ -6,26 +6,37 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Croppilot.Core.Features.User.Queries.Handlers
 {
-	internal class GetUserPaginatedQueryHandler(UserManager<ApplicationUser> userManager)
-		: ResponseHandler, IRequestHandler<GetUserPaginatedQuery, PaginatedResult<GetUser>>
-	{
-		public async Task<PaginatedResult<GetUser>> Handle(GetUserPaginatedQuery request, CancellationToken cancellationToken)
-		{
-			var response = await userManager.Users
-				.Select(u => new GetUser
-				{
-					Id = u.Id,
-					FirstName = u.FirstName,
-					LastName = u.LastName,
-					FullName = $"{u.FirstName} {u.LastName}",
-					Address = u.Address,
-					Phone = u.Phone,
-					UserName = u.UserName,
-					Email = u.Email
-				}).ToPaginatedListAsync(request.pageNumber, request.pageSize);
+    internal class GetUserPaginatedQueryHandler(UserManager<ApplicationUser> userManager)
+        : ResponseHandler, IRequestHandler<GetUserPaginatedQuery, Response<List<GetUser>>>
+    {
+        public async Task<Response<List<GetUser>>> Handle(GetUserPaginatedQuery request, CancellationToken cancellationToken)
+        {
+            var response = await userManager.Users
+                .Select(u => new GetUser
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    FullName = $"{u.FirstName} {u.LastName}",
+                    Address = u.Address,
+                    Phone = u.Phone,
+                    UserName = u.UserName,
+                    Email = u.Email
+                }).ToPaginatedListAsync(request.pageNumber, request.pageSize);
 
-			response.Meta = new { count = response.Data.Count };
-			return response;
-		}
-	}
+            var userMeta = new Dictionary<string, object>
+            {
+                {"Current Page", response.CurrentPage},
+                {"Total Pages", response.TotalPages},
+                {"Page Size", response.PageSize},
+                {"Total Count", response.TotalCount},
+                {"Has Next", response.HasNextPage},
+                {"Has Previous", response.HasPreviousPage},
+                {"Meta", response.Meta},
+                {"Succeeded", response.Succeeded},
+                {"Message", response.Messages}
+            };
+            return Success(response.Data, meta: userMeta);
+        }
+    }
 }

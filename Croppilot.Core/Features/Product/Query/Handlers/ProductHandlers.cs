@@ -1,8 +1,6 @@
-﻿using System.Linq.Expressions;
-using Croppilot.Core.Features.Product.Query.Models;
-using Croppilot.Core.Features.Product.Query.Result;
+﻿using Croppilot.Core.Features.Product.Query.Models;
 using Croppilot.Infrastructure.Comman;
-using Croppilot.Services.Abstract;
+using System.Linq.Expressions;
 
 namespace Croppilot.Core.Features.Product.Query.Handlers;
 
@@ -10,7 +8,7 @@ public class ProductHandlers(IProductServices productServices, IReviewService re
     : ResponseHandler,
         IRequestHandler<GetAllProductQuery, Response<List<GetAllProductResponse>>>,
         IRequestHandler<GetProductByIdQuery, Response<GetProductByIdResponse>>,
-        IRequestHandler<GetProductPaginatedQuery, PaginatedResult<GetProductPaginatedResponse>>
+        IRequestHandler<GetProductPaginatedQuery, Response<List<GetProductPaginatedResponse>>>
 {
     public async Task<Response<List<GetAllProductResponse>>> Handle(GetAllProductQuery request,
         CancellationToken cancellationToken)
@@ -44,7 +42,7 @@ public class ProductHandlers(IProductServices productServices, IReviewService re
         return Success(productResult);
     }
 
-    public async Task<PaginatedResult<GetProductPaginatedResponse>> Handle(GetProductPaginatedQuery request,
+    public async Task<Response<List<GetProductPaginatedResponse>>> Handle(GetProductPaginatedQuery request,
         CancellationToken cancellationToken)
     {
         Expression<Func<Date.Models.Product, GetProductPaginatedResponse>> expression = product =>
@@ -63,8 +61,19 @@ public class ProductHandlers(IProductServices productServices, IReviewService re
         var paginatedList = await filteredQueryable.Select(expression)
             .ToPaginatedListAsync(request.PageNumber, request.PageSize);
 
-        paginatedList.Meta = new Dictionary<string, object> { { "count", paginatedList.Data.Count } };
+        var productMeta = new Dictionary<string, object>
+        {
+            {"Current Page", paginatedList.CurrentPage},
+            {"Total Pages", paginatedList.TotalPages},
+            {"Page Size", paginatedList.PageSize},
+            {"Total Count", paginatedList.TotalCount},
+            {"Has Next", paginatedList.HasNextPage},
+            {"Has Previous", paginatedList.HasPreviousPage},
+            {"Meta", paginatedList.Meta},
+            {"Succeeded", paginatedList.Succeeded},
+            {"Message", paginatedList.Messages}
+        };
 
-        return paginatedList;
+        return Success(paginatedList.Data, meta: productMeta);
     }
 }

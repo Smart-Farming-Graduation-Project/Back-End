@@ -1,10 +1,8 @@
 ﻿using Croppilot.Core.Features.User.Queries.Result;
-using Croppilot.Infrastructure.Comman;
-using MediatR;
 
 namespace Croppilot.Core.Features.User.Queries.Models
 {
-    public class GetUserPaginatedQuery : IRequest<PaginatedResult<GetUser>>
+    public class GetUserPaginatedQuery : IRequest<Response<List<GetUser>>>
     {
         public int pageNumber { get; set; }
         public int pageSize { get; set; }

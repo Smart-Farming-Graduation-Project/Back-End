@@ -8,8 +8,11 @@
 
   <ItemGroup>
     <Compile Remove="Comman\**" />
+    <Compile Remove="Features\Votes\Query\**" />
     <EmbeddedResource Remove="Comman\**" />
+    <EmbeddedResource Remove="Features\Votes\Query\**" />
     <None Remove="Comman\**" />
+    <None Remove="Features\Votes\Query\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,10 +33,6 @@
     <Folder Include="Features\Comments\Query\Validators\" />
     <Folder Include="Features\Cupon\Query\" />
     <Folder Include="Features\Payment\Query\" />
-    <Folder Include="Features\Votes\Query\Handlers\" />
-    <Folder Include="Features\Votes\Query\Models\" />
-    <Folder Include="Features\Votes\Query\Result\" />
-    <Folder Include="Features\Votes\Query\Validators\" />
     <Folder Include="Mapping\Authentication\Command\" />
     <Folder Include="Mapping\Authentication\Query\" />
     <Folder Include="Mapping\Authorization\Command\" />
