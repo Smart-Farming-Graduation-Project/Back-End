@@ -8,6 +8,7 @@ namespace Croppilot.API.Controller;
 public class CategoryController(IMediator mediator) : AppControllerBase
 {
     [ResponseCache(CacheProfileName = "Default"), HttpGet("CategoryList")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetAllCategory()
     {
         var response = await mediator.Send(new GetAllCategoryQuery());
@@ -15,6 +16,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
     }
 
     [ResponseCache(CacheProfileName = "Default"), HttpGet("CategoryPaginatedList")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> Paginated([FromQuery] GetCategoryPaginatedQuery query)
     {
         var response = await mediator.Send(query);
@@ -22,6 +24,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
     }
 
     [ResponseCache(CacheProfileName = "Default"), HttpGet("Category/{id}")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetCategoryById([FromRoute] int id)
     {
         var response = await mediator.Send(new GetCategoryByIdQuery(id));
@@ -29,6 +32,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
     }
 
     [HttpPost("Category/Create")]
+    [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
     public async Task<IActionResult> Create( /*[FromBody]*/ AddCategoryCommand command)
     {
         var response = await mediator.Send(command);
@@ -36,6 +40,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
     }
 
     [HttpPut("Category/Update")]
+    [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
     public async Task<IActionResult> Edit( /*[FromBody]*/ EditCategoryCommand command)
     {
         var response = await mediator.Send(command);
@@ -43,6 +48,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
     }
 
     [HttpDelete("CategoryDelete/{id}")]
+    [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var response = await mediator.Send(new DeleteCategoryCommand(id));
