@@ -32,6 +32,7 @@ public class CartController : AppControllerBase
     [ResponseCache(CacheProfileName = "Default"), HttpGet("GetCart"), SwaggerOperation(
          Summary = "Retrieves the current user's cart",
          Description = "**Fetches the shopping cart for the authenticated user.**")]
+    [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetCart()
     {
         var userId = User.GetUserId();
@@ -51,6 +52,7 @@ public class CartController : AppControllerBase
              "**Adds a specified product to the authenticated user's shopping cart" +
              ". Provide the product ID and optionally specify the quantity (default is 1) ," +
              " if you want to update quantity for any product exist in cart you should send productId and the new quantity.**")]
+    [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
     public async Task<IActionResult> AddProductToCart([FromRoute] int productId, [FromQuery] int quantity = 1)
     {
         var command = new AddProductToCartCommand
@@ -72,6 +74,7 @@ public class CartController : AppControllerBase
     [HttpDelete("RemoveProduct/{productId}"), SwaggerOperation(Summary = "Removes a product from the cart",
          Description =
              "**Removes the specified product from the user's shopping cart.Need the The ID of the product to remove from the cart.**")]
+    [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
     public async Task<IActionResult> RemoveProductFromCart([FromRoute] int productId)
     {
         var command = new RemoveProductFromCartCommand
