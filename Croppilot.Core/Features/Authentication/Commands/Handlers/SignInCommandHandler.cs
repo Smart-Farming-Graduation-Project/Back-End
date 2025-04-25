@@ -2,6 +2,7 @@
 using Croppilot.Core.Features.Authentication.Commands.Result;
 using Croppilot.Date.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace Croppilot.Core.Features.Authentication.Commands.Handlers;
 
@@ -13,13 +14,22 @@ public class SignInCommandHandler(
     public async Task<Response<SignInResponse>> Handle(SignInCommand request, CancellationToken cancellationToken)
     {
         //var user = await userService.GetUserByUserName(request.UserName);
+        var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
         ApplicationUser user = new ApplicationUser();
         if (new EmailAddressAttribute().IsValid(request.UserNameOrEmail))
             user = await userService.GetUserByEmail(request.UserNameOrEmail);
         else
             user = await userService.GetUserByUserName(request.UserNameOrEmail);
+
         if (user is null)
-            return BadRequest<SignInResponse>("Username or Password are wrong");
+        {
+            if (emailRegex.IsMatch(request.UserNameOrEmail))
+                return BadRequest<SignInResponse>("Email or Password are wrong");
+
+            return BadRequest<SignInResponse>("User Name or Password are wrong");
+        }
+
         //Ensure email is confirmed before allowing login
         if (!user.EmailConfirmed) return BadRequest<SignInResponse>("Please confirm your email before signing in.");
 
