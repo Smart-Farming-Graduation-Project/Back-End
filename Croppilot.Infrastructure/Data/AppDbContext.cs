@@ -35,6 +35,7 @@ namespace Croppilot.Infrastructure.Data
         public DbSet<Field> Fields { get; set; }
         public DbSet<Equipment> Equipments { get; set; }
         public DbSet<SoilMoisture> SoilMoistures { get; set; }
+        public DbSet<Alert> EmergencyAlerts { get; set; }
         //public DbSet<FarmerAdminDashboard> FarmerAdminDashboards { get; set; }
         //public DbSet<CropYield> CropYields { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using Croppilot.Core.Features.Dashbored.Equipment.Models;
+﻿using Croppilot.Core.Features.Dashbored.Alerts.Models;
+using Croppilot.Core.Features.Dashbored.Equipment.Models;
 using Croppilot.Core.Features.Dashbored.FarmStatues;
 using Croppilot.Core.Features.Dashbored.FarmStatus.Soil;
 using Croppilot.Core.Features.Dashbored.Field.Models;
@@ -103,6 +104,17 @@ namespace Croppilot.API.Controller
             var result = await mediator.Send(new SoilMoistureModel());
             return NewResult(result);
         }
-
+        [ResponseCache(CacheProfileName = "NoCache"), HttpGet("GetAlerts")]
+        public async Task<IActionResult> GetAlerts()
+        {
+            var result = await mediator.Send(new GetAllAlerts());
+            return NewResult(result);
+        }
+        [HttpPost("CreateAlert")]
+        public async Task<IActionResult> CreateAlert(CreateAlert command)
+        {
+            var result = await mediator.Send(command);
+            return NewResult(result);
+        }
     }
 }

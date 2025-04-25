@@ -45,7 +45,7 @@ namespace Croppilot.Infrastructure
             service.AddTransient<IFieldRepository, FieldRepository>();
             service.AddTransient<IEquipmentRepository, EquipmentRepository>();
             service.AddTransient<ISoilRepository, SoilRepository>();
-
+            service.AddTransient<IAlertsRepository, AlertsRepository>();
             #region Identity Service
 
             service.AddIdentityCore<ApplicationUser>(options =>
