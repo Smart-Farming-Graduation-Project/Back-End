@@ -2,10 +2,10 @@
 
 namespace Croppilot.Core.Features.Category.Command.Validtators
 {
-	public class AddCategoryValidator : AbstractValidator<AddCategoryCommand>
+	public class EditCategoryValidator : AbstractValidator<EditCategoryCommand>
 	{
 		private readonly ICategoryService _categoryService;
-		public AddCategoryValidator(ICategoryService categoryService)
+		public EditCategoryValidator(ICategoryService categoryService)
 		{
 			_categoryService = categoryService;
 			ApplyValidationRules();
@@ -13,6 +13,9 @@ namespace Croppilot.Core.Features.Category.Command.Validtators
 		}
 		private void ApplyValidationRules()
 		{
+			RuleFor(x => x.Id)
+				.NotEmpty().WithMessage("Category ID is required.")
+				.GreaterThan(0).WithMessage("Category ID must be greater than 0.");
 			RuleFor(x => x.Name)
 				.NotEmpty().WithMessage("Category name is required.")
 				.MaximumLength(50).WithMessage("Category name cannot exceed 50 characters.");
@@ -25,16 +28,13 @@ namespace Croppilot.Core.Features.Category.Command.Validtators
 				.WithMessage("Only JPEG and PNG formats are allowed.")
 				.When(x => x.Image != null);
 		}
-
 		private void AppluCustomValidationRules()
 		{
-			RuleFor(x => x.Name)
-				.MustAsync(async (name, cancellation) =>
-				{
-					var category = await _categoryService.GetByNameAsync(name);
-					return category == null;
-				}).WithMessage("This Category Name Is Already Exist");
+			RuleFor(x => x).MustAsync(async (command, cancellation) =>
+			{
+				var category = await _categoryService.GetByNameAsync(command.Name);
+				return category == null || category.Id == command.Id;
+			}).WithMessage("This Category Name Is Already Exist");
 		}
-
 	}
 }
