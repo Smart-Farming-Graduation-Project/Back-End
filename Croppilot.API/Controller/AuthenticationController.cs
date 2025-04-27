@@ -33,7 +33,7 @@ public class AuthenticationController(IMediator mediator) : AppControllerBase
 	 SwaggerOperation(
 		 Summary = "Registers a new user",
 		 Description =
-			 "Creates a new user account. **For mobile clients, firstName, lastName, phone, and address are optional. 'سبهم فاضيين عادي'**"
+			 "Creates a new user account. **For mobile clients, firstName, lastName, phone, and address are optional. 'سبهم فاضيين عادي'** \n Only JPEG and PNG formats are allowed"
 	 )]
 	// [SwaggerRequestExample(typeof(AddUserCommand), typeof(RegisterRequestExample))] //Show frontend and mobile request examples
 	public async Task<IActionResult> Register([FromForm] AddUserCommand command)
