@@ -9,7 +9,7 @@ namespace Croppilot.Core.Features.Category.Command.Validtators
 		{
 			_categoryService = categoryService;
 			ApplyValidationRules();
-			AppluCustomValidationRules();
+			ApplyCustomValidationRules();
 		}
 		private void ApplyValidationRules()
 		{
