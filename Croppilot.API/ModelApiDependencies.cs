@@ -235,7 +235,7 @@ public static class ModelApiDependencies
                         partitionKey: key,
                         factory: _ => new SlidingWindowRateLimiterOptions
                         {
-                            PermitLimit = 40,
+                            PermitLimit = 20,
                             Window = TimeSpan.FromMinutes(1),
                             SegmentsPerWindow = 6,
                             AutoReplenishment = true
@@ -246,7 +246,7 @@ public static class ModelApiDependencies
                     partitionKey: key,
                     factory: _ => new SlidingWindowRateLimiterOptions
                     {
-                        PermitLimit = 20,
+                        PermitLimit = 10,
                         Window = TimeSpan.FromMinutes(1),
                         SegmentsPerWindow = 6,
                         AutoReplenishment = true
@@ -267,24 +267,22 @@ public static class ModelApiDependencies
                         partitionKey: key,
                         factory: _ => new SlidingWindowRateLimiterOptions
                         {
-                            PermitLimit = 40,
+                            PermitLimit = 10,
                             Window = TimeSpan.FromMinutes(1),
                             SegmentsPerWindow = 6,
                             AutoReplenishment = true
                         });
                 }
-                else
-                {
-                    return RateLimitPartition.GetSlidingWindowLimiter(
-                        partitionKey: key,
-                        factory: _ => new SlidingWindowRateLimiterOptions
-                        {
-                            PermitLimit = 20,
-                            Window = TimeSpan.FromMinutes(1),
-                            SegmentsPerWindow = 6,
-                            AutoReplenishment = true
-                        });
-                }
+
+                return RateLimitPartition.GetSlidingWindowLimiter(
+                    partitionKey: key,
+                    factory: _ => new SlidingWindowRateLimiterOptions
+                    {
+                        PermitLimit = 5,
+                        Window = TimeSpan.FromMinutes(1),
+                        SegmentsPerWindow = 6,
+                        AutoReplenishment = true
+                    });
             });
 
             // Payment and financial operations - highly restricted
