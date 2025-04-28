@@ -23,6 +23,7 @@ namespace Croppilot.Core.Features.Authentication.Commands.Models
         public string UserId { get; set; }
         [Required]
         public string Provider { get; set; }
+        public string profileImage { get; set; }
 
     }
 }

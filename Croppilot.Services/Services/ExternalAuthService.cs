@@ -1,10 +1,11 @@
 ﻿using Croppilot.Date.DTOS;
+using Croppilot.Date.Helpers;
 using Croppilot.Date.Identity;
-using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Croppilot.Services.Services
 {
@@ -13,6 +14,7 @@ namespace Croppilot.Services.Services
         private readonly IConfiguration _config;
         private readonly HttpClient _facebookHttpClient;
         private readonly UserManager<ApplicationUser> _userManager;
+
         public ExternalAuthService(UserManager<ApplicationUser> userManager, IConfiguration config)
         {
             _config = config;
@@ -43,7 +45,8 @@ namespace Croppilot.Services.Services
                 var fbResult = await _facebookHttpClient.GetFromJsonAsync<FacebookResultDto>(
                     $"debug_token?input_token={accessToken}&access_token={facebookKeys}");
 
-                return fbResult?.Data?.Is_Valid == true && string.Equals(fbResult.Data.User_Id, userId, StringComparison.OrdinalIgnoreCase);
+                return fbResult?.Data?.Is_Valid == true &&
+                       string.Equals(fbResult.Data.User_Id, userId, StringComparison.OrdinalIgnoreCase);
             }
             catch (Exception ex)
             {
@@ -57,36 +60,79 @@ namespace Croppilot.Services.Services
 
         public async Task<bool> GoogleValidatedAsync(string accessToken, string userId)
         {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(accessToken);
-
-            if (!payload.Audience.Equals(_config["Authentication:Google:ClientId"]))
+            try
             {
+                using var httpClient = new HttpClient();
+
+                var response = await httpClient.GetAsync(
+                    $"https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={Uri.EscapeDataString(accessToken)}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    //Console.WriteLine($"Google tokeninfo request failed: {response.StatusCode} - {response.ReasonPhrase}");
+                    return false;
+                }
+
+                var jsonContent = await response.Content.ReadAsStringAsync();
+                //Console.WriteLine($"Google tokeninfo response: {jsonContent}");
+
+                if (string.IsNullOrEmpty(jsonContent))
+                {
+                    //Console.WriteLine("Empty response from Google tokeninfo");
+                    return false;
+                }
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var tokenInfo = System.Text.Json.JsonSerializer.Deserialize<GoogleTokenInfoResponse>(jsonContent, options);
+
+                if (tokenInfo == null)
+                {
+                    //Console.WriteLine("Failed to deserialize Google tokeninfo response");
+                    return false;
+                }
+
+                //Console.WriteLine($"Deserialized tokeninfo - UserId: {tokenInfo.UserId}, Audience: {tokenInfo.Audience}");
+
+                var clientId = _config["Authentication:Google:ClientId"];
+                if (string.IsNullOrEmpty(tokenInfo.Audience) || !tokenInfo.Audience.Equals(clientId))
+                {
+                    //Console.WriteLine($"Audience mismatch - Expected: {clientId}, Actual: {tokenInfo.Audience}");
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(tokenInfo.UserId) || !tokenInfo.UserId.Equals(userId))
+                {
+                    //Console.WriteLine($"UserId mismatch - Expected: {userId}, Actual: {tokenInfo.UserId}");
+                    return false;
+                }
+
+                // Check expiration using the new GetExpiresIn method
+                int expiresIn = tokenInfo.GetExpiresIn();
+                if (expiresIn <= 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the full exception details
+                //Console.WriteLine($"Google validation error: {ex.Message}");
+                //Console.WriteLine($"Stack trace: {ex.StackTrace}");
+
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+
                 return false;
             }
 
-            if (!payload.Issuer.Equals("accounts.google.com") && !payload.Issuer.Equals("https://accounts.google.com"))
-            {
-                return false;
-            }
-
-            if (payload.ExpirationTimeSeconds == null)
-            {
-                return false;
-            }
-
-            DateTime now = DateTime.Now.ToUniversalTime();
-            DateTime expiration = DateTimeOffset.FromUnixTimeSeconds((long)payload.ExpirationTimeSeconds).DateTime;
-            if (now > expiration)
-            {
-                return false;
-            }
-
-            if (!payload.Subject.Equals(userId))
-            {
-                return false;
-            }
-
-            return true;
         }
 
 

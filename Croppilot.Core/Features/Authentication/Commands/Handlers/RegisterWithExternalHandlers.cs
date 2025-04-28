@@ -56,7 +56,8 @@ public class RegisterWithExternalHandlers(
             Provider = request.Provider,
             Email = request.Email,
             Address = request.Address,
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            ImageUrl = request.profileImage,
         };
         var result = await externalAuth.CreateUser(userToAdd);
         if (!result.Succeeded)
