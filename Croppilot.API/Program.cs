@@ -71,7 +71,6 @@ app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseWatchDogExceptionLogger();
 
 app.UseRouting();
-app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 app.UseCors();
@@ -79,6 +78,7 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseRateLimiter();
 app.UseWatchDog(opt =>
 {
     opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
