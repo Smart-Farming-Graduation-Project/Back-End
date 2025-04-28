@@ -1,6 +1,7 @@
 ﻿using Croppilot.Date.Models;
 using Hangfire;
 using System.Security.Claims;
+using Croppilot.Infrastructure.Extensions;
 
 namespace Croppilot.Core.Features.Product.Command.Handlers;
 
@@ -19,7 +20,8 @@ public class ProductCommandHandler(
 	{
 		var category = await EnsureCategoryExists(command.CategoryName, cancellationToken);
 
-		var userId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+		var userId = httpContextAccessor?.HttpContext?.User.GetUserId()!;
+		
 		var product = command.Adapt<Date.Models.Product>();
 		product.CategoryId = category.Id;
 		product.UserId = userId;
@@ -41,9 +43,13 @@ public class ProductCommandHandler(
 
 	public async Task<Response<string>> Handle(EditProductCommand command, CancellationToken cancellationToken)
 	{
+		var userId = httpContextAccessor?.HttpContext?.User.GetUserId()!;
 		var product = await productServices.GetByIdAsync(command.Id, ["Category", "ProductImages"], cancellationToken);
 		if (product == null)
 			return NotFound<string>("Product Not Found");
+		
+		if (product.UserId != userId)
+			return Unauthorized<string>("You are not authorized to edit this product");
 
 		var category = await EnsureCategoryExists(command.CategoryName, cancellationToken);
 
@@ -70,13 +76,15 @@ public class ProductCommandHandler(
 
 	public async Task<Response<string>> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
 	{
-
+		var userId = httpContextAccessor?.HttpContext?.User.GetUserId()!;
 
 		var existingProduct = await productServices.GetByIdAsync(command.Id, ["ProductImages"]);
 
-
 		if (existingProduct is null)
 			return NotFound<string>($"Product {command.Id} not found");
+		
+		if (existingProduct.UserId != userId)
+			return Unauthorized<string>("You are not authorized to delete this product");
 
 		await RemoveProductImagesFromStorage(existingProduct.ProductImages, command.Id);
 		var result = await productServices.Delete(command.Id, cancellationToken);

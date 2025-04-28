@@ -19,6 +19,7 @@ namespace Croppilot.API.Controller;
 /// Frontend developers should check the 'Succeeded' flag and, if false, review the 'Errors' list to determine the exact issues.
 /// </summary>
 [SwaggerResponse(200, "Operation completed successfully"), SwaggerResponse(400, "Invalid request or operation failed")]
+[Authorize]
 public class ProductController(IMediator mediator) : AppControllerBase
 {
     /// <summary>
@@ -29,6 +30,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Summary = "Retrieves all products",
          Description = "**Fetches a complete list of products.**")]
     [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+    [AllowAnonymous]
     public async Task<IActionResult> GetProducts()
     {
         var response = await mediator.Send(new GetAllProductQuery());
@@ -44,6 +46,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Description =
              "**Fetches a paginated list of products based on query parameters." +
              "Frontend: Supply pagination parameters (e.g., page number, page size) via query parameters**")]
+    [AllowAnonymous]
     [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> Paginated([FromQuery] GetProductPaginatedQuery query)
     {
@@ -59,6 +62,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Summary = "Retrieves a product by ID",
          Description =
              "**Fetches the details of a product using its unique identifier. Frontend: Provide the product's ID in the route**")]
+    [AllowAnonymous]
     [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetProductById([FromRoute] int id)
     {
