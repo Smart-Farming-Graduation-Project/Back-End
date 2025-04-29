@@ -5,7 +5,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
 {
     public static class FieldSeed
     {
-        public static void SeedFields(ModelBuilder modelBuilder)
+        public static void SeedFields(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Field>().HasData(
               new Field { Id = 1, Name = "Field Alpha", Size = 10.5, Crop = "Wheat", PlantingDate = DateTime.UtcNow.AddMonths(-3), HarvestDate = DateTime.UtcNow.AddMonths(2), Irrigation = IrrigationType.Drip, Status = FieldStatus.Planted },

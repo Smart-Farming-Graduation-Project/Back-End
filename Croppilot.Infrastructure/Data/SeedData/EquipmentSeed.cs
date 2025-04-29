@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Croppilot.Date.Helpers.Dashboard.Enum;
+﻿using Croppilot.Date.Helpers.Dashboard.Enum;
 using Croppilot.Date.Models.DashboardModels;
 
 namespace Croppilot.Infrastructure.Data.SeedData
