@@ -29,8 +29,8 @@ public class Product
 
 	public int CategoryId { get; set; }
 
-    [ForeignKey("CategoryId"), ValidateNever]
-    public Category Category { get; set; }
+	[ForeignKey("CategoryId"), ValidateNever]
+	public Category Category { get; set; }
 
 	[ValidateNever] public List<ProductImage> ProductImages { get; set; }
 	[ValidateNever] public ICollection<Leasing> Leasings { get; set; } = new List<Leasing>();
@@ -39,6 +39,6 @@ public class Product
 	public string UserId { get; set; }
 	public ApplicationUser User { get; set; }
 	public int? CuponId { get; set; }
-	public Cupon Cupon { get; set; }
+	public Cupon? Cupon { get; set; }
 
 }
