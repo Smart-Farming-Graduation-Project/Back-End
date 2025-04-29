@@ -15,7 +15,6 @@ namespace Croppilot.Infrastructure.Seeder
                 await roleManager.CreateAsync(new ApplicationRole(UserRoleEnum.User.ToString()));
                 await roleManager.CreateAsync(new ApplicationRole(UserRoleEnum.Buyer.ToString()));
                 await roleManager.CreateAsync(new ApplicationRole(UserRoleEnum.Farmer.ToString()));
-
             }
         }
     }

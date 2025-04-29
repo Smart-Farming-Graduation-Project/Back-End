@@ -21,14 +21,14 @@ namespace Croppilot.API.Controller;
 /// 
 /// Only Admins can access these endpoints, and some require SuperAdmin privileges.
 /// </summary>
-[Route("api/[controller]"), ApiController, Authorize(Policy = nameof(UserRoleEnum.Admin))]
+//[Route("api/[controller]"), ApiController, Authorize(Policy = nameof(UserRoleEnum.Admin))]
 [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
 public class AuthorizationController(IMediator mediator) : AppControllerBase
 {
     /// <summary>
     /// Retrieves the list of all available roles.
     /// </summary>
-    [HttpGet("GetRoles"), SwaggerOperation(
+    [HttpGet("GetRoles"), Authorize(Policy = nameof(UserRoleEnum.Admin)), SwaggerOperation(
          Summary = "Retrieves all roles",
          Description = "Fetches the complete list of user roles in the system.")]
     public async Task<IActionResult> GetRoles()
@@ -39,7 +39,7 @@ public class AuthorizationController(IMediator mediator) : AppControllerBase
     /// <summary>
     /// Retrieves role details by ID.
     /// </summary>
-    [HttpGet("GetById/{id:guid}"), SwaggerOperation(
+    [HttpGet("GetById/{id:guid}"), Authorize(Policy = nameof(UserRoleEnum.Admin)), SwaggerOperation(
          Summary = "Gets role by ID",
          Description = "Fetches details of a specific role by its unique identifier.")]
     public async Task<IActionResult> GetById(string id)
@@ -61,10 +61,10 @@ public class AuthorizationController(IMediator mediator) : AppControllerBase
     /// <summary>
     /// Creates a new role.
     /// </summary>
-    [HttpPost("Create"), SwaggerOperation(
+    [HttpPost("Create"), Authorize(Policy = nameof(UserRoleEnum.Manager)), SwaggerOperation(
          Summary = "Creates a new role",
          Description = "Adds a new role to the system. Requires SuperAdmin privileges.")]
-    //[Authorize(Policy = nameof(UserRoleEnum.SuperAdmin))]
+    [Authorize(Policy = nameof(UserRoleEnum.Manager))]
     public async Task<IActionResult> CreateRole(AddRoleCommand command)
     {
         return NewResult(await mediator.Send(command));

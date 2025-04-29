@@ -36,7 +36,7 @@ namespace Croppilot.Infrastructure.Seeder
                 {
                     FirstName = "abdo",
                     LastName = "admin",
-                    UserName = "admin",
+                    UserName = "frontadmin",
                     Email = options.FrontAdmin.Email,
                     Address = "cairo",
                     Phone = "01000000000",
@@ -52,7 +52,7 @@ namespace Croppilot.Infrastructure.Seeder
                 {
                     FirstName = "abdo",
                     LastName = "user",
-                    UserName = "user",
+                    UserName = "frontuser",
                     Email = options.FrontUser.Email,
                     Address = "cairo",
                     Phone = "0100000000",
