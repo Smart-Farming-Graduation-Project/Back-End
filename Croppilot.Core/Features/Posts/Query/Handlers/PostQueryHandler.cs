@@ -20,7 +20,6 @@ public class PostQueryHandler(IPostService postService) : ResponseHandler,
             Title = p.Title,
             Content = p.Content,
             VoteCount = p.VoteCount,
-            SharedPostId = p.SharedPostId,
             CreatedAt = p.CreatedAt,
             UpdatedAt = p.UpdatedAt
         }).ToList();

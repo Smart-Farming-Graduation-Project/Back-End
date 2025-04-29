@@ -29,7 +29,6 @@ public class PostService(IPostRepository postRepository, ICommentRepository comm
         currentPost.Title = post.Title;
         currentPost.Content = post.Content;
         currentPost.VoteCount = post.VoteCount;
-        currentPost.SharedPostId = post.SharedPostId;
         currentPost.UpdatedAt = DateTime.UtcNow;
 
         await postRepository.UpdateAsync(currentPost, cancellationToken);

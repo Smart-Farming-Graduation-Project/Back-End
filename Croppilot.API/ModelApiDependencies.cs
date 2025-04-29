@@ -234,24 +234,22 @@ public static class ModelApiDependencies
                         partitionKey: key,
                         factory: _ => new SlidingWindowRateLimiterOptions
                         {
-                            PermitLimit = 100,
+                            PermitLimit = 20,
                             Window = TimeSpan.FromMinutes(1),
                             SegmentsPerWindow = 6,
                             AutoReplenishment = true
                         });
                 }
-                else
-                {
-                    return RateLimitPartition.GetSlidingWindowLimiter(
-                        partitionKey: key,
-                        factory: _ => new SlidingWindowRateLimiterOptions
-                        {
-                            PermitLimit = 60,
-                            Window = TimeSpan.FromMinutes(1),
-                            SegmentsPerWindow = 6,
-                            AutoReplenishment = true
-                        });
-                }
+
+                return RateLimitPartition.GetSlidingWindowLimiter(
+                    partitionKey: key,
+                    factory: _ => new SlidingWindowRateLimiterOptions
+                    {
+                        PermitLimit = 10,
+                        Window = TimeSpan.FromMinutes(1),
+                        SegmentsPerWindow = 6,
+                        AutoReplenishment = true
+                    });
             });
 
             // Write operations (POST/PUT/DELETE) - lower limits
@@ -268,24 +266,22 @@ public static class ModelApiDependencies
                         partitionKey: key,
                         factory: _ => new SlidingWindowRateLimiterOptions
                         {
-                            PermitLimit = 40,
+                            PermitLimit = 10,
                             Window = TimeSpan.FromMinutes(1),
                             SegmentsPerWindow = 6,
                             AutoReplenishment = true
                         });
                 }
-                else
-                {
-                    return RateLimitPartition.GetSlidingWindowLimiter(
-                        partitionKey: key,
-                        factory: _ => new SlidingWindowRateLimiterOptions
-                        {
-                            PermitLimit = 20,
-                            Window = TimeSpan.FromMinutes(1),
-                            SegmentsPerWindow = 6,
-                            AutoReplenishment = true
-                        });
-                }
+
+                return RateLimitPartition.GetSlidingWindowLimiter(
+                    partitionKey: key,
+                    factory: _ => new SlidingWindowRateLimiterOptions
+                    {
+                        PermitLimit = 5,
+                        Window = TimeSpan.FromMinutes(1),
+                        SegmentsPerWindow = 6,
+                        AutoReplenishment = true
+                    });
             });
 
             // Payment and financial operations - highly restricted
