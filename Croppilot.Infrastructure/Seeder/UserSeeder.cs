@@ -22,7 +22,7 @@ namespace Croppilot.Infrastructure.Seeder
                     Email = options.Manager.Email,
                     Address = "Cairo",
                     Phone = "0100000000",
-                    ImageUrl = "https://example.com/image.jpg",
+                    ImageUrl = "https://graduationprojetct.blob.core.windows.net/user-images/46844dca-6f0b-4026-a0bc-dc6b757fb7dd_testimage.png",
                     EmailConfirmed = true
                 };
                 await userManager.CreateAsync(owner, options.Manager.Password);
@@ -40,7 +40,7 @@ namespace Croppilot.Infrastructure.Seeder
                     Email = options.FrontAdmin.Email,
                     Address = "cairo",
                     Phone = "01000000000",
-                    ImageUrl = "https://example.com/image.jpg",
+                    ImageUrl = "https://graduationprojetct.blob.core.windows.net/user-images/af0bad6e-2df0-48c9-a668-89ba8493fe6c_testimage.jpg",
                     EmailConfirmed = true
                 };
                 await userManager.CreateAsync(frontAdmin, options.FrontAdmin.Password);
@@ -56,7 +56,7 @@ namespace Croppilot.Infrastructure.Seeder
                     Email = options.FrontUser.Email,
                     Address = "cairo",
                     Phone = "0100000000",
-                    ImageUrl = "https://example.com/image.jpg",
+                    ImageUrl = "https://graduationprojetct.blob.core.windows.net/user-images/af0bad6e-2df0-48c9-a668-89ba8493fe6c_testimage.jpg",
                     EmailConfirmed = true
                 };
                 await userManager.CreateAsync(frontUser, options.FrontUser.Password);
@@ -71,7 +71,7 @@ namespace Croppilot.Infrastructure.Seeder
                     Email = options.MobileAdmin.Email,
                     Address = "Cairo",
                     Phone = "01000000000",
-                    ImageUrl = "https://example.com/mobile.jpg",
+                    ImageUrl = "https://graduationprojetct.blob.core.windows.net/user-images/test%20502.JPG",
                     EmailConfirmed = true
                 };
                 await userManager.CreateAsync(mobileAdmin, options.MobileAdmin.Password);
@@ -87,7 +87,7 @@ namespace Croppilot.Infrastructure.Seeder
                     Email = options.MobileUser.Email,
                     Address = "Cairo",
                     Phone = "01000000000",
-                    ImageUrl = "https://example.com/mobile.jpg",
+                    ImageUrl = "https://graduationprojetct.blob.core.windows.net/user-images/af0bad6e-2df0-48c9-a668-89ba8493fe6c_testimage.jpg",
                     EmailConfirmed = true
                 };
                 await userManager.CreateAsync(mobileUser, options.MobileUser.Password);
