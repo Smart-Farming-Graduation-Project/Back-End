@@ -16,7 +16,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 1
                   },
                   new Product
@@ -28,7 +28,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 1
                   },
                   new Product
@@ -40,7 +40,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Lease,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 1
                   },
                   new Product
@@ -52,7 +52,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 2
                   },
                   new Product
@@ -64,7 +64,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 2
                   },
                   new Product
@@ -76,7 +76,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 2
                   },
                    new Product
@@ -88,7 +88,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                        Availability = Availability.Sale,
                        CreatedAt = DateTime.UtcNow,
                        UpdatedAt = DateTime.UtcNow,
-                       UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                       UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                        CategoryId = 3
                    },
                   new Product
@@ -100,7 +100,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 3
                   },
                   new Product
@@ -112,7 +112,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 3
                   },
                   new Product
@@ -124,7 +124,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 4
                   },
                    new Product
@@ -136,7 +136,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                        Availability = Availability.Sale,
                        CreatedAt = DateTime.UtcNow,
                        UpdatedAt = DateTime.UtcNow,
-                       UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                       UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                        CategoryId = 5
                    },
                   new Product
@@ -148,7 +148,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 5
                   },
                   new Product
@@ -160,7 +160,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 6
                   },
                   new Product
@@ -172,7 +172,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e",
                       CategoryId = 6
                   },
                   new Product
@@ -184,7 +184,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c",
                       CategoryId = 7
                   },
                   new Product
@@ -196,7 +196,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c",
                       CategoryId = 7
                   },
                   new Product
@@ -208,7 +208,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c",
                       CategoryId = 8
                   },
                   new Product
@@ -220,7 +220,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c",
                       CategoryId = 8
                   },
                   new Product
@@ -232,7 +232,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c",
                       CategoryId = 10
                   },
                   new Product
@@ -244,7 +244,7 @@ namespace Croppilot.Infrastructure.Data.SeedData
                       Availability = Availability.Sale,
                       CreatedAt = DateTime.UtcNow,
                       UpdatedAt = DateTime.UtcNow,
-                      UserId = "8efa5fd5-ac9b-4cfd-833a-654b1fa84ef2",
+                      UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c",
                       CategoryId = 10
                   }
 
