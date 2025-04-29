@@ -73,7 +73,7 @@ public class AuthorizationController(IMediator mediator) : AppControllerBase
     /// <summary>
     /// Edits an existing role.
     /// </summary>
-    [HttpPut("Edit"), Authorize(Policy = nameof(UserRoleEnum.SuperAdmin)), SwaggerOperation(
+    [HttpPut("Edit"), Authorize(Policy = nameof(UserRoleEnum.Manager)), SwaggerOperation(
          Summary = "Edits an existing role",
          Description = "Modifies the details of an existing role. Requires SuperAdmin privileges.")]
     public async Task<IActionResult> Edit(EditRoleCommand command)
@@ -84,7 +84,7 @@ public class AuthorizationController(IMediator mediator) : AppControllerBase
     /// <summary>
     /// Deletes a role from the system.
     /// </summary>
-    [HttpDelete("Delete"), Authorize(Policy = nameof(UserRoleEnum.SuperAdmin)), SwaggerOperation(
+    [HttpDelete("Delete"), Authorize(Policy = nameof(UserRoleEnum.Manager)), SwaggerOperation(
          Summary = "Deletes a role",
          Description = "Removes an existing role from the system. Requires SuperAdmin privileges.")]
     public async Task<IActionResult> Delete(DeleteRoleCommand command)

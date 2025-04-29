@@ -2,10 +2,11 @@
 {
     public enum UserRoleEnum
     {
-        SuperAdmin,
+        Manager,
         Admin,
         User,
         Buyer,
-        Seller
+        Farmer
+        //Seller
     }
 }

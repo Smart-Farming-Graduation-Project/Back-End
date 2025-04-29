@@ -10,10 +10,11 @@ namespace Croppilot.Infrastructure.Seeder
         {
             if (!(await roleManager.Roles.CountAsync() > 0))
             {
+                await roleManager.CreateAsync(new ApplicationRole(UserRoleEnum.Manager.ToString()));
                 await roleManager.CreateAsync(new ApplicationRole(UserRoleEnum.Admin.ToString()));
                 await roleManager.CreateAsync(new ApplicationRole(UserRoleEnum.User.ToString()));
                 await roleManager.CreateAsync(new ApplicationRole(UserRoleEnum.Buyer.ToString()));
-                await roleManager.CreateAsync(new ApplicationRole(UserRoleEnum.Seller.ToString()));
+                await roleManager.CreateAsync(new ApplicationRole(UserRoleEnum.Farmer.ToString()));
 
             }
         }
