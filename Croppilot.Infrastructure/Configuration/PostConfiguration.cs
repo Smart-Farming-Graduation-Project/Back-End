@@ -31,13 +31,8 @@ public class PostConfiguration : IEntityTypeConfiguration<Post>
             .WithMany()
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        // Self-referencing relationship for shared posts
-        builder.HasOne(p => p.SharedPost)
-            .WithMany(p => p.Shares)
-            .HasForeignKey(p => p.SharedPostId)
-            .OnDelete(DeleteBehavior.NoAction);
-
+        
+        // Relationship with Comments
         builder.HasMany(p => p.Comments)
             .WithOne(c => c.Post)
             .HasForeignKey(c => c.PostId)
