@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Croppilot.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250313221544_add-price-percsion")]
-    partial class addpricepercsion
+    [Migration("20250429213844_initial-new-database")]
+    partial class initialnewdatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -75,6 +75,10 @@ namespace Croppilot.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -176,6 +180,52 @@ namespace Croppilot.Infrastructure.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("Croppilot.Date.Models.AiModel.FeedbackEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Disease")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ModelResultId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Solution")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModelResultId");
+
+                    b.ToTable("FeedbackEntries");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.AiModel.ModelResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("ImageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AIModelResults");
+                });
+
             modelBuilder.Entity("Croppilot.Date.Models.Cart", b =>
                 {
                     b.Property<int>("Id")
@@ -243,6 +293,10 @@ namespace Croppilot.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -322,6 +376,291 @@ namespace Croppilot.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.Cupon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Discount_Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Discount_Value")
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UsageCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("UsageLimit")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Cupons", t =>
+                        {
+                            t.HasCheckConstraint("CK_Cupon_Discount_Value", "Discount_Value > 0");
+
+                            t.HasCheckConstraint("CK_Cupon_UsageLimit", "UsageLimit > 0");
+
+                            t.HasCheckConstraint("ck_Cupon_ExpirationDate", "ExpirationDate > GetDate()");
+                        });
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.Alert", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmergencyType")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("LocationDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmergencyAlerts");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.Equipment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Battery")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Connectivity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EquipmentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("HoursUsed")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("LastMaintenance")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Equipments");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.Field", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Crop")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("HarvestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Irrigation")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PlantingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Size")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Fields");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.SoilMoisture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FieldId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Moisture")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Optimal")
+                        .HasColumnType("int");
+
+                    b.Property<float>("PH")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FieldId");
+
+                    b.ToTable("SoilMoistures");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.WeatherData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Condition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Humidity")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Pressure")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Temperature")
+                        .HasColumnType("float");
+
+                    b.Property<double>("UvIndex")
+                        .HasColumnType("float");
+
+                    b.Property<double>("WindSpeed")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WeatherDatas");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.WeatherForecast", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Condition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("High")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Humidity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Low")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Precipitation")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Pressure")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Wind")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WeatherForecasts");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Leasing", b =>
@@ -434,9 +773,6 @@ namespace Croppilot.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<int?>("SharedPostId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -455,8 +791,6 @@ namespace Croppilot.Infrastructure.Migrations
                         .HasDefaultValue(0);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SharedPostId");
 
                     b.HasIndex("UserId");
 
@@ -480,6 +814,9 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("CuponId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -497,9 +834,17 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("CuponId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Products");
                 });
@@ -789,6 +1134,17 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Croppilot.Date.Models.AiModel.FeedbackEntry", b =>
+                {
+                    b.HasOne("Croppilot.Date.Models.AiModel.ModelResult", "ModelResult")
+                        .WithMany("FeedbackEntries")
+                        .HasForeignKey("ModelResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ModelResult");
+                });
+
             modelBuilder.Entity("Croppilot.Date.Models.Cart", b =>
                 {
                     b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
@@ -845,6 +1201,28 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Croppilot.Date.Models.Cupon", b =>
+                {
+                    b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
+                        .WithMany("Cupons")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.SoilMoisture", b =>
+                {
+                    b.HasOne("Croppilot.Date.Models.DashboardModels.Field", "Field")
+                        .WithMany("SoilMoistureReadings")
+                        .HasForeignKey("FieldId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Field");
+                });
+
             modelBuilder.Entity("Croppilot.Date.Models.Leasing", b =>
                 {
                     b.HasOne("Croppilot.Date.Models.Product", "Product")
@@ -880,18 +1258,11 @@ namespace Croppilot.Infrastructure.Migrations
 
             modelBuilder.Entity("Croppilot.Date.Models.Post", b =>
                 {
-                    b.HasOne("Croppilot.Date.Models.Post", "SharedPost")
-                        .WithMany("Shares")
-                        .HasForeignKey("SharedPostId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("SharedPost");
 
                     b.Navigation("User");
                 });
@@ -904,7 +1275,22 @@ namespace Croppilot.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Croppilot.Date.Models.Cupon", "Cupon")
+                        .WithMany("Products")
+                        .HasForeignKey("CuponId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
+                        .WithMany("Products")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("Cupon");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.ProductImage", b =>
@@ -1031,9 +1417,18 @@ namespace Croppilot.Infrastructure.Migrations
 
             modelBuilder.Entity("Croppilot.Date.Identity.ApplicationUser", b =>
                 {
+                    b.Navigation("Cupons");
+
+                    b.Navigation("Products");
+
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("Wishlist");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.AiModel.ModelResult", b =>
+                {
+                    b.Navigation("FeedbackEntries");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Cart", b =>
@@ -1051,6 +1446,16 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Navigation("Replies");
                 });
 
+            modelBuilder.Entity("Croppilot.Date.Models.Cupon", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.DashboardModels.Field", b =>
+                {
+                    b.Navigation("SoilMoistureReadings");
+                });
+
             modelBuilder.Entity("Croppilot.Date.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
@@ -1059,8 +1464,6 @@ namespace Croppilot.Infrastructure.Migrations
             modelBuilder.Entity("Croppilot.Date.Models.Post", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Shares");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Product", b =>
