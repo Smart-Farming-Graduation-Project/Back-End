@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Croppilot.Core.Bases;
+﻿using Croppilot.Core.Bases;
 using Microsoft.Azure.Cosmos;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
@@ -113,7 +112,7 @@ public static class ModelApiDependencies
             opt.IsAutoClear = true;
             opt.ClearTimeSchedule = WatchDogAutoClearScheduleEnum.Daily;
             opt.SetExternalDbConnString = configuration.GetConnectionString("WatchDog");
-            opt.DbDriverOption = WatchDogDbDriverEnum.MSSQL;
+            opt.DbDriverOption = WatchDogDbDriverEnum.PostgreSql;
         });
 
         return services;

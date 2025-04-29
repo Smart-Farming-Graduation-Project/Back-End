@@ -14,6 +14,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="WatchDog.NET" Version="1.4.12" />
   </ItemGroup>
@@ -25,15 +26,15 @@
 
   <ItemGroup>
 	  <Folder Include="images\" />
-	  <None Include="AiModels\best.onnx" >
+	  <None Include="AiModels\best.onnx">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	  </None>
-	  <None Include="AiModels\mobilenet_model.onnx" >
+	  <None Include="AiModels\mobilenet_model.onnx">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	  </None>
-	  <None Include="AiModels\Rl_Model.onnx" >
+	  <None Include="AiModels\Rl_Model.onnx">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	  </None>
