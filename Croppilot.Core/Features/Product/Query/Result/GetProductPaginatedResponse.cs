@@ -8,5 +8,6 @@ public record GetProductPaginatedResponse(
 	decimal Price,
 	string Availability,
 	string ProductOwner,
+	bool? IsFavorite,
 	List<string> Images
 );

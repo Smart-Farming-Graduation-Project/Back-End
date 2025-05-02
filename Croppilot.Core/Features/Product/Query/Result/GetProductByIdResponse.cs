@@ -9,5 +9,6 @@ public record GetProductByIdResponse(
 	string Availability,
 	double AverageRating,
 	string ProductOwner,
+	bool IsFavorite,
 	List<string> Images
 );

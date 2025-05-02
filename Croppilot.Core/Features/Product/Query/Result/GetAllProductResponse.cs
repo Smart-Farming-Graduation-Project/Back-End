@@ -8,5 +8,6 @@ public record GetAllProductResponse(
 	decimal? Price,
 	string Availability,
 	string ProductOwner,
+	bool IsFavorite,
 	List<string> Images
 );
