@@ -4,7 +4,7 @@ namespace Croppilot.API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    [EnableRateLimiting(RateLimiters.AIModelRateLimit)]
+    // [EnableRateLimiting(RateLimiters.AIModelRateLimit)]
     public class AIModelController(IMediator mediator) : AppControllerBase
     {
         [HttpPost("predict")]

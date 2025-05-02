@@ -10,7 +10,7 @@ public class ReviewsController(IMediator mediator)
     [ResponseCache(CacheProfileName = "Default"), HttpGet("GetReviews/{productId}"), AllowAnonymous, SwaggerOperation(
          Summary = "Gets reviews for a product",
          Description = "**Retrieves all reviews for a specified product.**")]
-    [EnableRateLimiting(RateLimiters.SocialEndpointsLimit)]
+    // [EnableRateLimiting(RateLimiters.SocialEndpointsLimit)]
     public async Task<IActionResult> GetReviewsByProduct([FromRoute] int productId)
     {
         var query = new GetReviewsByProductQuery { ProductID = productId };

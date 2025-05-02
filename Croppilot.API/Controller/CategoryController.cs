@@ -8,7 +8,7 @@ namespace Croppilot.API.Controller;
 public class CategoryController(IMediator mediator) : AppControllerBase
 {
 	[ResponseCache(CacheProfileName = "Default"), HttpGet("CategoryList")]
-	[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+	// [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
 	public async Task<IActionResult> GetAllCategory()
 	{
 		var response = await mediator.Send(new GetAllCategoryQuery());
@@ -16,7 +16,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
 	}
 
 	[ResponseCache(CacheProfileName = "Default"), HttpGet("CategoryPaginatedList")]
-	[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+	// [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
 	public async Task<IActionResult> Paginated([FromQuery] GetCategoryPaginatedQuery query)
 	{
 		var response = await mediator.Send(query);
@@ -24,7 +24,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
 	}
 
 	[ResponseCache(CacheProfileName = "Default"), HttpGet("Category/{id}")]
-	[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+	// [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
 	public async Task<IActionResult> GetCategoryById([FromRoute] int id)
 	{
 		var response = await mediator.Send(new GetCategoryByIdQuery(id));
@@ -32,7 +32,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
 	}
 
 	[HttpPost("Category/Create")]
-	[EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
+	// [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
 	[SwaggerOperation(Summary = "Create a new category",
 		Description = "Create a new category with the provided details. Only JPEG and PNG formats are allowed")]
 	public async Task<IActionResult> Create( /*[FromBody]*/ AddCategoryCommand command)
@@ -42,7 +42,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
 	}
 
 	[HttpPut("Category/Update")]
-	[EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
+	// [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
 	[SwaggerOperation(Summary = "Update an existing category",
 		Description = "Update an existing category with the provided details. Only JPEG and PNG formats are allowed")]
 	public async Task<IActionResult> Edit( /*[FromBody]*/ EditCategoryCommand command)
@@ -52,7 +52,7 @@ public class CategoryController(IMediator mediator) : AppControllerBase
 	}
 
 	[HttpDelete("CategoryDelete/{id}")]
-	[EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
+	// [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
 	public async Task<IActionResult> Delete([FromRoute] int id)
 	{
 		var response = await mediator.Send(new DeleteCategoryCommand(id));

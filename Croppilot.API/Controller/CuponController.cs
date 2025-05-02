@@ -5,7 +5,7 @@ namespace Croppilot.API.Controller
 	[Route("api/[controller]")]
 	[ApiController]
 	[Authorize]
-	[EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
+	// [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
 	public class CuponController(IMediator mediator) : AppControllerBase
 	{
 		[HttpPost("CreateCupon")]
