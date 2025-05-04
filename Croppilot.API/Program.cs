@@ -48,9 +48,13 @@ using (var scope = app.Services.CreateScope())
     var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
 
 
-    // Apply Migrations Automatically with Resilience
-    var strategy = dbContext.Database.CreateExecutionStrategy();
-    await strategy.ExecuteAsync(async () => { await dbContext.Database.MigrateAsync(); });
+    if ((await dbContext.Database.GetPendingMigrationsAsync()).Any())
+    {
+        var strategy = dbContext.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () => {
+            await dbContext.Database.MigrateAsync();
+        });
+    }       
 
     // Seed Roles and Users
     var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
