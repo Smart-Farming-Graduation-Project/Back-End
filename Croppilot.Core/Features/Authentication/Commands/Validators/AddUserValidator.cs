@@ -40,7 +40,8 @@ namespace Croppilot.Core.Features.Authentication.Commands.Validators
                 .Matches(@"[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
                 .Matches(@"[a-z]").WithMessage("Password must contain at least one lowercase letter.")
                 .Matches(@"\d").WithMessage("Password must contain at least one number.")
-                .Matches(@"[!@#$%^&*(),.?""{}|<>]").WithMessage("Password must contain at least one special character.");
+                .Matches(@"[!@#$%^&*(),.?""{}|<>]")
+                .WithMessage("Password must contain at least one special character.");
 
             RuleFor(x => x.ConfirmPassword)
                 .NotEmpty().WithMessage("Confirm password is required.")
@@ -59,9 +60,9 @@ namespace Croppilot.Core.Features.Authentication.Commands.Validators
             RuleFor(x => x.Image)
                 .NotEmpty().WithMessage("Image is required.")
                 .Must(x => x.Length > 0).WithMessage("Uploaded image cannot be empty.")
-                .Must(x => x.ContentType == "image/jpeg" || x.ContentType == "image/png" || x.ContentType == "image/jpg")
-                .WithMessage("Only JPEG and PNG formats are allowed.");
-
+                .Must(x => x.ContentType == "image/jpeg" || x.ContentType == "image/png" ||
+                           x.ContentType == "image/jpg")
+                .WithMessage("Only JPEG, JPG, and PNG formats are allowed.");
         }
 
         private void ApplyCustomValidationRules()
