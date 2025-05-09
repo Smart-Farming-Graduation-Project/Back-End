@@ -1,7 +1,6 @@
 ﻿using Croppilot.Date.Models;
-using Hangfire;
-using System.Security.Claims;
 using Croppilot.Infrastructure.Extensions;
+using Hangfire;
 
 namespace Croppilot.Core.Features.Product.Command.Handlers;
 
@@ -21,7 +20,7 @@ public class ProductCommandHandler(
 		var category = await EnsureCategoryExists(command.CategoryName, cancellationToken);
 
 		var userId = httpContextAccessor?.HttpContext?.User.GetUserId()!;
-		
+
 		var product = command.Adapt<Date.Models.Product>();
 		product.CategoryId = category.Id;
 		product.UserId = userId;
@@ -47,7 +46,7 @@ public class ProductCommandHandler(
 		var product = await productServices.GetByIdAsync(command.Id, ["Category", "ProductImages"], cancellationToken);
 		if (product == null)
 			return NotFound<string>("Product Not Found");
-		
+
 		if (product.UserId != userId)
 			return Unauthorized<string>("You are not authorized to edit this product");
 
@@ -82,7 +81,7 @@ public class ProductCommandHandler(
 
 		if (existingProduct is null)
 			return NotFound<string>($"Product {command.Id} not found");
-		
+
 		if (existingProduct.UserId != userId)
 			return Unauthorized<string>("You are not authorized to delete this product");
 
@@ -92,6 +91,7 @@ public class ProductCommandHandler(
 			? Deleted<string>($"Product {command.Id} Deleted Successfully")
 			: BadRequest<string>("Deletion failed");
 	}
+
 
 	private async Task<Date.Models.Category> EnsureCategoryExists(string categoryName,
 		CancellationToken cancellationToken)
