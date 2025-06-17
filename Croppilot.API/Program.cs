@@ -10,7 +10,6 @@ using Hangfire;
 using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WatchDog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,10 +50,11 @@ using (var scope = app.Services.CreateScope())
     if ((await dbContext.Database.GetPendingMigrationsAsync()).Any())
     {
         var strategy = dbContext.Database.CreateExecutionStrategy();
-        await strategy.ExecuteAsync(async () => {
+        await strategy.ExecuteAsync(async () =>
+        {
             await dbContext.Database.MigrateAsync();
         });
-    }       
+    }
 
     // Seed Roles and Users
     var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -72,7 +72,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
-app.UseWatchDogExceptionLogger();
+//app.UseWatchDogExceptionLogger();
 
 app.UseRouting();
 
@@ -83,13 +83,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRateLimiter();
-app.UseWatchDog(opt =>
-{
-    opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
-    opt.WatchPagePassword = app.Configuration.GetValue<string>("WatchDogSettings:WatchPagePassword");
-    // opt.Blacklist = "api/Authentication/SignIn";
-    // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
-});
+//app.UseWatchDog(opt =>
+//{
+//    opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
+//    opt.WatchPagePassword = app.Configuration.GetValue<string>("WatchDogSettings:WatchPagePassword");
+//    // opt.Blacklist = "api/Authentication/SignIn";
+//    // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
+//});
 
 app.MapControllers().RequireRateLimiting(RateLimiters.ConcurrencyRateLimit);
 

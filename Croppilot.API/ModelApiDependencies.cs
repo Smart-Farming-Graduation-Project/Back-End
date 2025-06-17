@@ -3,8 +3,6 @@ using Microsoft.Azure.Cosmos;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
-using WatchDog;
-using WatchDog.src.Enums;
 using Enum = System.Enum;
 
 namespace Croppilot.API;
@@ -54,7 +52,7 @@ public static class ModelApiDependencies
             .AddXmlSerializerFormatters();
 
         services.AddHttpContextAccessor().AddSwaggerServices().AddRolePolicy().AddCorSServices()
-            .AddWatchDogConfigurations(configuration)
+            //.AddWatchDogConfigurations(configuration)
             .AddRateLimitConfigurations();
 
 
@@ -104,19 +102,19 @@ public static class ModelApiDependencies
         return services;
     }
 
-    private static IServiceCollection AddWatchDogConfigurations(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        services.AddWatchDogServices(opt =>
-        {
-            opt.IsAutoClear = true;
-            opt.ClearTimeSchedule = WatchDogAutoClearScheduleEnum.Daily;
-            opt.SetExternalDbConnString = configuration.GetConnectionString("WatchDog");
-            opt.DbDriverOption = WatchDogDbDriverEnum.PostgreSql;
-        });
+    //private static IServiceCollection AddWatchDogConfigurations(this IServiceCollection services,
+    //    IConfiguration configuration)
+    //{
+    //    services.AddWatchDogServices(opt =>
+    //    {
+    //        opt.IsAutoClear = true;
+    //        opt.ClearTimeSchedule = WatchDogAutoClearScheduleEnum.Daily;
+    //        opt.SetExternalDbConnString = configuration.GetConnectionString("WatchDog");
+    //        opt.DbDriverOption = WatchDogDbDriverEnum.PostgreSql;
+    //    });
 
-        return services;
-    }
+    //    return services;
+    //}
 
     private static IServiceCollection AddRateLimitConfigurations(this IServiceCollection services)
     {
