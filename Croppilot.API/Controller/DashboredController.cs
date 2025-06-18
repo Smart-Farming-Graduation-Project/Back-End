@@ -29,7 +29,7 @@ namespace Croppilot.API.Controller
         }
         //[ResponseCache(CacheProfileName = "OneDayCache"), HttpGet("Soil/Report")]
         //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
-        [HttpGet("Soil/Report"]
+        [HttpGet("Soil/Report")]
         public async Task<IActionResult> GetSoilData(double latitude = SD.Latitude, double longitude = SD.Longitude)
         {
             var result = await mediator.Send(new SoilModel(latitude, longitude));
