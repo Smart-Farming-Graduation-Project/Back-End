@@ -82,7 +82,7 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseRateLimiter();
+//app.UseRateLimiter();
 //app.UseWatchDog(opt =>
 //{
 //    opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
@@ -91,6 +91,7 @@ app.UseRateLimiter();
 //    // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
 //});
 
-app.MapControllers().RequireRateLimiting(RateLimiters.ConcurrencyRateLimit);
+app.MapControllers();
+//.RequireRateLimiting(RateLimiters.ConcurrencyRateLimit);
 
 app.Run();

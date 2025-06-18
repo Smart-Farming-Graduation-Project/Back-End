@@ -22,7 +22,7 @@ namespace Croppilot.API.Controller;
 /// Only Admins can access these endpoints, and some require SuperAdmin privileges.
 /// </summary>
 //[Route("api/[controller]"), ApiController, Authorize(Policy = nameof(UserRoleEnum.Admin))]
-[EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
+//[EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
 public class AuthorizationController(IMediator mediator) : AppControllerBase
 {
     /// <summary>

@@ -14,56 +14,56 @@ namespace Croppilot.API.Controller
     public class DashboredController(IMediator mediator) : AppControllerBase
     {
         [ResponseCache(CacheProfileName = "OneDayCache"), HttpGet("Weather/current")]
-        [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetCurrentWeather(string city = SD.DefaultCity)
         {
             var result = await mediator.Send(new WeatherDataModel(city));
             return NewResult(result);
         }
         [ResponseCache(CacheProfileName = "FiveDayCache"), HttpGet("Weather/forecast")]
-        [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetWeatherForecast(string? city = SD.DefaultCity)
         {
             var result = await mediator.Send(new WeatherForcastModel(city));
             return NewResult(result);
         }
-        [ResponseCache(CacheProfileName = "OneDayCache"), HttpGet("Soil/Report")]
-        [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+        //[ResponseCache(CacheProfileName = "OneDayCache"), HttpGet("Soil/Report")]
+        //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetSoilData(double latitude = SD.Latitude, double longitude = SD.Longitude)
         {
             var result = await mediator.Send(new SoilModel(latitude, longitude));
             return NewResult(result);
         }
         [HttpGet("Field/{id}")]
-        [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetFieldById(int id)
         {
             var result = await mediator.Send(new GetFieldById(id));
             return NewResult(result);
         }
         [ResponseCache(CacheProfileName = "NoCache"), HttpGet("Fields")]
-        [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetAllFields()
         {
             var result = await mediator.Send(new GetAllFieldModel());
             return NewResult(result);
         }
         [HttpPost("CreateField")]
-        [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
         public async Task<IActionResult> CreateField(CreateFieldModel command)
         {
             var result = await mediator.Send(command);
             return NewResult(result);
         }
         [HttpPut("EditField")]
-        [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
         public async Task<IActionResult> UpdateField(UpdateFieldModel command)
         {
             var result = await mediator.Send(command);
             return NewResult(result);
         }
         [HttpDelete("DeleteField{id}")]
-        [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
         public async Task<IActionResult> DeleteField(int id)
         {
             var result = await mediator.Send(new DeleteFieldModel(id));
@@ -71,49 +71,49 @@ namespace Croppilot.API.Controller
         }
 
         [ResponseCache(CacheProfileName = "NoCache"), HttpGet("Equipments")]
-        [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetAllEquipments()
         {
             var result = await mediator.Send(new GetAllEquipmentModel());
             return NewResult(result);
         }
         [HttpPost("CreateEquipment")]
-        [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
         public async Task<IActionResult> CreateEquipment(CreateEquipmentModel command)
         {
             var result = await mediator.Send(command);
             return NewResult(result);
         }
         [HttpPut("EditEquipment")]
-        [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
         public async Task<IActionResult> UpdateEquipment(UpdateEquipmentModel command)
         {
             var result = await mediator.Send(command);
             return NewResult(result);
         }
         [HttpDelete("DeleteEquipment{id}")]
-        [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
         public async Task<IActionResult> DeleteEquipment(string id)
         {
             var result = await mediator.Send(new DeleteEquipmentModel(id));
             return NewResult(result);
         }
         [HttpPatch("UpdateEquipmentStatus")]
-        [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
         public async Task<IActionResult> UpdateEquipmentStatus(UpdateEquipmentStatusModel command)
         {
             var result = await mediator.Send(command);
             return NewResult(result);
         }
         [ResponseCache(CacheProfileName = "LongCache"), HttpGet("FarmStatus")]
-        [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetFarmStatus()
         {
             var result = await mediator.Send(new GetFarmStatusModel());
             return NewResult(result);
         }
         [ResponseCache(CacheProfileName = "LongCache"), HttpGet("SoilMoisture")]
-        [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+        //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetSoilMoisture()
         {
             var result = await mediator.Send(new SoilMoistureModel());

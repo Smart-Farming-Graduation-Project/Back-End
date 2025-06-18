@@ -7,7 +7,7 @@ namespace Croppilot.API.Controller
 
     [Route("api/[controller]")]
     [ApiController]
-    [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+    //[EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
     public class NotificationController(IMediator mediator) : AppControllerBase
     {
         [HttpPost("Send-Sms"), SwaggerOperation(
