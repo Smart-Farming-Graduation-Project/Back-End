@@ -8,7 +8,8 @@ namespace Croppilot.Core.Features.CosmosDb.Handlers
         //IRequestHandler<ReadingRequest, Response<GetIotDataResult>>,
         IRequestHandler<GetIoTData, Response<List<GetIotDataResult>>>,
         IRequestHandler<AllReadingRequest, Response<List<GetIotDataResult>>>,
-        IRequestHandler<GetReadingByDevice, Response<List<GetIotDataResult>>>
+        IRequestHandler<GetReadingByDevice, Response<List<GetIotDataResult>>>,
+        IRequestHandler<GetLastReading, Response<GetIotDataResult>>
     {
         //public async Task<Response<GetIotDataResult>> Handle(ReadingRequest request,
         //    CancellationToken cancellationToken)
@@ -60,6 +61,19 @@ namespace Croppilot.Core.Features.CosmosDb.Handlers
             result.Meta = new Dictionary<string, object> { { "count", data.Count } };
 
             return result;
+        }
+
+        public async Task<Response<GetIotDataResult>> Handle(GetLastReading request, CancellationToken cancellationToken)
+        {
+            string query = @"SELECT TOP 1 * FROM c 
+                             ORDER BY c.timestamp DESC";
+            var data = await cosmosDbService.QueryItemsAsync<GetIotDataResult>(query);
+
+            var lastReading = data.FirstOrDefault();
+            if (lastReading == null)
+                return NotFound<GetIotDataResult>("No readings found for this device");
+
+            return Success(lastReading);
         }
     }
 }
