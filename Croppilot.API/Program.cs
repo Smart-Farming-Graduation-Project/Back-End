@@ -8,6 +8,8 @@ using Croppilot.Infrastructure.Seeder;
 using Croppilot.Services;
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,10 +52,7 @@ using (var scope = app.Services.CreateScope())
     if ((await dbContext.Database.GetPendingMigrationsAsync()).Any())
     {
         var strategy = dbContext.Database.CreateExecutionStrategy();
-        await strategy.ExecuteAsync(async () =>
-        {
-            await dbContext.Database.MigrateAsync();
-        });
+        await strategy.ExecuteAsync(async () => { await dbContext.Database.MigrateAsync(); });
     }
 
     // Seed Roles and Users
@@ -81,6 +80,11 @@ app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 //app.UseRateLimiter();
 //app.UseWatchDog(opt =>

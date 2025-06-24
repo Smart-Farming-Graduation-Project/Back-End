@@ -53,7 +53,8 @@ public static class ModelApiDependencies
             })
             .AddXmlSerializerFormatters();
 
-        services.AddHttpContextAccessor().AddSwaggerServices().AddRolePolicy().AddCorSServices();
+        services.AddHttpContextAccessor().AddSwaggerServices()
+            .AddRolePolicy().AddCorSServices().AddHealthChecksConfigurations(configuration);
         //.AddWatchDogConfigurations(configuration)
         //.AddRateLimitConfigurations();
 
@@ -114,6 +115,17 @@ public static class ModelApiDependencies
             opt.SetExternalDbConnString = configuration.GetConnectionString("WatchDog");
             opt.DbDriverOption = WatchDogDbDriverEnum.PostgreSql;
         });
+
+        return services;
+    }
+
+    private static IServiceCollection AddHealthChecksConfigurations(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHealthChecks()
+            .AddSqlServer(name: "Main Database",
+                connectionString: configuration.GetConnectionString("Default"), tags: ["Database"]);
+
 
         return services;
     }
