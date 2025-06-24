@@ -33,7 +33,11 @@ public static class HealthCheckExtensions
             .AddCheck<MailJetHealthCheck>(
                 name: "MailJet API",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: ["email", "mailjet", "external", "api"]);
+                tags: ["email", "mailjet", "external", "api"])
+            .AddCheck<AzureBlobStorageHealthCheck>(
+                name: "Azure Blob Storage",
+                failureStatus: HealthStatus.Unhealthy,
+                tags: ["storage", "azure", "blob", "external"]);
 
         return services;
     }
