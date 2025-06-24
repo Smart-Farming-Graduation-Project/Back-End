@@ -37,7 +37,11 @@ public static class HealthCheckExtensions
             .AddCheck<AzureBlobStorageHealthCheck>(
                 name: "Azure Blob Storage",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: ["storage", "azure", "blob", "external"]);
+                tags: ["storage", "azure", "blob", "external"])
+            .AddCheck<OpenAIHealthCheck>(
+                name: "OpenAI API",
+                failureStatus: HealthStatus.Unhealthy,
+                tags: ["ai", "openai", "external", "api"]);
 
         return services;
     }
