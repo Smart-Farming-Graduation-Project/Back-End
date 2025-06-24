@@ -124,7 +124,16 @@ public static class ModelApiDependencies
     {
         services.AddHealthChecks()
             .AddSqlServer(name: "Main Database",
-                connectionString: configuration.GetConnectionString("Default"), tags: ["Database"]);
+                connectionString: configuration.GetConnectionString("Default")!, tags: ["Database"])
+            .AddSqlServer(name: "WatchDog Database",
+                connectionString: configuration.GetConnectionString("WatchDog")!, tags: ["Database"])
+            .AddSqlServer(name: "Hangfire Database",
+                connectionString: configuration.GetConnectionString("HangfireConnection")!, tags: ["Database"])
+            .AddHangfire(options =>
+            {
+                options.MaximumJobsFailed = 7;
+                options.MinimumAvailableServers = 1;
+            });
 
 
         return services;
