@@ -6,6 +6,7 @@ using System.Threading.RateLimiting;
 using WatchDog;
 using WatchDog.src.Enums;
 using Enum = System.Enum;
+using Croppilot.Infrastructure.HealthChecks.Extensions;
 
 namespace Croppilot.API;
 
@@ -53,7 +54,8 @@ public static class ModelApiDependencies
             })
             .AddXmlSerializerFormatters();
 
-        services.AddHttpContextAccessor().AddSwaggerServices().AddRolePolicy().AddCorSServices();
+        services.AddHttpContextAccessor().AddSwaggerServices()
+            .AddRolePolicy().AddCorSServices().AddHealthChecksConfigurations(configuration);
         //.AddWatchDogConfigurations(configuration)
         //.AddRateLimitConfigurations();
 
@@ -114,6 +116,43 @@ public static class ModelApiDependencies
             opt.SetExternalDbConnString = configuration.GetConnectionString("WatchDog");
             opt.DbDriverOption = WatchDogDbDriverEnum.PostgreSql;
         });
+
+        return services;
+    }
+
+
+    private static IServiceCollection AddHealthChecksConfigurations(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHealthChecks()
+            // Database checks
+            .AddSqlServer(name: "Main Database",
+                connectionString: configuration.GetConnectionString("Default")!,
+                tags: ["Database"])
+            .AddSqlServer(name: "WatchDog Database",
+                connectionString: configuration.GetConnectionString("WatchDog")!,
+                tags: ["Database"])
+            .AddSqlServer(name: "Hangfire Database",
+                connectionString: configuration.GetConnectionString("HangfireConnection")!,
+                tags: ["Database"])
+            .AddUrlGroup(
+                new Uri("https://api.openweathermap.org/data/2.5/weather?q=Cairo&appid=" +
+                        configuration["WeatherApi:ApiKey"]),
+                name: "OpenWeather API",
+                tags: ["External API"])
+            .AddUrlGroup(
+                new Uri("https://api.stripe.com/v1"),
+                name: "Stripe API",
+                tags: ["External API"])
+
+            // Background Services
+            .AddHangfire(options =>
+            {
+                options.MaximumJobsFailed = 7;
+                options.MinimumAvailableServers = 1;
+            });
+
+        services.AddCustomHealthChecks(configuration);
 
         return services;
     }
