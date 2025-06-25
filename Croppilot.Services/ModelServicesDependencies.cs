@@ -20,9 +20,13 @@ namespace Croppilot.Services
             service.AddSingleton(
                 _ => new BlobServiceClient(configuration.GetSection("AzureKey:ConnectionString").Value));
 
+
+            service.AddSingleton<BlobServiceClient>(sp =>
+            {
+                var connStr = configuration["AzureKey:RoverStorge"];
+                return new BlobServiceClient(connStr);
+            });
             service.Configure<StripeSettings>(configuration.GetSection("Stripe"));
-
-
             service.AddScoped<IProductServices, ProductServices>();
             service.AddScoped<ICategoryService, CategoryService>();
             service.AddScoped<ILeasingService, LeasingService>();
@@ -51,6 +55,7 @@ namespace Croppilot.Services
 
 
             service.AddScoped<ICosmosDbService, CosmosDbService>();
+            service.AddScoped<IRoverPhotoServices, RoverPhotoServices>();
             service.AddScoped<IModelServices, ModelServices>();
             service.AddScoped<IRlPredictServices, RlPredictServices>();
 

@@ -1,6 +1,7 @@
 ﻿using Croppilot.Date.Models.AiModel;
 using Croppilot.Infrastructure.Repositories.Interfaces;
 using Croppilot.Services.Abstract.AiSerives;
+using Croppilot.Services.Abstract.EmbbeddedServices;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -19,12 +20,14 @@ namespace Croppilot.Services.Services.AIServises
         private readonly IConfiguration _configuration;
         private readonly Yolov8 _yolov8;
         private readonly InferenceSession _mobilenetSession;
+        private readonly IRoverPhotoServices _roverPhotoServices;
         private readonly string[] _customLabels;
-        public ModelServices(IUnitOfWork unit, IChatService chatService, IAzureBlobStorageService azureBlobStorageService, IConfiguration configuration)
+        public ModelServices(IUnitOfWork unit, IChatService chatService, IRoverPhotoServices roverPhotoServices, IConfiguration configuration)
         {
             _unit = unit;
             _chatService = chatService;
-            _azureBlobStorageService = azureBlobStorageService;
+            _roverPhotoServices = roverPhotoServices;
+
             _configuration = configuration;
 
             // Load the Models
@@ -266,8 +269,8 @@ namespace Croppilot.Services.Services.AIServises
                 bitmap.Encode(imageStream, SKEncodedImageFormat.Jpeg, 100);
                 imageStream.Position = 0;
 
-                var blobName = $"{filename}.jpg";
-                return await _azureBlobStorageService.UploadImageAsync(imageStream, "model-result-images", blobName);
+                var blobName = $"{filename}+redaId.jpg";
+                return await _roverPhotoServices.UploadImageAsync(imageStream, blobName);
             }
         }
     }
