@@ -40,8 +40,8 @@ namespace Croppilot.Services.Services
 		public async Task<TokenResponse> GetJWTtoken(ApplicationUser user)
 		{
 			var jwtTokenId = Guid.NewGuid().ToString();
-			var accessToken = await CreateTokenAsync(user, jwtTokenId);
 			var refreshToken = await GenerateRefreshTokenAsync(user, jwtTokenId);
+			var accessToken = await CreateTokenAsync(user, refreshToken.JwtTokenId);
 			return await Task.FromResult(new TokenResponse()
 			{
 				AccessToken = accessToken,
@@ -207,10 +207,10 @@ namespace Croppilot.Services.Services
 		{
 			//user.RefreshTokens = await GetRefreshTokensBelongToUserAsync(user.Id);
 
-			if (user?.RefreshTokens?.Any(r => r.IsActive) == true)
-			{
-				return await Task.FromResult(user.RefreshTokens.FirstOrDefault(r => r.IsActive));
-			}
+			//if (user?.RefreshTokens?.Any(r => r.IsActive) == true)
+			//{
+			//	return await Task.FromResult(user.RefreshTokens.FirstOrDefault(r => r.IsActive));
+			//}
 			var refreshToken = new RefreshToken()
 			{
 				Token = await CreateRefreshTokenAsync(),
@@ -226,7 +226,7 @@ namespace Croppilot.Services.Services
 		private async Task<string> IsValidAccessToken(RefreshToken refreshToken, string accessToken)
 		{
 			var accessTokenData = ReadAccessToken(accessToken, validateLifeTime: false);
-			return await Task.FromResult(accessTokenData.isSuccess && refreshToken.UserId == accessTokenData.userId && refreshToken.JwtTokenId == accessTokenData.jwtTokenId ?
+			return await Task.FromResult((accessTokenData.isSuccess && refreshToken.UserId == accessTokenData.userId && refreshToken.JwtTokenId == accessTokenData.jwtTokenId) ?
 				accessTokenData.userId : string.Empty);
 		}
 		private (bool isSuccess, string userId, string jwtTokenId) ReadAccessToken(string accessToken, bool validateLifeTime = true)
