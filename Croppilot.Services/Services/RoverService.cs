@@ -9,8 +9,19 @@ public class RoverService(IRoverRepository roverRepository) : IRoverService
 {
     public async Task<OperationResult> CreateRoverAsync(Rover rover, CancellationToken cancellationToken = default)
     {
+        // Check if rover ID already exists
+        var exists = await RoverIdExistsAsync(rover.Id, cancellationToken);
+        if (exists)
+            return OperationResult.Failure;
+
         await roverRepository.AddAsync(rover, cancellationToken);
         return OperationResult.Success;
+    }
+
+    public async Task<bool> RoverIdExistsAsync(string roverId, CancellationToken cancellationToken = default)
+    {
+        var rover = await roverRepository.GetAsync(r => r.Id == roverId, cancellationToken: cancellationToken);
+        return rover != null;
     }
 
     public async Task<IEnumerable<Rover>> GetRoversByUserIdAsync(string userId, CancellationToken cancellationToken = default)
