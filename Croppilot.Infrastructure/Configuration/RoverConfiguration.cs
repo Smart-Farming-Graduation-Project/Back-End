@@ -12,7 +12,7 @@ public class RoverConfiguration : IEntityTypeConfiguration<Rover>
         
         builder.Property(r => r.Id)
             .IsRequired()
-            .HasMaxLength(50)
+            .HasMaxLength(450)
             .ValueGeneratedNever(); // Prevent auto-generation since user provides the ID
             
         builder.Property(r => r.UserId)
