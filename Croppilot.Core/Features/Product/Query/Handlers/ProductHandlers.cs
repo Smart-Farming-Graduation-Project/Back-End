@@ -23,7 +23,18 @@ public class ProductHandlers(
 			cancellationToken: cancellationToken);
 		var wishList = await GetWishList();
 		var productResult = productList.Adapt<List<GetAllProductResponse>>();
-		productResult = productResult.Select(p => p with { IsFavorite = IsFavorite(wishList, p.ProductId) }).ToList();
+		
+		// Calculate average rating for each product
+		for (int i = 0; i < productResult.Count; i++)
+		{
+			var averageRating = await reviewService.GetAverageRatingByProductIdAsync(productResult[i].ProductId, cancellationToken);
+			productResult[i] = productResult[i] with 
+			{ 
+				AverageRating = averageRating,
+				IsFavorite = IsFavorite(wishList, productResult[i].ProductId) 
+			};
+		}
+		
 		var result = Success(productResult);
 		result.Meta = new Dictionary<string, object> { { "count", productResult.Count } };
 
