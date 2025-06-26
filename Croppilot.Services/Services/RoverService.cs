@@ -40,6 +40,13 @@ public class RoverService(IRoverRepository roverRepository) : IRoverService
             cancellationToken: cancellationToken);
     }
 
+    public async Task<IEnumerable<Rover>> GetAllRoversAsync(CancellationToken cancellationToken = default)
+    {
+        return await roverRepository.GetAllAsync(
+            includeProperties: ["User"],
+            cancellationToken: cancellationToken);
+    }
+
     public async Task<bool> DeleteRoverAsync(string roverId, CancellationToken cancellationToken = default)
     {
         var rover = await roverRepository.GetAsync(r => r.Id == roverId, cancellationToken: cancellationToken);
