@@ -7,6 +7,7 @@ public record GetAllProductResponse(
 	string? Description,
 	decimal? Price,
 	string Availability,
+	double AverageRating,
 	string ProductOwner,
 	bool IsFavorite,
 	List<string> Images
