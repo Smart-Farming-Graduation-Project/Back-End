@@ -53,6 +53,7 @@ namespace Croppilot.Services.Services.AIServises
             using (var stream = new MemoryStream())
             {
                 await image.CopyToAsync(stream);
+
                 var fileBytes = stream.ToArray();
 
                 using (var skImage = SKImage.FromEncodedData(fileBytes))
@@ -63,16 +64,12 @@ namespace Croppilot.Services.Services.AIServises
                     var feedbackDict = new Dictionary<string, string>();
 
                     var imageId = Guid.NewGuid();
-
-
-
                     var modelResult = new ModelResult
                     {
                         ImageId = imageId,
                         ImageUrl = "",
                         FeedbackEntries = new List<FeedbackEntry>()
                     };
-
 
                     foreach (var prediction in predictions)
                     {
@@ -112,7 +109,7 @@ namespace Croppilot.Services.Services.AIServises
                         }
                     }
 
-                    modelResult.ImageUrl = await SaveImage(skBitmap, imageId.ToString());
+                    modelResult.ImageUrl = await SaveImage(skBitmap, image.FileName);
 
                     // Save to database
                     await _unit.ModelRepository.AddAsync(modelResult);
@@ -269,7 +266,16 @@ namespace Croppilot.Services.Services.AIServises
                 bitmap.Encode(imageStream, SKEncodedImageFormat.Jpeg, 100);
                 imageStream.Position = 0;
 
-                var blobName = $"{filename}+redaId.jpg";
+                string blobName;
+                if (filename.Contains("cropguardrover", StringComparison.OrdinalIgnoreCase))
+                {
+                    blobName = $"rover_{filename}";
+                }
+                else
+                {
+                    // Default naming
+                    blobName = $"predicted{filename}";
+                }
                 return await _roverPhotoServices.UploadImageAsync(imageStream, blobName);
             }
         }

@@ -1,7 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using Croppilot.Core.Features.Rovers.Command.Models;
 using Croppilot.Core.Features.Rovers.Query.Models;
-using Croppilot.Date.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace Croppilot.API.Controller;
 
@@ -26,7 +25,26 @@ public class RoverController : AppControllerBase
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
-    
+    [HttpGet("RoverPhoto")]
+    [SwaggerOperation(
+        Summary = "Get all rover photos",
+        Description = "Retrieves all photos taken by rovers in the system.")]
+    [SwaggerResponse(200, "Rovers photos retrieved successfully")]
+    public async Task<IActionResult> GetAllPhoto()
+    {
+        var response = await _mediator.Send(new GetAllRoverPhoto());
+        return NewResult(response);
+    }
+    [HttpGet("RoverPhotoThatArePredicted")]
+    [SwaggerOperation(
+        Summary = "Get all predicted rover photos",
+        Description = "Retrieves all photos taken by rovers that are predicted")]
+    [SwaggerResponse(200, "Rovers photos retrieved successfully")]
+    public async Task<IActionResult> GetAllPredictedPhoto()
+    {
+        var response = await _mediator.Send(new GetPredictedRoverPhoto());
+        return NewResult(response);
+    }
     /// <summary>
     /// Gets all rovers in the system.
     /// </summary>
@@ -139,4 +157,4 @@ public class RoverController : AppControllerBase
         var response = await _mediator.Send(command);
         return NewResult(response);
     }
-} 
+}
