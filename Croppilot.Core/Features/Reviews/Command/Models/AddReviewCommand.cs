@@ -4,7 +4,7 @@ public class AddReviewCommand : IRequest<Response<string>>
 {
     public int ProductID { get; set; }
     public string Headline { get; set; }
-    public int Rating { get; set; }
+    public double Rating { get; set; }
     public string ReviewText { get; set; }
 
 }
