@@ -17,8 +17,9 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .HasMaxLength(255);
 
         builder.Property(r => r.Rating)
-            .IsRequired();
-        builder.HasCheckConstraint("CK_Review_Rating", "[Rating] BETWEEN 1 AND 5");
+            .IsRequired()
+            .HasColumnType("decimal(3,2)");
+        builder.HasCheckConstraint("CK_Review_Rating", "[Rating] BETWEEN 1.0 AND 5.0");
 
         builder.Property(r => r.ReviewText)
             .IsRequired(false);

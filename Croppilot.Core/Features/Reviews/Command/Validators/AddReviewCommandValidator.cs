@@ -18,7 +18,7 @@ public class AddReviewCommandValidator : AbstractValidator<AddReviewCommand>
             .MaximumLength(255).WithMessage("Headline cannot exceed 255 characters.");
 
         RuleFor(x => x.Rating)
-            .InclusiveBetween(1, 5).WithMessage("Rating must be between 1 and 5.");
+            .InclusiveBetween(1.0, 5.0).WithMessage("Rating must be between 1.0 and 5.0.");
 
         RuleFor(x => x.ReviewText)
             .NotEmpty().WithMessage("ReviewText is required.");

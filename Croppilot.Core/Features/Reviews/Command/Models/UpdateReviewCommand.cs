@@ -4,7 +4,7 @@ public class UpdateReviewCommand : IRequest<Response<string>>
 {
     public int ReviewID { get; set; }
     public string Headline { get; set; }
-    public int Rating { get; set; }
+    public double Rating { get; set; }
 
     public string? ReviewText { get; set; }
 }

@@ -7,7 +7,7 @@ public class ReviewResponse
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Headline { get; set; }
-    public int Rating { get; set; }
+    public double Rating { get; set; }
     public string? ReviewText { get; set; }
     public DateTime ReviewDate { get; set; }
 }
