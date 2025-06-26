@@ -6,7 +6,8 @@ namespace Croppilot.Core.Features.Rovers.Query.Handlers;
 
 public class RoverQueryHandler(IRoverService roverService, IUserService userService) : ResponseHandler,
     IRequestHandler<GetUserRoversQuery, Response<List<GetRoverResponse>>>,
-    IRequestHandler<GetRoverByIdQuery, Response<GetRoverResponse>>
+    IRequestHandler<GetRoverByIdQuery, Response<GetRoverResponse>>,
+    IRequestHandler<GetAllRoversQuery, Response<List<GetRoverResponse>>>
 {
     public async Task<Response<List<GetRoverResponse>>> Handle(GetUserRoversQuery query, CancellationToken cancellationToken)
     {
@@ -54,5 +55,20 @@ public class RoverQueryHandler(IRoverService roverService, IUserService userServ
         };
 
         return Success(roverResponse);
+    }
+
+    public async Task<Response<List<GetRoverResponse>>> Handle(GetAllRoversQuery query, CancellationToken cancellationToken)
+    {
+        var rovers = await roverService.GetAllRoversAsync(cancellationToken);
+        
+        var roverResponses = rovers.Select(r => new GetRoverResponse
+        {
+            Id = r.Id,
+            UserId = r.UserId,
+            CreatedAt = r.CreatedAt,
+            UserName = r.User?.UserName ?? string.Empty
+        }).ToList();
+
+        return Success(roverResponses);
     }
 } 
