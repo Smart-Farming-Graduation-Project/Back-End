@@ -23,6 +23,7 @@ namespace Croppilot.Infrastructure.Repositories.Interfaces
 
         IFeedbackRepository FeedbackRepository { get; }
         IModelRepository ModelRepository { get; }
+        IRoverRepository RoverRepository { get; }
 
         //Dashbord Repositories
         IWeatherDataRepository WeatherDataRepository { get; }
