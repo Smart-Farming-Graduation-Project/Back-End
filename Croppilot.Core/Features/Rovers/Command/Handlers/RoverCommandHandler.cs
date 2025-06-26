@@ -4,12 +4,17 @@ using Croppilot.Services.Abstract;
 
 namespace Croppilot.Core.Features.Rovers.Command.Handlers;
 
-public class RoverCommandHandler(IRoverService roverService) : ResponseHandler,
+public class RoverCommandHandler(IRoverService roverService,IUserService userService) : ResponseHandler,
     IRequestHandler<AddRoverCommand, Response<string>>,
     IRequestHandler<DeleteRoverCommand, Response<string>>
 {
     public async Task<Response<string>> Handle(AddRoverCommand command, CancellationToken cancellationToken)
     {
+        //Check if user exists
+        var user = await userService.GetUserById(command.UserId);
+        if (user == null)
+            return NotFound<string>("User not found.");
+        
         // Check if rover ID already exists
         var roverExists = await roverService.RoverIdExistsAsync(command.RoverId, cancellationToken);
         if (roverExists)
