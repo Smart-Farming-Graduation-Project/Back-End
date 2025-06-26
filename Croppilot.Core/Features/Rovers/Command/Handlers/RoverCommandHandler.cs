@@ -11,7 +11,7 @@ public class RoverCommandHandler(IRoverService roverService,IUserService userSer
     public async Task<Response<string>> Handle(AddRoverCommand command, CancellationToken cancellationToken)
     {
         //Check if user exists
-        var user = await userService.GetUserById(command.UserId);
+        var user = await userService.GetUserByUserName(command.UserName);
         if (user == null)
             return NotFound<string>("User not found.");
         
@@ -23,7 +23,7 @@ public class RoverCommandHandler(IRoverService roverService,IUserService userSer
         var rover = new Rover
         {
             Id = command.RoverId,
-            UserId = command.UserId,
+            UserId = user.Id,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -36,12 +36,17 @@ public class RoverCommandHandler(IRoverService roverService,IUserService userSer
 
     public async Task<Response<string>> Handle(DeleteRoverCommand command, CancellationToken cancellationToken)
     {
+        // Check if user exists
+        var user = await userService.GetUserByUserName(command.UserName);
+        if (user == null)
+            return NotFound<string>("User not found.");
+        
         // First check if the rover exists and belongs to the user
         var rover = await roverService.GetRoverByIdAsync(command.RoverId, cancellationToken);
         if (rover == null)
             return NotFound<string>("Rover not found.");
 
-        if (rover.UserId != command.UserId)
+        if (rover.UserId != user.Id)
             return NotFound<String>("This rover does not belong to the user.");
 
         var result = await roverService.DeleteRoverAsync(command.RoverId, cancellationToken);

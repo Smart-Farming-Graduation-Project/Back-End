@@ -17,10 +17,10 @@ public class AddRoverCommandValidator : AbstractValidator<AddRoverCommand>
             .Matches("^[a-zA-Z0-9_-]+$")
             .WithMessage("Rover ID can only contain letters, numbers, underscores, and hyphens.");
 
-        RuleFor(x => x.UserId)
+        RuleFor(x => x.UserName)
             .NotEmpty()
-            .WithMessage("User ID is required.")
+            .WithMessage("User Name is required.")
             .NotNull()
-            .WithMessage("User ID cannot be null.");
+            .WithMessage("User Name cannot be null.");
     }
 } 

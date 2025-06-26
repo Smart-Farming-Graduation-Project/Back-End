@@ -13,10 +13,10 @@ public class DeleteRoverCommandValidator : AbstractValidator<DeleteRoverCommand>
             .NotNull()
             .WithMessage("Rover ID cannot be null.");
 
-        RuleFor(x => x.UserId)
+        RuleFor(x => x.UserName)
             .NotEmpty()
-            .WithMessage("User ID is required.")
+            .WithMessage("UserName is required.")
             .NotNull()
-            .WithMessage("User ID cannot be null.");
+            .WithMessage("UserName cannot be null.");
     }
 } 
