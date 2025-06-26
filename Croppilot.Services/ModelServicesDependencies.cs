@@ -58,6 +58,7 @@ namespace Croppilot.Services
             service.AddScoped<IRoverPhotoServices, RoverPhotoServices>();
             service.AddScoped<IModelServices, ModelServices>();
             service.AddScoped<IRlPredictServices, RlPredictServices>();
+            service.AddScoped<IRoverService, RoverService>();
 
 
             service.AddScoped<IWeatherServices, WeatherServices>();
