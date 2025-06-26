@@ -55,8 +55,8 @@ public static class ModelApiDependencies
             .AddXmlSerializerFormatters();
 
         services.AddHttpContextAccessor().AddSwaggerServices()
-            .AddRolePolicy().AddCorSServices().AddHealthChecksConfigurations(configuration);
-        //.AddWatchDogConfigurations(configuration)
+            .AddRolePolicy().AddCorSServices().AddHealthChecksConfigurations(configuration)
+            .AddWatchDogConfigurations(configuration);
         //.AddRateLimitConfigurations();
 
 
@@ -114,7 +114,7 @@ public static class ModelApiDependencies
             opt.IsAutoClear = true;
             opt.ClearTimeSchedule = WatchDogAutoClearScheduleEnum.Daily;
             opt.SetExternalDbConnString = configuration.GetConnectionString("WatchDog");
-            opt.DbDriverOption = WatchDogDbDriverEnum.PostgreSql;
+            opt.DbDriverOption = WatchDogDbDriverEnum.MSSQL;
         });
 
         return services;
