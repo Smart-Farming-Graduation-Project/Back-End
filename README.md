@@ -245,24 +245,14 @@ ENTRYPOINT ["dotnet", "Croppilot.API.dll"]
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 📞 Support
 
 For support and questions:
 
 - 📧 Email: support@croppilot.com
-- 🐛 Issues: [GitHub Issues](https://github.com/your-username/croppilot-backend/issues)
-- 📖 Documentation: [Wiki](https://github.com/your-username/croppilot-backend/wiki)
-
-## 🔄 Version History
-
-- **v1.0.0** - Initial release with core features
-- **v1.1.0** - Added AI model integration
-- **v1.2.0** - Enhanced dashboard capabilities
-- **v1.3.0** - Added e-commerce functionality
+- 🐛 Issues: [GitHub Issues](https://github.com/Smart-Farming-Graduation-Project/Back-End/issues)
+- 📖 Documentation: [Wiki](https://github.com/Smart-Farming-Graduation-Project/Back-End/wiki)
 
 ---
 
