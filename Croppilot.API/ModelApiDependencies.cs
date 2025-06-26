@@ -140,10 +140,6 @@ public static class ModelApiDependencies
                         configuration["WeatherApi:ApiKey"]),
                 name: "OpenWeather API",
                 tags: ["External API"])
-            .AddUrlGroup(
-                new Uri("https://api.stripe.com/v1"),
-                name: "Stripe API",
-                tags: ["External API"])
 
             // Background Services
             .AddHangfire(options =>
