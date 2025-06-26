@@ -21,6 +21,18 @@ public static class HealthCheckExtensions
             options.TimeoutSeconds = configuration.GetValue<int>("HealthCheck:TimeoutSeconds", 30);
         });
 
+        // Configure options for Stripe
+        services.Configure<StripeHealthCheckOptions>(options =>
+        {
+            options.SecretKey = configuration["Stripe:Secretkey"] ?? string.Empty;
+            options.PublishableKey = configuration["Stripe:PublishableKey"] ?? string.Empty;
+            options.WebhookSecret = configuration["Stripe:WebhookSecret"] ?? string.Empty;
+            options.EnableListProducts = configuration.GetValue<bool>("HealthCheck:Stripe:EnableListProducts", true);
+            options.EnableCreateTestPrice = configuration.GetValue<bool>("HealthCheck:Stripe:EnableCreateTestPrice", false);
+            options.TimeoutSeconds = configuration.GetValue<int>("HealthCheck:TimeoutSeconds", 30);
+            options.MaxRetrieveCount = configuration.GetValue<int>("HealthCheck:Stripe:MaxRetrieveCount", 5);
+        });
+
         // Register HTTP clients for health checks
         services.AddHttpClient<MailJetHealthCheck>(client =>
         {
@@ -41,7 +53,11 @@ public static class HealthCheckExtensions
             .AddCheck<OpenAIHealthCheck>(
                 name: "OpenAI API",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: ["ai", "openai", "external", "api"]);
+                tags: ["ai", "openai", "external", "api"])
+            .AddCheck<StripeHealthCheck>(
+                name: "Stripe Payment API",
+                failureStatus: HealthStatus.Unhealthy,
+                tags: ["payment", "stripe", "external", "api"]);
 
         return services;
     }
