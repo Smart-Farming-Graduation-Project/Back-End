@@ -14,7 +14,8 @@ public class ProductHandlers(
 	: ResponseHandler,
 		IRequestHandler<GetAllProductQuery, Response<List<GetAllProductResponse>>>,
 		IRequestHandler<GetProductByIdQuery, Response<GetProductByIdResponse>>,
-		IRequestHandler<GetProductPaginatedQuery, Response<List<GetProductPaginatedResponse>>>
+		IRequestHandler<GetProductPaginatedQuery, Response<List<GetProductPaginatedResponse>>>,
+		IRequestHandler<GetProductsByUserId, Response<List<GetProductPaginatedResponse>>>
 {
 	public async Task<Response<List<GetAllProductResponse>>> Handle(GetAllProductQuery request,
 		CancellationToken cancellationToken)
@@ -23,18 +24,18 @@ public class ProductHandlers(
 			cancellationToken: cancellationToken);
 		var wishList = await GetWishList();
 		var productResult = productList.Adapt<List<GetAllProductResponse>>();
-		
+
 		// Calculate average rating for each product
 		for (int i = 0; i < productResult.Count; i++)
 		{
 			var averageRating = await reviewService.GetAverageRatingByProductIdAsync(productResult[i].ProductId, cancellationToken);
-			productResult[i] = productResult[i] with 
-			{ 
+			productResult[i] = productResult[i] with
+			{
 				AverageRating = averageRating,
-				IsFavorite = IsFavorite(wishList, productResult[i].ProductId) 
+				IsFavorite = IsFavorite(wishList, productResult[i].ProductId)
 			};
 		}
-		
+
 		var result = Success(productResult);
 		result.Meta = new Dictionary<string, object> { { "count", productResult.Count } };
 
@@ -107,6 +108,40 @@ public class ProductHandlers(
 		};
 
 		return Success(paginatedList.Data, meta: productMeta);
+	}
+
+	public async Task<Response<List<GetProductPaginatedResponse>>> Handle(GetProductsByUserId request, CancellationToken cancellationToken)
+	{
+		var userId = httpContextAccessor?.HttpContext?.User.GetUserId();
+		if (string.IsNullOrEmpty(userId))
+			return BadRequest<List<GetProductPaginatedResponse>>("User ID is not provided.");
+		var queryable = await productServices.GetProductsByUserIdAsync(userId, includeProperties: ["Category", "ProductImages", "User"], cancellationToken: cancellationToken);
+		var paginated = await queryable.Select(p =>
+			new GetProductPaginatedResponse(
+				p.Id,
+				p.Name,
+				p.Category.Name,
+				p.Description,
+				p.Price,
+				p.Availability.ToString(),
+				p.User.UserName ?? string.Empty,
+				false,
+				p.ProductImages.Select(img => img.ImageUrl).ToList()
+			)).ToPaginatedListAsync(request.PageNumber, request.PageSize);
+		var productMeta = new Dictionary<string, object>
+		{
+			{"Current Page", paginated.CurrentPage},
+			{"Total Pages", paginated.TotalPages},
+			{"Page Size", paginated.PageSize},
+			{"Total Count", paginated.TotalCount},
+			{"Has Next", paginated.HasNextPage},
+			{"Has Previous", paginated.HasPreviousPage},
+			{"Meta", paginated.Meta},
+			{"Succeeded", paginated.Succeeded},
+			{"Message", paginated.Messages}
+		};
+
+		return Success(paginated.Data, meta: productMeta);
 	}
 
 	private async Task<Wishlist?> GetWishList()
