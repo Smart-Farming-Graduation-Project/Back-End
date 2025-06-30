@@ -117,4 +117,14 @@ public class ProductServices(
 	{
 		return Path.GetFileName(new Uri(url).AbsolutePath);
 	}
+
+	public Task<IQueryable<Product>> GetProductsByUserIdAsync(string userId, string[]? includeProperties = null, CancellationToken cancellationToken = default)
+	{
+		var products = unit.ProductRepository.GetForPaginationAsync(
+			x => x.UserId == userId,
+			includeProperties: includeProperties,
+			false
+		);
+		return products;
+	}
 }
