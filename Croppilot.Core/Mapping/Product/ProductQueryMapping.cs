@@ -24,6 +24,7 @@ public class ProductQueryMapping : IRegister
 			.Map(dest => dest.Price, src => src.Price)
 			.Map(dest => dest.Availability, src => src.Availability.ToString())
 			.Map(dest => dest.ProductOwner, src => src.User.UserName)
+			.Map(dest => dest.AverageRating, src => 0.0)
 			.Map(dest => dest.IsFavorite, src => false)
 			.Map(dest => dest.Images, src => src.ProductImages.Select(img => img.ImageUrl).ToList());
 

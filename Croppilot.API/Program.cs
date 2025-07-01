@@ -12,6 +12,7 @@ using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WatchDog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,14 +87,14 @@ app.MapHealthChecks("/health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-//app.UseRateLimiter();
-//app.UseWatchDog(opt =>
-//{
-//    opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
-//    opt.WatchPagePassword = app.Configuration.GetValue<string>("WatchDogSettings:WatchPagePassword");
-//    // opt.Blacklist = "api/Authentication/SignIn";
-//    // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
-//});
+// app.UseRateLimiter();
+app.UseWatchDog(opt =>
+{
+    opt.WatchPageUsername = app.Configuration.GetValue<string>("WatchDogSettings:WatchPageUsername");
+    opt.WatchPagePassword = app.Configuration.GetValue<string>("WatchDogSettings:WatchPagePassword");
+    // opt.Blacklist = "api/Authentication/SignIn";
+    // //Prevent logging for SignIn endpoints ( it work but need to make all end points in Auth controller)
+});
 
 app.MapControllers();
 //.RequireRateLimiting(RateLimiters.ConcurrencyRateLimit);

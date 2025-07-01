@@ -55,8 +55,8 @@ public static class ModelApiDependencies
             .AddXmlSerializerFormatters();
 
         services.AddHttpContextAccessor().AddSwaggerServices()
-            .AddRolePolicy().AddCorSServices().AddHealthChecksConfigurations(configuration);
-        //.AddWatchDogConfigurations(configuration)
+            .AddRolePolicy().AddCorSServices().AddHealthChecksConfigurations(configuration)
+            .AddWatchDogConfigurations(configuration);
         //.AddRateLimitConfigurations();
 
 
@@ -114,7 +114,7 @@ public static class ModelApiDependencies
             opt.IsAutoClear = true;
             opt.ClearTimeSchedule = WatchDogAutoClearScheduleEnum.Daily;
             opt.SetExternalDbConnString = configuration.GetConnectionString("WatchDog");
-            opt.DbDriverOption = WatchDogDbDriverEnum.PostgreSql;
+            opt.DbDriverOption = WatchDogDbDriverEnum.MSSQL;
         });
 
         return services;
@@ -139,10 +139,6 @@ public static class ModelApiDependencies
                 new Uri("https://api.openweathermap.org/data/2.5/weather?q=Cairo&appid=" +
                         configuration["WeatherApi:ApiKey"]),
                 name: "OpenWeather API",
-                tags: ["External API"])
-            .AddUrlGroup(
-                new Uri("https://api.stripe.com/v1"),
-                name: "Stripe API",
                 tags: ["External API"])
 
             // Background Services

@@ -18,5 +18,6 @@ namespace Croppilot.Date.Identity
 		public ICollection<Cupon> Cupons { get; set; }
 		[Required(ErrorMessage = "Image Url is required")]
 		public string ImageUrl { get; set; } = null!;
+		public ICollection<ChatHistory>? chatHistories { get; set; }
 	}
 }

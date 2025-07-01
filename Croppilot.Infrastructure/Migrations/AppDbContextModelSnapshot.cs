@@ -392,11 +392,16 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("UserMessage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ChatHistories");
                 });
@@ -547,7 +552,7 @@ namespace Croppilot.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 5, 2, 18, 48, 36, 970, DateTimeKind.Utc).AddTicks(1256),
+                            CreatedAt = new DateTime(2025, 6, 26, 11, 57, 13, 537, DateTimeKind.Utc).AddTicks(9810),
                             EmergencyType = 5,
                             Latitude = 26.820553,
                             LocationDescription = "Farm Field #1",
@@ -558,7 +563,7 @@ namespace Croppilot.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 5, 2, 18, 33, 36, 970, DateTimeKind.Utc).AddTicks(1258),
+                            CreatedAt = new DateTime(2025, 6, 26, 11, 42, 13, 537, DateTimeKind.Utc).AddTicks(9816),
                             EmergencyType = 4,
                             Latitude = 27.820553,
                             LocationDescription = "Farm Field #2",
@@ -569,7 +574,7 @@ namespace Croppilot.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 5, 2, 18, 18, 36, 970, DateTimeKind.Utc).AddTicks(1260),
+                            CreatedAt = new DateTime(2025, 6, 26, 11, 27, 13, 537, DateTimeKind.Utc).AddTicks(9817),
                             EmergencyType = 0,
                             Latitude = 28.820553,
                             LocationDescription = "Farm Field #3",
@@ -580,7 +585,7 @@ namespace Croppilot.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 3, 36, 970, DateTimeKind.Utc).AddTicks(1272),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 12, 13, 537, DateTimeKind.Utc).AddTicks(9818),
                             EmergencyType = 3,
                             Latitude = 29.820553,
                             LocationDescription = "Farm Field #4",
@@ -591,7 +596,7 @@ namespace Croppilot.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 5, 2, 18, 58, 36, 970, DateTimeKind.Utc).AddTicks(1273),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 7, 13, 537, DateTimeKind.Utc).AddTicks(9820),
                             EmergencyType = 6,
                             Latitude = 30.820553,
                             LocationDescription = "Farm Field #5",
@@ -602,7 +607,7 @@ namespace Croppilot.Infrastructure.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 13, 36, 970, DateTimeKind.Utc).AddTicks(1274),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 22, 13, 537, DateTimeKind.Utc).AddTicks(9821),
                             EmergencyType = 5,
                             Latitude = 31.820553,
                             LocationDescription = "Farm Field #6",
@@ -613,7 +618,7 @@ namespace Croppilot.Infrastructure.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 8, 36, 970, DateTimeKind.Utc).AddTicks(1276),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 17, 13, 537, DateTimeKind.Utc).AddTicks(9822),
                             EmergencyType = 4,
                             Latitude = 32.820552999999997,
                             LocationDescription = "Farm Field #7",
@@ -624,7 +629,7 @@ namespace Croppilot.Infrastructure.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 15, 36, 970, DateTimeKind.Utc).AddTicks(1277),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 24, 13, 537, DateTimeKind.Utc).AddTicks(9824),
                             EmergencyType = 1,
                             Latitude = 26.820553,
                             LocationDescription = "Farm Field #1",
@@ -635,7 +640,7 @@ namespace Croppilot.Infrastructure.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 16, 36, 970, DateTimeKind.Utc).AddTicks(1278),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 25, 13, 537, DateTimeKind.Utc).AddTicks(9825),
                             EmergencyType = 7,
                             Latitude = 27.820553,
                             LocationDescription = "Farm Entrance",
@@ -688,7 +693,7 @@ namespace Croppilot.Infrastructure.Migrations
                             Connectivity = 0,
                             EquipmentId = "EQ-001",
                             HoursUsed = 120.0,
-                            LastMaintenance = new DateTime(2025, 4, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1105),
+                            LastMaintenance = new DateTime(2025, 5, 27, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9594),
                             Name = "Tractor A",
                             Status = 0
                         },
@@ -699,7 +704,7 @@ namespace Croppilot.Infrastructure.Migrations
                             Connectivity = 1,
                             EquipmentId = "EQ-002",
                             HoursUsed = 50.0,
-                            LastMaintenance = new DateTime(2025, 4, 17, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1119),
+                            LastMaintenance = new DateTime(2025, 6, 11, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9609),
                             Name = "Drone B",
                             Status = 2
                         },
@@ -710,7 +715,7 @@ namespace Croppilot.Infrastructure.Migrations
                             Connectivity = 0,
                             EquipmentId = "EQ-003",
                             HoursUsed = 30.0,
-                            LastMaintenance = new DateTime(2025, 4, 22, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1121),
+                            LastMaintenance = new DateTime(2025, 6, 16, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9610),
                             Name = "Sprinkler C",
                             Status = 1
                         },
@@ -721,7 +726,7 @@ namespace Croppilot.Infrastructure.Migrations
                             Connectivity = 0,
                             EquipmentId = "EQ-004",
                             HoursUsed = 200.0,
-                            LastMaintenance = new DateTime(2025, 3, 18, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1122),
+                            LastMaintenance = new DateTime(2025, 5, 12, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9611),
                             Name = "Harvester D",
                             Status = 0
                         },
@@ -732,7 +737,7 @@ namespace Croppilot.Infrastructure.Migrations
                             Connectivity = 1,
                             EquipmentId = "EQ-005",
                             HoursUsed = 20.0,
-                            LastMaintenance = new DateTime(2025, 4, 27, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1124),
+                            LastMaintenance = new DateTime(2025, 6, 21, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9613),
                             Name = "Seeder E",
                             Status = 2
                         },
@@ -743,7 +748,7 @@ namespace Croppilot.Infrastructure.Migrations
                             Connectivity = 0,
                             EquipmentId = "EQ-006",
                             HoursUsed = 90.0,
-                            LastMaintenance = new DateTime(2025, 4, 12, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1125),
+                            LastMaintenance = new DateTime(2025, 6, 6, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9664),
                             Name = "Plow F",
                             Status = 1
                         });
@@ -789,10 +794,10 @@ namespace Croppilot.Infrastructure.Migrations
                         {
                             Id = 1,
                             Crop = "Wheat",
-                            HarvestDate = new DateTime(2025, 7, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1167),
+                            HarvestDate = new DateTime(2025, 8, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9710),
                             Irrigation = 1,
                             Name = "Field Alpha",
-                            PlantingDate = new DateTime(2025, 2, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1160),
+                            PlantingDate = new DateTime(2025, 3, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9700),
                             Size = 10.5,
                             Status = 2
                         },
@@ -800,10 +805,10 @@ namespace Croppilot.Infrastructure.Migrations
                         {
                             Id = 2,
                             Crop = "Corn",
-                            HarvestDate = new DateTime(2025, 8, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1170),
+                            HarvestDate = new DateTime(2025, 9, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9712),
                             Irrigation = 2,
                             Name = "Field Beta",
-                            PlantingDate = new DateTime(2025, 3, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1169),
+                            PlantingDate = new DateTime(2025, 4, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9712),
                             Size = 15.199999999999999,
                             Status = 2
                         },
@@ -811,10 +816,10 @@ namespace Croppilot.Infrastructure.Migrations
                         {
                             Id = 3,
                             Crop = "Rice",
-                            HarvestDate = new DateTime(2025, 6, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1172),
+                            HarvestDate = new DateTime(2025, 7, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9714),
                             Irrigation = 3,
                             Name = "Field Gamma",
-                            PlantingDate = new DateTime(2025, 1, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1171),
+                            PlantingDate = new DateTime(2025, 2, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9714),
                             Size = 8.0,
                             Status = 2
                         },
@@ -822,10 +827,10 @@ namespace Croppilot.Infrastructure.Migrations
                         {
                             Id = 4,
                             Crop = "Soybeans",
-                            HarvestDate = new DateTime(2025, 10, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1174),
+                            HarvestDate = new DateTime(2025, 11, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9716),
                             Irrigation = 1,
                             Name = "Field Delta",
-                            PlantingDate = new DateTime(2025, 4, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1173),
+                            PlantingDate = new DateTime(2025, 5, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9716),
                             Size = 12.699999999999999,
                             Status = 4
                         },
@@ -833,10 +838,10 @@ namespace Croppilot.Infrastructure.Migrations
                         {
                             Id = 5,
                             Crop = "Barley",
-                            HarvestDate = new DateTime(2025, 8, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1177),
+                            HarvestDate = new DateTime(2025, 9, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9718),
                             Irrigation = 5,
                             Name = "Field Epsilon",
-                            PlantingDate = new DateTime(2024, 12, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1175),
+                            PlantingDate = new DateTime(2025, 1, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9718),
                             Size = 20.300000000000001,
                             Status = 2
                         },
@@ -844,10 +849,10 @@ namespace Croppilot.Infrastructure.Migrations
                         {
                             Id = 6,
                             Crop = "Oats",
-                            HarvestDate = new DateTime(2025, 9, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1179),
+                            HarvestDate = new DateTime(2025, 10, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9723),
                             Irrigation = 4,
                             Name = "Field Zeta",
-                            PlantingDate = new DateTime(2024, 11, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(1178),
+                            PlantingDate = new DateTime(2024, 12, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9719),
                             Size = 9.5,
                             Status = 3
                         });
@@ -1216,11 +1221,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 1,
                             Availability = 0,
                             CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(914),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9357),
                             Description = "Fresh vine-ripened tomatoes",
                             Name = "Organic Tomatoes",
                             Price = 19.99m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(914),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9357),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1228,11 +1233,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 2,
                             Availability = 0,
                             CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(918),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9422),
                             Description = "Crisp and refreshing cucumbers",
                             Name = "Cucumbers",
                             Price = 12.50m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(919),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9423),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1240,11 +1245,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 3,
                             Availability = 1,
                             CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(921),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9425),
                             Description = "Mixed color sweet peppers",
                             Name = "Bell Peppers",
                             Price = 18.75m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(921),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9425),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1252,11 +1257,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 4,
                             Availability = 0,
                             CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(924),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9427),
                             Description = "Sweet and juicy strawberries",
                             Name = "Strawberries",
                             Price = 25.99m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(924),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9428),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1264,11 +1269,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 5,
                             Availability = 0,
                             CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(926),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9430),
                             Description = "Premium imported mangoes",
                             Name = "Mangoes",
                             Price = 30.50m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(926),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9430),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1276,11 +1281,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 6,
                             Availability = 0,
                             CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(928),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9432),
                             Description = "Large sweet watermelons",
                             Name = "Watermelons",
                             Price = 45.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(929),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9433),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1288,11 +1293,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 7,
                             Availability = 0,
                             CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(931),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9435),
                             Description = "Whole milk 1L bottle",
                             Name = "Farm Fresh Milk",
                             Price = 20.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(931),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9435),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1300,11 +1305,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 8,
                             Availability = 0,
                             CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(933),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9437),
                             Description = "Aged cheddar cheese 200g",
                             Name = "Artisan Cheese",
                             Price = 35.75m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(933),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9438),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1312,11 +1317,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 9,
                             Availability = 0,
                             CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(935),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9440),
                             Description = "Natural Yogurt",
                             Name = "Natural Yogurt",
                             Price = 18.50m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(935),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9440),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1324,11 +1329,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 10,
                             Availability = 0,
                             CategoryId = 4,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(937),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9442),
                             Description = "Large brown eggs",
                             Name = "Free-Range Eggs (12pk)",
                             Price = 30.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(938),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9443),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1336,11 +1341,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 11,
                             Availability = 0,
                             CategoryId = 5,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(940),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9445),
                             Description = "Red rose plant in 12\" pot",
                             Name = "Rose Bush",
                             Price = 120.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(940),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9445),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1348,11 +1353,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 12,
                             Availability = 0,
                             CategoryId = 5,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(942),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9447),
                             Description = "Fragrant lavender for gardens",
                             Name = "Lavender Plant",
                             Price = 85.50m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(942),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9448),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1360,11 +1365,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 13,
                             Availability = 0,
                             CategoryId = 6,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(944),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9450),
                             Description = "Early girl tomato plants",
                             Name = "Tomato Seedlings",
                             Price = 15.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(945),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9450),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1372,11 +1377,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 14,
                             Availability = 0,
                             CategoryId = 6,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(947),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9452),
                             Description = "Burpless cucumber plants, disease-resistant",
                             Name = "Cucumber Seedlings",
                             Price = 13.25m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(947),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9453),
                             UserId = "642b8bd1-a65f-4598-95bc-29b833dcb84e"
                         },
                         new
@@ -1384,11 +1389,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 15,
                             Availability = 0,
                             CategoryId = 7,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(949),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9455),
                             Description = "Organic chicken feed",
                             Name = "Poultry Feed 20kg",
                             Price = 150.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(949),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9455),
                             UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c"
                         },
                         new
@@ -1396,11 +1401,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 16,
                             Availability = 0,
                             CategoryId = 7,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(951),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9457),
                             Description = "Nutritional cattle mix",
                             Name = "Cattle Feed 25kg",
                             Price = 220.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(952),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9457),
                             UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c"
                         },
                         new
@@ -1408,11 +1413,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 17,
                             Availability = 0,
                             CategoryId = 8,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(954),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9459),
                             Description = "Professional grade shears",
                             Name = "Pruning Shears",
                             Price = 65.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(954),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9460),
                             UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c"
                         },
                         new
@@ -1420,11 +1425,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 18,
                             Availability = 0,
                             CategoryId = 8,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(956),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9462),
                             Description = "Sturdy steel garden hoe",
                             Name = "Garden Hoe",
                             Price = 45.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(956),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9462),
                             UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c"
                         },
                         new
@@ -1432,11 +1437,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 19,
                             Availability = 0,
                             CategoryId = 10,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(958),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9464),
                             Description = "Nutrient-rich compost",
                             Name = "Compost 10kg",
                             Price = 40.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(959),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9465),
                             UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c"
                         },
                         new
@@ -1444,11 +1449,11 @@ namespace Croppilot.Infrastructure.Migrations
                             Id = 20,
                             Availability = 0,
                             CategoryId = 10,
-                            CreatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(961),
+                            CreatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9467),
                             Description = "Organic soil amendment",
                             Name = "Worm Castings",
                             Price = 55.00m,
-                            UpdatedAt = new DateTime(2025, 5, 2, 19, 18, 36, 970, DateTimeKind.Utc).AddTicks(961),
+                            UpdatedAt = new DateTime(2025, 6, 26, 12, 27, 13, 537, DateTimeKind.Utc).AddTicks(9467),
                             UserId = "655501be-8ca7-434d-9cbe-6e8d23b3d92c"
                         });
                 });
@@ -1709,8 +1714,8 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Property<int>("ProductID")
                         .HasColumnType("int");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(3,2)");
 
                     b.Property<DateTime>("ReviewDate")
                         .ValueGeneratedOnAdd()
@@ -1735,8 +1740,29 @@ namespace Croppilot.Infrastructure.Migrations
 
                     b.ToTable("Reviews", t =>
                         {
-                            t.HasCheckConstraint("CK_Review_Rating", "[Rating] BETWEEN 1 AND 5");
+                            t.HasCheckConstraint("CK_Review_Rating", "[Rating] BETWEEN 1.0 AND 5.0");
                         });
+                });
+
+            modelBuilder.Entity("Croppilot.Date.Models.Rover", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Rovers");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.Vote", b =>
@@ -1997,6 +2023,15 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Croppilot.Date.Models.ChatHistory", b =>
+                {
+                    b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
+                        .WithMany("chatHistories")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Croppilot.Date.Models.Comment", b =>
                 {
                     b.HasOne("Croppilot.Date.Models.Comment", "ParentComment")
@@ -2145,6 +2180,17 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Croppilot.Date.Models.Rover", b =>
+                {
+                    b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Croppilot.Date.Models.Vote", b =>
                 {
                     b.HasOne("Croppilot.Date.Identity.ApplicationUser", "User")
@@ -2246,6 +2292,8 @@ namespace Croppilot.Infrastructure.Migrations
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("Wishlist");
+
+                    b.Navigation("chatHistories");
                 });
 
             modelBuilder.Entity("Croppilot.Date.Models.AiModel.ModelResult", b =>

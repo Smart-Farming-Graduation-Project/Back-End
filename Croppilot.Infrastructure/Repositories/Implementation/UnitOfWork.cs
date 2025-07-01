@@ -23,6 +23,7 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
 		public ICuponRepository CuponRepository { get; }
     public IFeedbackRepository FeedbackRepository { get; }
     public IModelRepository ModelRepository { get; }
+    public IRoverRepository RoverRepository { get; }
 
         public IWeatherDataRepository WeatherDataRepository { get; }
 
@@ -50,6 +51,7 @@ namespace Croppilot.Infrastructure.Repositories.Implementation
 			CuponRepository = new CuponRepository(_context);
        FeedbackRepository = new FeedbackRepository(_context);
        ModelRepository = new ModelRepository(_context);
+       RoverRepository = new RoverRepository(_context);
         WeatherDataRepository = new WeatherDataRepository(_context);
             WeatherForecastRepository = new WeatherForcastRepository(_context);
 		}

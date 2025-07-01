@@ -30,6 +30,8 @@ namespace Croppilot.Infrastructure.Data
         public DbSet<ModelResult> AIModelResults { get; set; }
         public DbSet<FeedbackEntry> FeedbackEntries { get; set; }
 
+        public DbSet<Rover> Rovers { get; set; }
+
         //Dashborad Models
         public DbSet<WeatherData> WeatherDatas { get; set; }
         public DbSet<WeatherForecast> WeatherForecasts { get; set; }
