@@ -31,10 +31,19 @@
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Generics/Implementation/GenericRepository.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Generics/Interfaces/IGenericRepository.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/GlobalUsing.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/HealthChecks/CustomHealthChecks/AzureBlobStorageHealthCheck.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/HealthChecks/CustomHealthChecks/MailHealthChecks.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/HealthChecks/CustomHealthChecks/OpenAIHealthCheck.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/HealthChecks/Extensions/HealthCheckExtensions.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/HealthChecks/Options/MailJetHealthCheckOptions.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Migrations/20250429213844_initial-new-database.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Migrations/20250429213844_initial-new-database.Designer.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Migrations/20250429214857_seeding-data.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Migrations/20250429214857_seeding-data.Designer.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Migrations/20250502173305_add isfavorite attribute.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Migrations/20250502173305_add isfavorite attribute.Designer.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Migrations/20250502191837_delete isfavorite attribute.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Migrations/20250502191837_delete isfavorite attribute.Designer.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Migrations/AppDbContextModelSnapshot.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/ModelInfrastructureDependencies.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Infrastructure/Repositories/Implementation/AiRepository/FeedbackRepository.cs

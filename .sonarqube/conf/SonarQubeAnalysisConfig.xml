@@ -10,7 +10,7 @@
   <HasBeginStepCommandLineTruststorePassword>false</HasBeginStepCommandLineTruststorePassword>
   <SonarQubeHostUrl>http://localhost:9000</SonarQubeHostUrl>
   <SonarQubeVersion>25.5.0.107428</SonarQubeVersion>
-  <SonarProjectKey>crop-guard-api</SonarProjectKey>
+  <SonarProjectKey>Graduation-Project-Backend</SonarProjectKey>
   <AdditionalConfig>
     <ConfigSetting Id="BuildUri" />
     <ConfigSetting Id="TfsUri" />
@@ -142,8 +142,8 @@
     <Property Name="sonaranalyzer-vbnet.pluginKey">vbnet</Property>
     <Property Name="sonar.java.jvmframeworkconfig.activate">true</Property>
     <Property Name="sonar.updatecenter.url">https://downloads.sonarsource.com/sonarqube/update/update-center.properties</Property>
-    <Property Name="sonar.core.startTime">5/7/2025 8:32:05 PM</Property>
-    <Property Name="sonar.core.id">147B411E-AZarzgWnBjWnCoRJoPmW</Property>
+    <Property Name="sonar.core.startTime">6/28/2025 7:34:13 PM</Property>
+    <Property Name="sonar.core.id">147B411E-AZe3Y7hmBwUXdrnk-9jz</Property>
   </ServerSettings>
   <LocalSettings>
     <Property Name="sonar.host.url">http://localhost:9000</Property>

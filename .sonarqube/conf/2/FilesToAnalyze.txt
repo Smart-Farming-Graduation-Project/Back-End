@@ -8,6 +8,7 @@
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Abstract/DashboredServices/ISoilServices.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Abstract/DashboredServices/IWeatherServices.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Abstract/EmbbeddedServices/ICosmosDbService.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Abstract/EmbbeddedServices/IRoverPhotoServices.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Abstract/IAuthenticationService.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Abstract/IAuthorizationService.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Abstract/IAzureBlobStorageService.cs
@@ -49,6 +50,7 @@
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Services/DashboredServices/WeatherServices.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Services/EmailService.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Services/EmbbeddedSerivces/CosmosDbService.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Services/EmbbeddedSerivces/RoverPhotoServices.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Services/ExternalAuthService.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Services/LeasingService.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Services/Services/NotificationServices.cs

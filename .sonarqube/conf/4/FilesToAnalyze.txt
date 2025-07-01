@@ -34,6 +34,7 @@
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.API/AiModels/mobilenet_model.onnx
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.API/AiModels/Rl_Model.onnx
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.API/AppDbContext.dgml
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.API/AppDbContext.sql
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.API/Croppilot.API.http
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.API/images/20250323_020813564.jpg
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.API/Properties/launchSettings.json

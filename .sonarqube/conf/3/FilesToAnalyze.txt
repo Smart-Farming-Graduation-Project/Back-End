@@ -108,6 +108,7 @@
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Core/Features/CosmosDb/Handlers/CosmseDbHnadlers.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Core/Features/CosmosDb/Models/AllReadingRequest.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Core/Features/CosmosDb/Models/GetIoTData.cs
+/home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Core/Features/CosmosDb/Models/GetLastReading.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Core/Features/CosmosDb/Models/GetReadingByDevice.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Core/Features/CosmosDb/Models/ReadingRequest.cs
 /home/mohamed-zonkol/Desktop/Graduation-Prroject/Back-End/Croppilot.Core/Features/CosmosDb/Result/GetIotDataResult.cs
