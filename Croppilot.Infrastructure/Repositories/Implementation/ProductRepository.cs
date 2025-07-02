@@ -20,7 +20,14 @@ public class ProductRepository(AppDbContext context) : GenericRepository<Product
             .Include(p => p.ProductImages)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
-
+    public void Detach(Product product)
+    {
+        var entry = _context.Entry(product);
+        if (entry != null)
+        {
+            entry.State = EntityState.Detached;
+        }
+    }
     //public override async Task<List<Product>> GetAll()
     //{
     //    return await _context.Products

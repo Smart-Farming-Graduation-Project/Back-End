@@ -20,7 +20,6 @@ namespace Croppilot.Services.Services
             var messageOptions = new CreateMessageOptions(new PhoneNumber(to))
             {
                 From = new PhoneNumber(configuration["Notification:Twilio:PhoneNumber"]),
-                MessagingServiceSid = configuration["Notification:Twilio:MessagingServiceSid"],
                 Body = message
             };
 
