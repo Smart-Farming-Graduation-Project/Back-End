@@ -57,7 +57,12 @@ public static class HealthCheckExtensions
             .AddCheck<StripeHealthCheck>(
                 name: "Stripe Payment API",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: ["payment", "stripe", "external", "api"]);
+                tags: ["payment", "stripe", "external", "api"])
+            .AddRedis(
+                configuration.GetSection("Redis:ConnectionString").Value ?? string.Empty,
+                name: "Redis Cache",
+                failureStatus: HealthStatus.Unhealthy,
+                tags: ["cache", "redis", "external", "database"]);
 
         return services;
     }

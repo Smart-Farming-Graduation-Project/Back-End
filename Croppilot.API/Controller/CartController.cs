@@ -1,4 +1,5 @@
-﻿using Croppilot.Core.Features.Carts.Command.Models;
+﻿using Croppilot.Core.Attributes;
+using Croppilot.Core.Features.Carts.Command.Models;
 using Croppilot.Core.Features.Carts.Query.Models;
 
 
@@ -29,10 +30,11 @@ public class CartController : AppControllerBase
     /// Retrieves the current user's shopping cart.
     /// </summary>
     /// <returns>An <see cref="IActionResult"/> containing the cart data or an error response.</returns>
-    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetCart"), SwaggerOperation(
+    [HttpGet("GetCart"), SwaggerOperation(
          Summary = "Retrieves the current user's cart",
          Description = "**Fetches the shopping cart for the authenticated user.**")]
     // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+    [Cache(timeToLiveSeconds: 300, varyByUser: true)] // Cache for 5 minutes, vary by user
     public async Task<IActionResult> GetCart()
     {
         var userId = User.GetUserId();
@@ -53,6 +55,7 @@ public class CartController : AppControllerBase
              ". Provide the product ID and optionally specify the quantity (default is 1) ," +
              " if you want to update quantity for any product exist in cart you should send productId and the new quantity.**")]
     // [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+    [CacheInvalidate(invalidateUserCache: true, "cart")]
     public async Task<IActionResult> AddProductToCart([FromRoute] int productId, [FromQuery] int quantity = 1)
     {
         var command = new AddProductToCartCommand
@@ -75,6 +78,7 @@ public class CartController : AppControllerBase
          Description =
              "**Removes the specified product from the user's shopping cart.Need the The ID of the product to remove from the cart.**")]
     // [EnableRateLimiting(RateLimiters.WriteOperationsLimit)]
+    [CacheInvalidate(invalidateUserCache: true, "cart")]
     public async Task<IActionResult> RemoveProductFromCart([FromRoute] int productId)
     {
         var command = new RemoveProductFromCartCommand

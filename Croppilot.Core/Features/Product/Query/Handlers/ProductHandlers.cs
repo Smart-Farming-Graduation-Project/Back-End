@@ -1,4 +1,5 @@
 ﻿using Croppilot.Core.Features.Product.Query.Models;
+using Croppilot.Core.Features.Product.Query.Result;
 using Croppilot.Date.Models;
 using Croppilot.Infrastructure.Comman;
 using Croppilot.Infrastructure.Extensions;
@@ -10,6 +11,9 @@ public class ProductHandlers(
 	IProductServices productServices,
 	IReviewService reviewService,
 	IWishlistService wishlistService,
+	IUserFavoritesService userFavoritesService,
+	ICacheService cacheService,
+	ICacheKeyGenerator cacheKeyGenerator,
 	IHttpContextAccessor httpContextAccessor)
 	: ResponseHandler,
 		IRequestHandler<GetAllProductQuery, Response<List<GetAllProductResponse>>>,
@@ -19,24 +23,22 @@ public class ProductHandlers(
 	public async Task<Response<List<GetAllProductResponse>>> Handle(GetAllProductQuery request,
 		CancellationToken cancellationToken)
 	{
-		var productList = await productServices.GetAll(includeProperties: ["Category", "ProductImages", "User"],
-			cancellationToken: cancellationToken);
-		var wishList = await GetWishList();
-		var productResult = productList.Adapt<List<GetAllProductResponse>>();
+		// Step 1: Get or cache global product data (without user-specific data)
+		var globalProducts = await GetOrCacheGlobalProductsAsync(cancellationToken);
 		
-		// Calculate average rating for each product
-		for (int i = 0; i < productResult.Count; i++)
+		// Step 2: Get user-specific favorite data
+		var userId = GetCurrentUserId();
+		var productIds = globalProducts.Select(p => p.ProductId).ToList();
+		var userFavorites = await userFavoritesService.GetUserFavoritesAsync(userId, productIds, cancellationToken);
+		
+		// Step 3: Merge global data with user-specific data
+		var finalProducts = globalProducts.Select(global => global.Adapt<GetAllProductResponse>() with
 		{
-			var averageRating = await reviewService.GetAverageRatingByProductIdAsync(productResult[i].ProductId, cancellationToken);
-			productResult[i] = productResult[i] with 
-			{ 
-				AverageRating = averageRating,
-				IsFavorite = IsFavorite(wishList, productResult[i].ProductId) 
-			};
-		}
+			IsFavorite = userFavorites.GetValueOrDefault(global.ProductId, false)
+		}).ToList();
 		
-		var result = Success(productResult);
-		result.Meta = new Dictionary<string, object> { { "count", productResult.Count } };
+		var result = Success(finalProducts);
+		result.Meta = new Dictionary<string, object> { { "count", finalProducts.Count } };
 
 		return result;
 	}
@@ -44,83 +46,146 @@ public class ProductHandlers(
 	public async Task<Response<GetProductByIdResponse>> Handle(GetProductByIdQuery request,
 		CancellationToken cancellationToken)
 	{
-		var product = await productServices.GetByIdAsync(request.Id, includeProperties: ["Category", "ProductImages", "User"],
-			cancellationToken: cancellationToken);
-
-		if (product is null)
+		// Step 1: Get or cache global product data (without user-specific data)
+		var globalProduct = await GetOrCacheGlobalProductByIdAsync(request.Id, cancellationToken);
+		
+		if (globalProduct is null)
 			return NotFound<GetProductByIdResponse>("This Product Is Not Found");
-		var wishList = await GetWishList();
-		var productResult = product.Adapt<GetProductByIdResponse>();
-		productResult = productResult with
+		
+		// Step 2: Get user-specific favorite data
+		var userId = GetCurrentUserId();
+		var isFavorite = await userFavoritesService.GetUserFavoriteAsync(userId, request.Id, cancellationToken);
+		
+		// Step 3: Merge global data with user-specific data
+		var finalProduct = globalProduct.Adapt<GetProductByIdResponse>() with
 		{
-			AverageRating = await reviewService.GetAverageRatingByProductIdAsync(product.Id, cancellationToken)
-		};
-		productResult = productResult with
-		{
-			IsFavorite = IsFavorite(wishList, product.Id)
+			IsFavorite = isFavorite
 		};
 
-		return Success(productResult);
+		return Success(finalProduct);
 	}
 
 	public async Task<Response<List<GetProductPaginatedResponse>>> Handle(GetProductPaginatedQuery request,
 		CancellationToken cancellationToken)
 	{
-		var wishList = await GetWishList();
-		Expression<Func<Date.Models.Product, GetProductPaginatedResponse>> expression = product =>
-			new GetProductPaginatedResponse(
-				product.Id,
-				product.Name,
-				product.Category.Name,
-				product.Description,
-				product.Price,
-				product.Availability.ToString(),
-				product.User.UserName,
-				false,
-				product.ProductImages.Select(img => img.ImageUrl).ToList()
-			);
-
-		var filteredQueryable = await productServices.FilterProductQueryable(request.OrderBy, request.Search);
-
-
-		var paginatedList = await filteredQueryable.Select(expression)
-			.ToPaginatedListAsync(request.PageNumber, request.PageSize);
-		paginatedList.Data = paginatedList.Data.Select(p =>
-			{
-				return p with
-				{
-					IsFavorite = IsFavorite(wishList, p.ProductId)
-				};
-			}).ToList();
+		// Step 1: Get or cache global product data (without user-specific data)
+		var globalPaginatedResult = await GetOrCacheGlobalProductsPaginatedAsync(request, cancellationToken);
+		
+		// Step 2: Get user-specific favorite data
+		var userId = GetCurrentUserId();
+		var productIds = globalPaginatedResult.Data.Select(p => p.ProductId).ToList();
+		var userFavorites = await userFavoritesService.GetUserFavoritesAsync(userId, productIds, cancellationToken);
+		
+		// Step 3: Merge global data with user-specific data
+		var finalProducts = globalPaginatedResult.Data.Select(global => global.Adapt<GetProductPaginatedResponse>() with
+		{
+			IsFavorite = userFavorites.GetValueOrDefault(global.ProductId, false)
+		}).ToList();
 
 		var productMeta = new Dictionary<string, object>
 		{
-			{"Current Page", paginatedList.CurrentPage},
-			{"Total Pages", paginatedList.TotalPages},
-			{"Page Size", paginatedList.PageSize},
-			{"Total Count", paginatedList.TotalCount},
-			{"Has Next", paginatedList.HasNextPage},
-			{"Has Previous", paginatedList.HasPreviousPage},
-			{"Meta", paginatedList.Meta},
-			{"Succeeded", paginatedList.Succeeded},
-			{"Message", paginatedList.Messages}
+			{"Current Page", globalPaginatedResult.CurrentPage},
+			{"Total Pages", globalPaginatedResult.TotalPages},
+			{"Page Size", globalPaginatedResult.PageSize},
+			{"Total Count", globalPaginatedResult.TotalCount},
+			{"Has Next", globalPaginatedResult.HasNextPage},
+			{"Has Previous", globalPaginatedResult.HasPreviousPage},
+			{"Meta", globalPaginatedResult.Meta},
+			{"Succeeded", globalPaginatedResult.Succeeded},
+			{"Message", globalPaginatedResult.Messages}
 		};
 
-		return Success(paginatedList.Data, meta: productMeta);
+		return Success(finalProducts, meta: productMeta);
 	}
 
-	private async Task<Wishlist?> GetWishList()
+	private async Task<List<GlobalProductResponse>> GetOrCacheGlobalProductsAsync(CancellationToken cancellationToken)
 	{
-		var userId = httpContextAccessor?.HttpContext?.User.GetUserId();
-		return await wishlistService.GetWishlistByUserIdAsync(userId);
+		var cacheKey = cacheKeyGenerator.GenerateCollectionKey("global-products");
+		
+		return await cacheService.GetOrSetAsync(
+			cacheKey,
+			async () =>
+			{
+				var productList = await productServices.GetAll(
+					includeProperties: ["Category", "ProductImages", "User"],
+					cancellationToken: cancellationToken);
+				
+				var globalProducts = productList.Adapt<List<GlobalProductResponse>>();
+				
+				// Calculate average rating for each product
+				for (int i = 0; i < globalProducts.Count; i++)
+				{
+					var averageRating = await reviewService.GetAverageRatingByProductIdAsync(
+						globalProducts[i].ProductId, cancellationToken);
+					globalProducts[i] = globalProducts[i] with { AverageRating = averageRating };
+				}
+				
+				return globalProducts;
+			},
+			TimeSpan.FromMinutes(30), // Cache global products for 30 minutes
+			cancellationToken);
 	}
 
-	private bool IsFavorite(Wishlist? wishlist, int productId)
+	private async Task<GlobalProductByIdResponse?> GetOrCacheGlobalProductByIdAsync(int productId, CancellationToken cancellationToken)
 	{
-		if (wishlist?.WishlistItems is not null)
-		{
-			return wishlist.WishlistItems.Any(wi => wi.ProductId == productId);
-		}
-		return false;
+		var cacheKey = cacheKeyGenerator.GenerateKey("global-product", productId);
+		
+		return await cacheService.GetOrSetAsync(
+			cacheKey,
+			async () =>
+			{
+				var product = await productServices.GetByIdAsync(productId,
+					includeProperties: ["Category", "ProductImages", "User"],
+					cancellationToken: cancellationToken);
+
+				if (product is null) return null;
+				
+				var globalProduct = product.Adapt<GlobalProductByIdResponse>();
+				var averageRating = await reviewService.GetAverageRatingByProductIdAsync(product.Id, cancellationToken);
+				
+				return globalProduct with { AverageRating = averageRating };
+			},
+			TimeSpan.FromHours(1), // Cache individual products for 1 hour
+			cancellationToken);
+	}
+
+	private async Task<PaginatedResult<GlobalProductPaginatedResponse>> GetOrCacheGlobalProductsPaginatedAsync(
+		GetProductPaginatedQuery request, CancellationToken cancellationToken)
+	{
+		// Create cache key based on pagination parameters
+		var cacheKey = cacheKeyGenerator.GeneratePaginatedKey(
+			"global-products", 
+			request.PageNumber, 
+			request.PageSize,
+			$"orderBy:{request.OrderBy}",
+			$"search:{request.Search ?? ""}");
+		
+		return await cacheService.GetOrSetAsync(
+			cacheKey,
+			async () =>
+			{
+				Expression<Func<Date.Models.Product, GlobalProductPaginatedResponse>> expression = product =>
+					new GlobalProductPaginatedResponse(
+						product.Id,
+						product.Name,
+						product.Category.Name,
+						product.Description,
+						product.Price,
+						product.Availability.ToString(),
+						product.User.UserName,
+						product.ProductImages.Select(img => img.ImageUrl).ToList()
+					);
+
+				var filteredQueryable = await productServices.FilterProductQueryable(request.OrderBy, request.Search);
+				return await filteredQueryable.Select(expression)
+					.ToPaginatedListAsync(request.PageNumber, request.PageSize);
+			},
+			TimeSpan.FromMinutes(15), // Cache paginated results for 15 minutes
+			cancellationToken);
+	}
+
+	private string GetCurrentUserId()
+	{
+		return httpContextAccessor?.HttpContext?.User.GetUserId() ?? string.Empty;
 	}
 }
