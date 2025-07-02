@@ -5,7 +5,7 @@ namespace Croppilot.API.Controller;
 
 public class OrderController(IMediator mediator) : AppControllerBase
 {
-    [ResponseCache(CacheProfileName = "Default"), HttpGet("OrdersList")]
+    [HttpGet("OrdersList")]
     // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetOrders()
     {
@@ -13,7 +13,7 @@ public class OrderController(IMediator mediator) : AppControllerBase
         return NewResult(response);
     }
 
-    [ResponseCache(CacheProfileName = "Default"), HttpGet("{id}")]
+    [HttpGet("{id}")]
     // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetOrderById([FromRoute] int id)
     {
@@ -21,7 +21,7 @@ public class OrderController(IMediator mediator) : AppControllerBase
         return NewResult(response);
     }
 
-    [ResponseCache(CacheProfileName = "Default"), HttpGet("user/{userId}")]
+    [HttpGet("user/{userId}")]
     // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     public async Task<IActionResult> GetUserOrders([FromRoute] string userId)
     {

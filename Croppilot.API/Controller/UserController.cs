@@ -7,27 +7,27 @@ namespace Croppilot.API.Controller;
 [Route("api/[controller]"), ApiController]
 public class UserController(IMediator mediator) : AppControllerBase
 {
-	[ResponseCache(CacheProfileName = "NoCache"), HttpGet("GetUsers"), Authorize(Policy = nameof(UserRoleEnum.Admin))]
+	    [HttpGet("GetUsers"), Authorize(Policy = nameof(UserRoleEnum.Admin))]
 	public async Task<IActionResult> GetPaginatedUsers([FromQuery] int pageNumber, int pageSize)
 	{
 		return NewResult(await mediator.Send(new GetUserPaginatedQuery(pageNumber, pageSize)));
 	}
 
-	[ResponseCache(CacheProfileName = "Default"), HttpGet("GetById/{id:guid}"), Authorize(Policy = nameof(UserRoleEnum.User))]
+	    [HttpGet("GetById/{id:guid}"), Authorize(Policy = nameof(UserRoleEnum.User))]
 	public async Task<IActionResult> GetById(string id)
 	{
 		var response = await mediator.Send(new GetUserByIdQuery(id));
 		return NewResult(response);
 	}
 
-	[ResponseCache(CacheProfileName = "Default"), HttpGet("GetByName/{userName:alpha}"), Authorize(Policy = nameof(UserRoleEnum.User))]
+	    [HttpGet("GetByName/{userName:alpha}"), Authorize(Policy = nameof(UserRoleEnum.User))]
 	public async Task<IActionResult> GetByName(string userName)
 	{
 		var response = await mediator.Send(new GetUserByUserNameQuery(userName));
 		return NewResult(response);
 	}
 
-	[ResponseCache(CacheProfileName = "Default"), HttpGet("user-roles/Get/{userName:alpha}"), Authorize(Policy = nameof(UserRoleEnum.Admin))]
+	    [HttpGet("user-roles/Get/{userName:alpha}"), Authorize(Policy = nameof(UserRoleEnum.Admin))]
 	public async Task<IActionResult> GetUserRoles(string userName)
 	{
 		return NewResult(await mediator.Send(new GetUserRolesQuery() { UserName = userName }));

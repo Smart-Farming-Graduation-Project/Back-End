@@ -23,7 +23,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             maxRetryDelay: TimeSpan.FromSeconds(10),
             errorNumbersToAdd: null)));
 
-builder.Services.AddResponseCaching();
+
 
 //inject dependencies
 builder.Services.AddInfrastructureDependencies(builder.Configuration).AddApiDependencies(builder.Configuration)

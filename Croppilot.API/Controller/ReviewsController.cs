@@ -7,7 +7,7 @@ public class ReviewsController(IMediator mediator)
     : AppControllerBase
 {
     // This endpoint is available to anyone.
-    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetReviews/{productId}"), AllowAnonymous, SwaggerOperation(
+    [HttpGet("GetReviews/{productId}"), AllowAnonymous, SwaggerOperation(
          Summary = "Gets reviews for a product",
          Description = "**Retrieves all reviews for a specified product.**")]
     // [EnableRateLimiting(RateLimiters.SocialEndpointsLimit)]
