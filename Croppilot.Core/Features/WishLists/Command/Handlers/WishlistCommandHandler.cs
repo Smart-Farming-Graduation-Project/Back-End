@@ -3,7 +3,10 @@ using Croppilot.Date.Models;
 
 namespace Croppilot.Core.Features.WishLists.Command.Handlers;
 
-public class WishlistCommandHandler(IWishlistService wishlistService, IProductServices productServices)
+public class WishlistCommandHandler(
+    IWishlistService wishlistService, 
+    IProductServices productServices,
+    IUserFavoritesService userFavoritesService)
     : ResponseHandler,
         IRequestHandler<AddProductToWishlistCommand, Response<string>>,
         IRequestHandler<RemoveProductFromWishlistCommand, Response<string>>
@@ -37,9 +40,14 @@ public class WishlistCommandHandler(IWishlistService wishlistService, IProductSe
         else
             result = await wishlistService.UpdateWishlistAsync(wishlist, cancellationToken);
 
-        return result == OperationResult.Success
-            ? Success<string>("Product added to wishlist successfully.")
-            : BadRequest<string>("Failed to add product to wishlist.");
+        if (result == OperationResult.Success)
+        {
+            // Invalidate user's favorites cache since their wishlist changed
+            await userFavoritesService.InvalidateUserFavoritesAsync(command.UserId, cancellationToken);
+            return Success<string>("Product added to wishlist successfully.");
+        }
+        
+        return BadRequest<string>("Failed to add product to wishlist.");
     }
 
     public async Task<Response<string>> Handle(RemoveProductFromWishlistCommand command,
@@ -57,9 +65,14 @@ public class WishlistCommandHandler(IWishlistService wishlistService, IProductSe
 
         var result = await wishlistService.UpdateWishlistAsync(wishlist, cancellationToken);
         
-        return result == OperationResult.Success
-            ? Success<string>("Product removed from wishlist successfully.")
-            : BadRequest<string>("Failed to remove product from wishlist.");
+        if (result == OperationResult.Success)
+        {
+            // Invalidate user's favorites cache since their wishlist changed
+            await userFavoritesService.InvalidateUserFavoritesAsync(command.UserId, cancellationToken);
+            return Success<string>("Product removed from wishlist successfully.");
+        }
+        
+        return BadRequest<string>("Failed to remove product from wishlist.");
     }
 
     private async Task<bool> IsProductExist(int productId, CancellationToken cancellationToken)
