@@ -1,4 +1,5 @@
-﻿using Croppilot.Core.Features.Product.Command.Models;
+﻿using Croppilot.Core.Attributes;
+using Croppilot.Core.Features.Product.Command.Models;
 using Croppilot.Core.Features.Product.Query.Models;
 
 namespace Croppilot.API.Controller;
@@ -31,6 +32,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Description = "**Fetches a complete list of products.**")]
     // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     [AllowAnonymous]
+    [Cache(timeToLiveSeconds: 1800)] // Cache for 30 minutes
     public async Task<IActionResult> GetProducts()
     {
         var response = await mediator.Send(new GetAllProductQuery());
@@ -48,6 +50,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
              "Frontend: Supply pagination parameters (e.g., page number, page size) via query parameters**")]
     [AllowAnonymous]
     // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+    [Cache(timeToLiveSeconds: 900)] // Cache for 15 minutes
     public async Task<IActionResult> Paginated([FromQuery] GetProductPaginatedQuery query)
     {
         var response = await mediator.Send(query);
@@ -64,6 +67,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
              "**Fetches the details of a product using its unique identifier. Frontend: Provide the product's ID in the route**")]
     [AllowAnonymous]
     // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+    [Cache(timeToLiveSeconds: 3600)] // Cache for 1 hour
     public async Task<IActionResult> GetProductById([FromRoute] int id)
     {
         var response = await mediator.Send(new GetProductByIdQuery(id));
@@ -79,6 +83,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Description =
              "**Adds a new product with the provided details.Frontend: Provide product details (e.g., name, description, price, etc.) in the request body.**")]
     // [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
+    [CacheInvalidate("product", "category")]
     public async Task<IActionResult> Create(AddProductCommand command)
     {
         var response = await mediator.Send(command);
@@ -93,6 +98,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Summary = "Updates an existing product",
          Description = "**Modifies the details of an existing product.**")]
     // [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
+    [CacheInvalidate("product", "category")]
     public async Task<IActionResult> Edit(EditProductCommand command)
     {
         var response = await mediator.Send(command);
@@ -108,6 +114,7 @@ public class ProductController(IMediator mediator) : AppControllerBase
          Description = "**Removes a product from the system using its unique identifier." +
                        "Frontend: Provide the product's ID in the route to delete the product.**")]
     // [EnableRateLimiting(RateLimiters.AdminEndpointsLimit)]
+    [CacheInvalidate("product", "category")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var response = await mediator.Send(new DeleteProductCommand(id));
