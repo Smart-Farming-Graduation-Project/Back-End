@@ -129,20 +129,16 @@ public class ProductServices(
         throw new NotImplementedException();
     }
 
-	private string ExtractFileNameFromUrl(string url)
-	{
-		return Path.GetFileName(new Uri(url).AbsolutePath);
-	}
 
-	public Task<IQueryable<Product>> GetProductsByUserIdAsync(string userId, string[]? includeProperties = null, CancellationToken cancellationToken = default)
-	{
-		var products = unit.ProductRepository.GetForPaginationAsync(
-			x => x.UserId == userId,
-			includeProperties: includeProperties,
-			false
-		);
-		return products;
-	}
+    public Task<IQueryable<Product>> GetProductsByUserIdAsync(string userId, string[]? includeProperties = null, CancellationToken cancellationToken = default)
+    {
+        var products = unit.ProductRepository.GetForPaginationAsync(
+            x => x.UserId == userId,
+            includeProperties: includeProperties,
+            false
+        );
+        return products;
+    }
     private string ExtractFileNameFromUrl(string url)
     {
         return Path.GetFileName(new Uri(url).AbsolutePath);
