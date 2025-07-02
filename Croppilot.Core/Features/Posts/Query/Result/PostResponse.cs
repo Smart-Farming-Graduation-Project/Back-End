@@ -9,4 +9,5 @@ public class PostResponse
     public int VoteCount { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public int UserVoteStatus { get; set; } // 1 for upvote, 0 for no vote, -1 for downvote
 }
