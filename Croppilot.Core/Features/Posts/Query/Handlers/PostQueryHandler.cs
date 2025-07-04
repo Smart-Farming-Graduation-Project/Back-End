@@ -8,94 +8,72 @@ namespace Croppilot.Core.Features.Posts.Query.Handlers;
 public class PostQueryHandler(
     IPostService postService,
     IHttpContextAccessor contextAccessor,
-    IVoteRepository voteRepository,
-    IUserVoteService userVoteService,
-    ICacheService cacheService,
-    ICacheKeyGenerator cacheKeyGenerator) : ResponseHandler,
+    IVoteRepository voteRepository) : ResponseHandler,
     IRequestHandler<GetPostsQuery, Response<List<PostResponse>>>,
     IRequestHandler<GetPostByIdQuery, Response<PostResponse>>
 {
     public async Task<Response<List<PostResponse>>> Handle(GetPostsQuery request, CancellationToken cancellationToken)
     {
-        // Step 1: Get or cache global post data (without user-specific data)
-        var globalPosts = await GetOrCacheGlobalPostsAsync(cancellationToken);
-        
-        if (globalPosts.Count == 0)
+        var posts = await postService.GetAllPostsAsync(cancellationToken);
+        if (posts.Count == 0)
             return NotFound<List<PostResponse>>("No posts found.");
 
-        // Step 2: Get user-specific vote data
-        var userId = GetCurrentUserId();
-        var postIds = globalPosts.Select(p => p.Id).ToList();
-        var userVotes = await userVoteService.GetUserVotesAsync(userId, postIds, cancellationToken);
+        // Get current user ID (null if not authenticated)
+        var currentUserId = contextAccessor.HttpContext?.User.GetUserId();
         
-        // Step 3: Merge global data with user-specific data
-        var finalPosts = globalPosts.Select(global =>
+        // Get user votes for all posts in one query to avoid N+1 queries
+        Dictionary<int, int> userVotes = new();
+        if (!string.IsNullOrEmpty(currentUserId))
         {
-            var postResponse = global.Adapt<PostResponse>();
-            postResponse.UserVoteStatus = userVotes.GetValueOrDefault(global.Id, 0);
-            return postResponse;
+            var postIds = posts.Select(p => p.Id).ToList();
+            var votes = await voteRepository.GetUserVotesForPostsAsync(currentUserId, postIds, cancellationToken);
+            userVotes = votes.ToDictionary(v => v.TargetId, v => v.VoteType);
+        }
+
+        var response = posts.Select(p => new PostResponse
+        {
+            Id = p.Id,
+            UserId = p.UserId,
+            Title = p.Title,
+            Content = p.Content,
+            VoteCount = p.VoteCount,
+            CreatedAt = p.CreatedAt,
+            UpdatedAt = p.UpdatedAt,
+            UserVoteStatus = userVotes.ContainsKey(p.Id) ? userVotes[p.Id] : 0
         }).ToList();
 
-        var result = Success(finalPosts);
-        result.Meta = new Dictionary<string, object> { { "count", finalPosts.Count } };
-
-        return result;
+        return Success(response);
     }
 
     public async Task<Response<PostResponse>> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
     {
-        // Step 1: Get or cache global post data (without user-specific data)
-        var globalPost = await GetOrCacheGlobalPostByIdAsync(request.Id, cancellationToken);
-        
-        if (globalPost is null)
+        var post = await postService.GetPostByIdAsync(request.Id, cancellationToken);
+        if (post == null)
             return NotFound<PostResponse>("Post not found.");
 
-        // Step 2: Get user-specific vote data
-        var userId = GetCurrentUserId();
-        var userVoteStatus = await userVoteService.GetUserVoteAsync(userId, request.Id, cancellationToken);
+        // Get current user ID (null if not authenticated)
+        var currentUserId = contextAccessor.HttpContext?.User.GetUserId();
+        var userVoteStatus = 0;
         
-        // Step 3: Merge global data with user-specific data
-        var finalPost = globalPost.Adapt<PostResponse>();
-        finalPost.UserVoteStatus = userVoteStatus;
+        // Get user's vote for this specific post
+        if (!string.IsNullOrEmpty(currentUserId))
+        {
+            var vote = await voteRepository.GetVoteByUserAndTargetAsync(currentUserId, request.Id, "post", cancellationToken);
+            userVoteStatus = vote?.VoteType ?? 0;
+        }
 
-        return Success(finalPost);
-    }
+        var response = new PostResponse
+        {
+            Id = post.Id,
+            UserId = post.UserId,
+            Title = post.Title,
+            Content = post.Content,
+            VoteCount = post.VoteCount,
+            CreatedAt = post.CreatedAt,
+            UpdatedAt = post.UpdatedAt,
+            UserVoteStatus = userVoteStatus
+        };
 
-    private async Task<List<GlobalPostResponse>> GetOrCacheGlobalPostsAsync(CancellationToken cancellationToken)
-    {
-        var cacheKey = cacheKeyGenerator.GenerateCollectionKey("global-posts");
-        
-        return await cacheService.GetOrSetAsync(
-            cacheKey,
-            async () =>
-            {
-                var posts = await postService.GetAllPostsAsync(cancellationToken);
-                return posts.Adapt<List<GlobalPostResponse>>();
-            },
-            TimeSpan.FromMinutes(30), // Cache global posts for 30 minutes
-            cancellationToken);
-    }
-
-    private async Task<GlobalPostByIdResponse?> GetOrCacheGlobalPostByIdAsync(int postId, CancellationToken cancellationToken)
-    {
-        var cacheKey = cacheKeyGenerator.GenerateKey("global-post", postId);
-        
-        return await cacheService.GetOrSetAsync(
-            cacheKey,
-            async () =>
-            {
-                var post = await postService.GetPostByIdAsync(postId, cancellationToken);
-                
-                if (post is null) return null;
-                
-                return post.Adapt<GlobalPostByIdResponse>();
-            },
-            TimeSpan.FromHours(1), // Cache individual posts for 1 hour
-            cancellationToken);
-    }
-
-    private string GetCurrentUserId()
-    {
-        return contextAccessor?.HttpContext?.User.GetUserId() ?? string.Empty;
+        return Success(response);
     }
 }
