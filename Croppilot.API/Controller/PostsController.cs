@@ -49,6 +49,23 @@ public class PostsController(IMediator mediator) : AppControllerBase
     }
 
     /// <summary>
+    /// Retrieves all posts created by a specific user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user whose posts to retrieve.</param>
+    /// <returns>
+    /// An <see cref="IActionResult"/> containing a list of posts created by the user or an error response.
+    /// </returns>
+    [HttpGet("GetPostsByUser/{userId}"), AllowAnonymous, SwaggerOperation(
+         Summary = "Retrieve posts by user",
+         Description = "**Fetches all posts created by a specific user.**")]
+    public async Task<IActionResult> GetPostsByUserId([FromRoute] string userId)
+    {
+        var query = new GetPostsByUserIdQuery { UserId = userId };
+        var response = await mediator.Send(query);
+        return NewResult(response);
+    }
+
+    /// <summary>
     /// Creates a new post.
     /// </summary>
     /// <param name="command">The command object containing the details of the post to create.</param>
