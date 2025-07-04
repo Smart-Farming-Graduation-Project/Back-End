@@ -27,8 +27,9 @@ public class PostCommandHandler(
         
         if (result == OperationResult.Success)
         {
-            // Invalidate global posts cache since a new post was added
+            // Invalidate global posts cache and user-specific caches since a new post was added
             await InvalidateGlobalPostsCacheAsync(cancellationToken);
+            await InvalidateUserPostsCacheAsync(userId, cancellationToken);
             return Success<string>("Post created successfully.");
         }
         
@@ -54,8 +55,8 @@ public class PostCommandHandler(
         
         if (result == OperationResult.Success)
         {
-            // Invalidate both individual post cache and global posts cache
-            await InvalidatePostCacheAsync(command.Id, cancellationToken);
+            // Invalidate both individual post cache and global/user-specific caches
+            await InvalidatePostCacheAsync(command.Id, userId, cancellationToken);
             return Success<string>("Post updated successfully.");
         }
         
@@ -74,8 +75,8 @@ public class PostCommandHandler(
         
         if (result == OperationResult.Success)
         {
-            // Invalidate both individual post cache and global posts cache
-            await InvalidatePostCacheAsync(command.Id, cancellationToken);
+            // Invalidate both individual post cache and global/user-specific caches
+            await InvalidatePostCacheAsync(command.Id, userId, cancellationToken);
             return Success<string>("Post deleted successfully.");
         }
         
@@ -101,9 +102,27 @@ public class PostCommandHandler(
     }
 
     /// <summary>
-    /// Invalidates both individual post cache and global posts cache
+    /// Invalidates user-specific posts cache for a user
     /// </summary>
-    private async Task InvalidatePostCacheAsync(int postId, CancellationToken cancellationToken)
+    private async Task InvalidateUserPostsCacheAsync(string userId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            // Invalidate user's posts cache
+            var userPostsCacheKey = cacheKeyGenerator.GenerateUserKey(userId, "user-posts");
+            await cacheService.RemoveAsync(userPostsCacheKey, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            // Log the error but don't fail the post operation
+            // Logger would be needed here in a full implementation
+        }
+    }
+
+    /// <summary>
+    /// Invalidates individual post cache, global posts cache, and user-specific caches
+    /// </summary>
+    private async Task InvalidatePostCacheAsync(int postId, string userId, CancellationToken cancellationToken)
     {
         try
         {
@@ -111,8 +130,11 @@ public class PostCommandHandler(
             var postCacheKey = cacheKeyGenerator.GenerateKey("global-post", postId);
             await cacheService.RemoveAsync(postCacheKey, cancellationToken);
             
-            // Also invalidate global posts cache
+            // Invalidate global posts cache
             await InvalidateGlobalPostsCacheAsync(cancellationToken);
+            
+            // Invalidate user's posts cache
+            await InvalidateUserPostsCacheAsync(userId, cancellationToken);
         }
         catch (Exception ex)
         {
