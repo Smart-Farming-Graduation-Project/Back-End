@@ -1,6 +1,9 @@
 namespace Croppilot.Core.Features.Posts.Query.Result;
 
-public record GlobalPostByIdResponse(
+/// <summary>
+/// Global post data without user-specific fields - used for caching core post information and single post retrieval
+/// </summary>
+public record GlobalPostResponse(
     int Id,
     string UserId,
     string Title,
