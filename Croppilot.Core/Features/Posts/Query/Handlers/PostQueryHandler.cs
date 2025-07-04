@@ -10,7 +10,8 @@ public class PostQueryHandler(
     IHttpContextAccessor contextAccessor,
     IVoteRepository voteRepository) : ResponseHandler,
     IRequestHandler<GetPostsQuery, Response<List<PostResponse>>>,
-    IRequestHandler<GetPostByIdQuery, Response<PostResponse>>
+    IRequestHandler<GetPostByIdQuery, Response<PostResponse>>,
+    IRequestHandler<GetPostsByUserIdQuery, Response<List<PostResponse>>>
 {
     public async Task<Response<List<PostResponse>>> Handle(GetPostsQuery request, CancellationToken cancellationToken)
     {
@@ -73,6 +74,39 @@ public class PostQueryHandler(
             UpdatedAt = post.UpdatedAt,
             UserVoteStatus = userVoteStatus
         };
+
+        return Success(response);
+    }
+
+    public async Task<Response<List<PostResponse>>> Handle(GetPostsByUserIdQuery request, CancellationToken cancellationToken)
+    {
+        var posts = await postService.GetPostsByUserIdAsync(request.UserId, cancellationToken);
+        if (posts.Count == 0)
+            return NotFound<List<PostResponse>>("No posts found for this user.");
+
+        // Get current user ID (null if not authenticated)
+        var currentUserId = contextAccessor.HttpContext?.User.GetUserId();
+        
+        // Get user votes for all posts in one query to avoid N+1 queries
+        Dictionary<int, int> userVotes = new();
+        if (!string.IsNullOrEmpty(currentUserId))
+        {
+            var postIds = posts.Select(p => p.Id).ToList();
+            var votes = await voteRepository.GetUserVotesForPostsAsync(currentUserId, postIds, cancellationToken);
+            userVotes = votes.ToDictionary(v => v.TargetId, v => v.VoteType);
+        }
+
+        var response = posts.Select(p => new PostResponse
+        {
+            Id = p.Id,
+            UserId = p.UserId,
+            Title = p.Title,
+            Content = p.Content,
+            VoteCount = p.VoteCount,
+            CreatedAt = p.CreatedAt,
+            UpdatedAt = p.UpdatedAt,
+            UserVoteStatus = userVotes.ContainsKey(p.Id) ? userVotes[p.Id] : 0
+        }).ToList();
 
         return Success(response);
     }

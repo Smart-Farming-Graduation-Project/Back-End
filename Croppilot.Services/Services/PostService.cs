@@ -20,6 +20,11 @@ public class PostService(IPostRepository postRepository, ICommentRepository comm
         return await postRepository.GetAsync(p => p.Id == id, cancellationToken: cancellationToken);
     }
 
+    public async Task<List<Post>> GetPostsByUserIdAsync(string userId, CancellationToken cancellationToken = default)
+    {
+        return await postRepository.GetAllAsync(p => p.UserId == userId, cancellationToken: cancellationToken);
+    }
+
     public async Task<OperationResult> UpdatePostAsync(Post post, CancellationToken cancellationToken = default)
     {
         var currentPost = await postRepository.GetAsync(p => p.Id == post.Id, cancellationToken: cancellationToken);
