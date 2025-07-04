@@ -40,7 +40,9 @@ public class PostQueryHandler(
             VoteCount = p.VoteCount,
             CreatedAt = p.CreatedAt,
             UpdatedAt = p.UpdatedAt,
-            UserVoteStatus = userVotes.ContainsKey(p.Id) ? userVotes[p.Id] : 0
+            UserVoteStatus = userVotes.ContainsKey(p.Id) ? userVotes[p.Id] : 0,
+            UserName = $"{p.User.FirstName} {p.User.LastName}",
+            UserImageUrl = p.User.ImageUrl
         }).ToList();
 
         return Success(response);
@@ -72,7 +74,9 @@ public class PostQueryHandler(
             VoteCount = post.VoteCount,
             CreatedAt = post.CreatedAt,
             UpdatedAt = post.UpdatedAt,
-            UserVoteStatus = userVoteStatus
+            UserVoteStatus = userVoteStatus,
+            UserName = $"{post.User.FirstName} {post.User.LastName}",
+            UserImageUrl = post.User.ImageUrl
         };
 
         return Success(response);
@@ -105,7 +109,9 @@ public class PostQueryHandler(
             VoteCount = p.VoteCount,
             CreatedAt = p.CreatedAt,
             UpdatedAt = p.UpdatedAt,
-            UserVoteStatus = userVotes.ContainsKey(p.Id) ? userVotes[p.Id] : 0
+            UserVoteStatus = userVotes.ContainsKey(p.Id) ? userVotes[p.Id] : 0,
+            UserName = $"{p.User.FirstName} {p.User.LastName}",
+            UserImageUrl = p.User.ImageUrl
         }).ToList();
 
         return Success(response);

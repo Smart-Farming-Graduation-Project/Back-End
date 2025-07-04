@@ -15,7 +15,9 @@ public class PostQueryMapping : IRegister
             .Map(dest => dest.VoteCount, src => src.VoteCount)
             .Map(dest => dest.CreatedAt, src => src.CreatedAt)
             .Map(dest => dest.UpdatedAt, src => src.UpdatedAt)
-            .Map(dest => dest.UserVoteStatus, src => 0); // Will be set separately
+            .Map(dest => dest.UserVoteStatus, src => 0) // Will be set separately
+            .Map(dest => dest.UserName, src => $"{src.User.FirstName} {src.User.LastName}")
+            .Map(dest => dest.UserImageUrl, src => src.User.ImageUrl);
 
         // Mapping for GlobalPostResponse from Post (without user-specific data)
         // Used for caching core post information and single post retrieval
@@ -26,7 +28,9 @@ public class PostQueryMapping : IRegister
             .Map(dest => dest.Content, src => src.Content)
             .Map(dest => dest.VoteCount, src => src.VoteCount)
             .Map(dest => dest.CreatedAt, src => src.CreatedAt)
-            .Map(dest => dest.UpdatedAt, src => src.UpdatedAt);
+            .Map(dest => dest.UpdatedAt, src => src.UpdatedAt)
+            .Map(dest => dest.UserName, src => $"{src.User.FirstName} {src.User.LastName}")
+            .Map(dest => dest.UserImageUrl, src => src.User.ImageUrl);
 
         // Helper mapping for merging global and user-specific data
         config.NewConfig<GlobalPostResponse, PostResponse>()
@@ -37,6 +41,8 @@ public class PostQueryMapping : IRegister
             .Map(dest => dest.VoteCount, src => src.VoteCount)
             .Map(dest => dest.CreatedAt, src => src.CreatedAt)
             .Map(dest => dest.UpdatedAt, src => src.UpdatedAt)
-            .Map(dest => dest.UserVoteStatus, src => 0); // Will be set separately
+            .Map(dest => dest.UserVoteStatus, src => 0) // Will be set separately
+            .Map(dest => dest.UserName, src => src.UserName)
+            .Map(dest => dest.UserImageUrl, src => src.UserImageUrl);
     }
 } 

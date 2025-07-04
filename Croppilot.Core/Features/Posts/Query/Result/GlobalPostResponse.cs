@@ -6,9 +6,11 @@ namespace Croppilot.Core.Features.Posts.Query.Result;
 public record GlobalPostResponse(
     int Id,
     string UserId,
+    string UserName,
+    string UserImageUrl,
     string Title,
     string Content,
     int VoteCount,
     DateTime CreatedAt,
     DateTime? UpdatedAt
-); 
+);
