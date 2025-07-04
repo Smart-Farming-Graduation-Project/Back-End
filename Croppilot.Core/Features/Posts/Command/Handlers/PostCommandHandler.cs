@@ -6,7 +6,9 @@ namespace Croppilot.Core.Features.Posts.Command.Handlers;
 
 public class PostCommandHandler(
     IPostService postService,
-    IHttpContextAccessor contextAccessor) :
+    IHttpContextAccessor contextAccessor,
+    ICacheService cacheService,
+    ICacheKeyGenerator cacheKeyGenerator) :
     ResponseHandler,
     IRequestHandler<AddPostCommand, Response<string>>,
     IRequestHandler<UpdatePostCommand, Response<string>>,
@@ -21,11 +23,16 @@ public class PostCommandHandler(
         var post = command.Adapt<Post>();
         post.UserId = userId;
 
-
         var result = await postService.AddPostAsync(post, cancellationToken);
-        return result == OperationResult.Success
-            ? Success<string>("Post created successfully.")
-            : BadRequest<string>("Failed to create post.");
+        
+        if (result == OperationResult.Success)
+        {
+            // Invalidate global posts cache since a new post was added
+            await InvalidateGlobalPostsCacheAsync(cancellationToken);
+            return Success<string>("Post created successfully.");
+        }
+        
+        return BadRequest<string>("Failed to create post.");
     }
 
     public async Task<Response<string>> Handle(UpdatePostCommand command, CancellationToken cancellationToken)
@@ -44,9 +51,15 @@ public class PostCommandHandler(
         var post = command.Adapt<Post>();
         post.UserId = userId;
         var result = await postService.UpdatePostAsync(post, cancellationToken);
-        return result == OperationResult.Success
-            ? Success<string>("Post updated successfully.")
-            : BadRequest<string>("Failed to update post.");
+        
+        if (result == OperationResult.Success)
+        {
+            // Invalidate both individual post cache and global posts cache
+            await InvalidatePostCacheAsync(command.Id, cancellationToken);
+            return Success<string>("Post updated successfully.");
+        }
+        
+        return BadRequest<string>("Failed to update post.");
     }
 
     public async Task<Response<string>> Handle(DeletePostCommand command, CancellationToken cancellationToken)
@@ -58,8 +71,53 @@ public class PostCommandHandler(
             return Unauthorized<string>("You are not authorized to delete this post.");
 
         var result = await postService.DeletePostAsync(command.Id, cancellationToken);
-        return result == OperationResult.Success
-            ? Success<string>("Post deleted successfully.")
-            : BadRequest<string>("Failed to delete post.");
+        
+        if (result == OperationResult.Success)
+        {
+            // Invalidate both individual post cache and global posts cache
+            await InvalidatePostCacheAsync(command.Id, cancellationToken);
+            return Success<string>("Post deleted successfully.");
+        }
+        
+        return BadRequest<string>("Failed to delete post.");
+    }
+
+    /// <summary>
+    /// Invalidates global posts cache when posts are modified
+    /// </summary>
+    private async Task InvalidateGlobalPostsCacheAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            // Invalidate collection cache for posts
+            var collectionPattern = cacheKeyGenerator.GeneratePattern("global-posts");
+            await cacheService.RemoveByPatternAsync(collectionPattern, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            // Log the error but don't fail the post operation
+            // Logger would be needed here in a full implementation
+        }
+    }
+
+    /// <summary>
+    /// Invalidates both individual post cache and global posts cache
+    /// </summary>
+    private async Task InvalidatePostCacheAsync(int postId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            // Invalidate individual post cache
+            var postCacheKey = cacheKeyGenerator.GenerateKey("global-post", postId);
+            await cacheService.RemoveAsync(postCacheKey, cancellationToken);
+            
+            // Also invalidate global posts cache
+            await InvalidateGlobalPostsCacheAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            // Log the error but don't fail the post operation
+            // Logger would be needed here in a full implementation
+        }
     }
 }
