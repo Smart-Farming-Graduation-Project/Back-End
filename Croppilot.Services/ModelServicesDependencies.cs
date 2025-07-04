@@ -73,6 +73,7 @@ namespace Croppilot.Services
             service.AddScoped<ICacheService, CacheService>();
             service.AddScoped<ICacheKeyGenerator, CacheKeyGenerator>();
             service.AddScoped<IUserFavoritesService, UserFavoritesService>();
+            service.AddScoped<IUserVoteService, UserVoteService>();
 
             return service;
         }
