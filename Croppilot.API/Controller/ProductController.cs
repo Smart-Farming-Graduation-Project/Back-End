@@ -29,7 +29,8 @@ public class ProductController(IMediator mediator) : AppControllerBase
     /// </summary>
     [HttpGet("ProductsList"), SwaggerOperation(
          Summary = "Retrieves all products",
-         Description = "**Fetches a complete list of products with hybrid caching for global and user-specific data.**")]
+         Description =
+             "**Fetches a complete list of products with hybrid caching for global and user-specific data.**")]
     // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
     [AllowAnonymous]
     public async Task<IActionResult> GetProducts()
@@ -72,23 +73,37 @@ public class ProductController(IMediator mediator) : AppControllerBase
     }
 
     /// <summary>
-    /// Retrieves all products for the authenticated user.
-    /// Frontend: No parameters needed - user ID is extracted from the authentication token.
+    /// Retrieves all products for the authenticated user with pagination support.
+    /// Frontend: Optional parameters: pageNumber (default: 1), pageSize (default: 10), orderBy, search
     /// </summary>
     [HttpGet("MyProducts"), SwaggerOperation(
-         Summary = "Retrieves products for the authenticated user",
-         Description = "**Fetches all products owned by the currently authenticated user. User ID is automatically extracted from the JWT token.**")]
+         Summary = "Retrieves products for the authenticated user with pagination",
+         Description =
+             "**Fetches products owned by the currently authenticated user with pagination support. User ID is automatically extracted from the JWT token. Optional query parameters: pageNumber, pageSize, orderBy, search.**")]
     [Authorize(Policy = nameof(UserRoleEnum.User))]
     // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
-    public async Task<IActionResult> GetProductByUserId()
+    public async Task<IActionResult> GetProductByUserId(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] ProductOrderingEnum orderBy = ProductOrderingEnum.CreatedAt,
+        [FromQuery] string? search = null)
     {
         var userId = User.GetUserId();
         if (string.IsNullOrEmpty(userId))
         {
-            return Unauthorized("User ID could not be extracted from token.");
+            return Unauthorized("You are not authorized to access this resource.");
         }
 
-        var response = await mediator.Send(new GetProductsByUserIdQuery { UserId = userId });
+        var query = new GetProductsByUserIdQuery
+        {
+            UserId = userId,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            OrderBy = orderBy,
+            Search = search
+        };
+
+        var response = await mediator.Send(query);
         return NewResult(response);
     }
 

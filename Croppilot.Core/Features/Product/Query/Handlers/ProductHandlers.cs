@@ -102,24 +102,34 @@ public class ProductHandlers(
 	public async Task<Response<List<GetAllProductResponse>>> Handle(GetProductsByUserIdQuery request,
 		CancellationToken cancellationToken)
 	{
-		// Step 1: Get products by user ID
-		var userProducts = await GetOrCacheUserProductsAsync(request.UserId, cancellationToken);
+		// Step 1: Get paginated products by user ID (no caching)
+		var userProductsPaginated = await GetUserProductsPaginatedAsync(request, cancellationToken);
 		
 		// Step 2: Get user-specific favorite data (the requester's favorites, not the product owner's)
 		var currentUserId = GetCurrentUserId();
-		var productIds = userProducts.Select(p => p.ProductId).ToList();
+		var productIds = userProductsPaginated.Data.Select(p => p.ProductId).ToList();
 		var userFavorites = await userFavoritesService.GetUserFavoritesAsync(currentUserId, productIds, cancellationToken);
 		
 		// Step 3: Merge product data with current user's favorite data
-		var finalProducts = userProducts.Select(product => product.Adapt<GetAllProductResponse>() with
+		var finalProducts = userProductsPaginated.Data.Select(product => product.Adapt<GetAllProductResponse>() with
 		{
 			IsFavorite = userFavorites.GetValueOrDefault(product.ProductId, false)
 		}).ToList();
 		
-		var result = Success(finalProducts);
-		result.Meta = new Dictionary<string, object> { { "count", finalProducts.Count } };
+		var productMeta = new Dictionary<string, object>
+		{
+			{"Current Page", userProductsPaginated.CurrentPage},
+			{"Total Pages", userProductsPaginated.TotalPages},
+			{"Page Size", userProductsPaginated.PageSize},
+			{"Total Count", userProductsPaginated.TotalCount},
+			{"Has Next", userProductsPaginated.HasNextPage},
+			{"Has Previous", userProductsPaginated.HasPreviousPage},
+			{"Meta", userProductsPaginated.Meta},
+			{"Succeeded", userProductsPaginated.Succeeded},
+			{"Message", userProductsPaginated.Messages}
+		};
 
-		return result;
+		return Success(finalProducts, meta: productMeta);
 	}
 
 	private async Task<List<GlobalProductResponse>> GetOrCacheUserProductsAsync(string userId, CancellationToken cancellationToken)
@@ -236,6 +246,60 @@ public class ProductHandlers(
 			},
 			TimeSpan.FromMinutes(15), // Cache paginated results for 15 minutes
 			cancellationToken);
+	}
+
+	private async Task<PaginatedResult<GlobalProductResponse>> GetUserProductsPaginatedAsync(
+		GetProductsByUserIdQuery request, CancellationToken cancellationToken)
+	{
+		// Get all products and filter by user ID
+		var allProducts = await productServices.GetAll(
+			includeProperties: ["Category", "ProductImages", "User"],
+			cancellationToken: cancellationToken);
+		
+		// Filter products by user ID
+		var userProducts = allProducts.Where(p => p.UserId == request.UserId);
+		
+		// Apply search filter if provided
+		if (!string.IsNullOrEmpty(request.Search))
+			userProducts = userProducts.Where(x => x.Name.Contains(request.Search) || x.Category.Name.Contains(request.Search));
+
+		// Apply ordering
+		userProducts = request.OrderBy switch
+		{
+			ProductOrderingEnum.Id => userProducts.OrderBy(x => x.Id),
+			ProductOrderingEnum.Name => userProducts.OrderBy(x => x.Name),
+			ProductOrderingEnum.Category => userProducts.OrderBy(x => x.Category.Name),
+			ProductOrderingEnum.Price => userProducts.OrderBy(x => x.Price),
+			ProductOrderingEnum.Availability => userProducts.OrderBy(x => x.Availability),
+			ProductOrderingEnum.CreatedAt => userProducts.OrderBy(x => x.CreatedAt),
+			ProductOrderingEnum.UpdatedAt => userProducts.OrderBy(x => x.UpdatedAt),
+			_ => userProducts.OrderBy(x => x.CreatedAt)
+		};
+		
+		// Apply pagination
+		var paginatedProducts = await userProducts
+			.Select(product => new GlobalProductResponse(
+				product.Id,
+				product.Name,
+				product.Category.Name,
+				product.Description,
+				product.Price,
+				product.Availability.ToString(),
+				0.0, // AverageRating will be calculated below
+				product.User.UserName,
+				product.ProductImages.Select(img => img.ImageUrl).ToList()
+			))
+			.ToPaginatedListAsync(request.PageNumber, request.PageSize);
+		
+		// Calculate average rating for each product
+		for (int i = 0; i < paginatedProducts.Data.Count; i++)
+		{
+			var averageRating = await reviewService.GetAverageRatingByProductIdAsync(
+				paginatedProducts.Data[i].ProductId, cancellationToken);
+			paginatedProducts.Data[i] = paginatedProducts.Data[i] with { AverageRating = averageRating };
+		}
+		
+		return paginatedProducts;
 	}
 
 	private string GetCurrentUserId()
