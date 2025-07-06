@@ -18,7 +18,8 @@ public class ProductHandlers(
 	: ResponseHandler,
 		IRequestHandler<GetAllProductQuery, Response<List<GetAllProductResponse>>>,
 		IRequestHandler<GetProductByIdQuery, Response<GetProductByIdResponse>>,
-		IRequestHandler<GetProductPaginatedQuery, Response<List<GetProductPaginatedResponse>>>
+		IRequestHandler<GetProductPaginatedQuery, Response<List<GetProductPaginatedResponse>>>,
+		IRequestHandler<GetProductsByUserIdQuery, Response<List<GetAllProductResponse>>>
 {
 	public async Task<Response<List<GetAllProductResponse>>> Handle(GetAllProductQuery request,
 		CancellationToken cancellationToken)
@@ -96,6 +97,59 @@ public class ProductHandlers(
 		};
 
 		return Success(finalProducts, meta: productMeta);
+	}
+
+	public async Task<Response<List<GetAllProductResponse>>> Handle(GetProductsByUserIdQuery request,
+		CancellationToken cancellationToken)
+	{
+		// Step 1: Get products by user ID
+		var userProducts = await GetOrCacheUserProductsAsync(request.UserId, cancellationToken);
+		
+		// Step 2: Get user-specific favorite data (the requester's favorites, not the product owner's)
+		var currentUserId = GetCurrentUserId();
+		var productIds = userProducts.Select(p => p.ProductId).ToList();
+		var userFavorites = await userFavoritesService.GetUserFavoritesAsync(currentUserId, productIds, cancellationToken);
+		
+		// Step 3: Merge product data with current user's favorite data
+		var finalProducts = userProducts.Select(product => product.Adapt<GetAllProductResponse>() with
+		{
+			IsFavorite = userFavorites.GetValueOrDefault(product.ProductId, false)
+		}).ToList();
+		
+		var result = Success(finalProducts);
+		result.Meta = new Dictionary<string, object> { { "count", finalProducts.Count } };
+
+		return result;
+	}
+
+	private async Task<List<GlobalProductResponse>> GetOrCacheUserProductsAsync(string userId, CancellationToken cancellationToken)
+	{
+		var cacheKey = cacheKeyGenerator.GenerateUserKey(userId, "user-products");
+		
+		return await cacheService.GetOrSetAsync(
+			cacheKey,
+			async () =>
+			{
+				var productList = await productServices.GetAll(
+					includeProperties: ["Category", "ProductImages", "User"],
+					cancellationToken: cancellationToken);
+				
+				// Filter products by user ID
+				var userProducts = productList.Where(p => p.UserId == userId).ToList();
+				var globalProducts = userProducts.Adapt<List<GlobalProductResponse>>();
+				
+				// Calculate average rating for each product
+				for (int i = 0; i < globalProducts.Count; i++)
+				{
+					var averageRating = await reviewService.GetAverageRatingByProductIdAsync(
+						globalProducts[i].ProductId, cancellationToken);
+					globalProducts[i] = globalProducts[i] with { AverageRating = averageRating };
+				}
+				
+				return globalProducts;
+			},
+			TimeSpan.FromMinutes(15), // Cache user products for 15 minutes
+			cancellationToken);
 	}
 
 	private async Task<List<GlobalProductResponse>> GetOrCacheGlobalProductsAsync(CancellationToken cancellationToken)

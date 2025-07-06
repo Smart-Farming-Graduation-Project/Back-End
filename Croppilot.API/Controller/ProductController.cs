@@ -72,6 +72,27 @@ public class ProductController(IMediator mediator) : AppControllerBase
     }
 
     /// <summary>
+    /// Retrieves all products for the authenticated user.
+    /// Frontend: No parameters needed - user ID is extracted from the authentication token.
+    /// </summary>
+    [HttpGet("MyProducts"), SwaggerOperation(
+         Summary = "Retrieves products for the authenticated user",
+         Description = "**Fetches all products owned by the currently authenticated user. User ID is automatically extracted from the JWT token.**")]
+    [Authorize(Policy = nameof(UserRoleEnum.User))]
+    // [EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
+    public async Task<IActionResult> GetProductByUserId()
+    {
+        var userId = User.GetUserId();
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("User ID could not be extracted from token.");
+        }
+
+        var response = await mediator.Send(new GetProductsByUserIdQuery { UserId = userId });
+        return NewResult(response);
+    }
+
+    /// <summary>
     /// Creates a new product.
     /// Frontend: Provide product details (e.g., name, description, price, etc.) in the request body.
     /// </summary>
