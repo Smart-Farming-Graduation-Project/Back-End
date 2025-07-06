@@ -69,7 +69,11 @@ namespace Croppilot.Services
             service.AddScoped<IAlertsServices, AlertsServices>();
             service.AddHttpClient();
 
-
+            // Register caching services
+            service.AddScoped<ICacheService, CacheService>();
+            service.AddScoped<ICacheKeyGenerator, CacheKeyGenerator>();
+            service.AddScoped<IUserFavoritesService, UserFavoritesService>();
+            service.AddScoped<IUserVoteService, UserVoteService>();
 
             return service;
         }

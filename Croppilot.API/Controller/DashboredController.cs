@@ -13,14 +13,14 @@ namespace Croppilot.API.Controller
     [ApiController]
     public class DashboredController(IMediator mediator) : AppControllerBase
     {
-        [ResponseCache(CacheProfileName = "OneDayCache"), HttpGet("Weather/current")]
+        [HttpGet("Weather/current")]
         //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetCurrentWeather(string city = SD.DefaultCity)
         {
             var result = await mediator.Send(new WeatherDataModel(city));
             return NewResult(result);
         }
-        [ResponseCache(CacheProfileName = "FiveDayCache"), HttpGet("Weather/forecast")]
+        [HttpGet("Weather/forecast")]
         //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetWeatherForecast(string? city = SD.DefaultCity)
         {
@@ -42,7 +42,7 @@ namespace Croppilot.API.Controller
             var result = await mediator.Send(new GetFieldById(id));
             return NewResult(result);
         }
-        [ResponseCache(CacheProfileName = "NoCache"), HttpGet("Fields")]
+        [HttpGet("Fields")]
         //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetAllFields()
         {
@@ -71,7 +71,7 @@ namespace Croppilot.API.Controller
             return NewResult(result);
         }
 
-        [ResponseCache(CacheProfileName = "NoCache"), HttpGet("Equipments")]
+        [HttpGet("Equipments")]
         //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetAllEquipments()
         {
@@ -106,21 +106,21 @@ namespace Croppilot.API.Controller
             var result = await mediator.Send(command);
             return NewResult(result);
         }
-        [ResponseCache(CacheProfileName = "LongCache"), HttpGet("FarmStatus")]
+        [HttpGet("FarmStatus")]
         //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetFarmStatus()
         {
             var result = await mediator.Send(new GetFarmStatusModel());
             return NewResult(result);
         }
-        [ResponseCache(CacheProfileName = "LongCache"), HttpGet("SoilMoisture")]
+        [HttpGet("SoilMoisture")]
         //[EnableRateLimiting(RateLimiters.ReadOperationsLimit)]
         public async Task<IActionResult> GetSoilMoisture()
         {
             var result = await mediator.Send(new SoilMoistureModel());
             return NewResult(result);
         }
-        [ResponseCache(CacheProfileName = "NoCache"), HttpGet("GetAlerts")]
+        [HttpGet("GetAlerts")]
         public async Task<IActionResult> GetAlerts()
         {
             var result = await mediator.Send(new GetAllAlerts());

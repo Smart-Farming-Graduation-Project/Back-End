@@ -14,7 +14,7 @@ public class WishlistController(IMediator mediator)
     /// Retrieves the current user's wishlist.
     /// </summary>
     /// <returns>An <see cref="IActionResult"/> containing the wishlist data or an error response.</returns>
-    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetWishlist"), SwaggerOperation(
+    [HttpGet("GetWishlist"), SwaggerOperation(
          Summary = "Retrieves the current user's wishlist",
          Description = "**Fetches the wishlist for the authenticated user.**")]
     public async Task<IActionResult> GetWishlist()

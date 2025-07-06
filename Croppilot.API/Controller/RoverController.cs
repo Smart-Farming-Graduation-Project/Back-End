@@ -50,7 +50,6 @@ public class RoverController : AppControllerBase
     /// </summary>
     /// <returns>List of all rovers</returns>
     [HttpGet]
-    [ResponseCache(CacheProfileName = "Default")]
     [SwaggerOperation(
         Summary = "Get all rovers",
         Description = "Retrieves all rovers in the system for administrative oversight.")]
@@ -68,7 +67,6 @@ public class RoverController : AppControllerBase
     /// <param name="userName">Username to retrieve rovers for</param>
     /// <returns>List of user's rovers</returns>
     [HttpGet("user/{userName}/rovers")]
-    [ResponseCache(CacheProfileName = "Default")]
     [SwaggerOperation(
         Summary = "Get all rovers for a user",
         Description = "Retrieves all rovers associated with the specified username.")]
@@ -89,7 +87,6 @@ public class RoverController : AppControllerBase
     /// <param name="roverId">Unique rover identifier</param>
     /// <returns>Rover details</returns>
     [HttpGet("{roverId}")]
-    [ResponseCache(CacheProfileName = "Default")]
     [SwaggerOperation(
         Summary = "Get rover by ID",
         Description = "Retrieves detailed information for the specified rover.")]

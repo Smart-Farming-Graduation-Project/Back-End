@@ -2,6 +2,6 @@
 
 namespace Croppilot.Core.Features.Posts.Query.Models;
 
-public class GetPostsQuery : IRequest<Response<List<PostResponse>>>
+public class GetPostsQuery : IRequest<Response<List<GetAllPostsResponse>>>
 {
 }

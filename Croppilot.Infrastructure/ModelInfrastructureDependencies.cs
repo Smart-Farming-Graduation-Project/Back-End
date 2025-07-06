@@ -10,8 +10,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System.Text;
 
 namespace Croppilot.Infrastructure
@@ -21,7 +23,8 @@ namespace Croppilot.Infrastructure
         public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection service,
             IConfiguration confg)
         {
-            service.AddHangfireConfigurations(confg);
+            service.AddHangfireConfigurations(confg)
+                .AddRedisConfigurations(confg);
 
             // service.AddTransient(typeof(IGenericRepository<>),typeof(GenericRepository<>));
             service.AddTransient<IProductRepository, ProductRepository>();
@@ -47,6 +50,7 @@ namespace Croppilot.Infrastructure
             service.AddTransient<IEquipmentRepository, EquipmentRepository>();
             service.AddTransient<ISoilRepository, SoilRepository>();
             service.AddTransient<IAlertsRepository, AlertsRepository>();
+
             #region Identity Service
 
             service.AddIdentityCore<ApplicationUser>(options =>
@@ -170,6 +174,42 @@ namespace Croppilot.Infrastructure
                 .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection")));
 
             services.AddHangfireServer();
+
+            return services;
+        }
+
+        private static IServiceCollection AddRedisConfigurations(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            // Configure Redis settings
+            var redisSettings = new RedisSettings();
+            configuration.GetSection("Redis").Bind(redisSettings);
+            services.Configure<RedisSettings>(configuration.GetSection("Redis"));
+
+            // Add Redis connection
+            services.AddSingleton<IConnectionMultiplexer>(provider =>
+            {
+                try
+                {
+                    var connectionString = redisSettings.ConnectionString;
+                    var options = ConfigurationOptions.Parse(connectionString);
+                    options.AbortOnConnectFail = false; // Don't crash on connection failure
+                    return ConnectionMultiplexer.Connect(connectionString);
+                }
+                catch (Exception ex)
+                {
+                    var logger = provider.GetService<ILogger<IConnectionMultiplexer>>();
+                    logger?.LogError(ex, "Failed to connect to Redis. Caching will be disabled.");
+                    return null!; // Allow graceful degradation
+                }
+            });
+
+            // Add distributed cache using Redis
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisSettings.ConnectionString;
+                options.InstanceName = redisSettings.InstanceName;
+            });
 
             return services;
         }

@@ -14,14 +14,14 @@ namespace Croppilot.API.Controller
             return NewResult(result);
         }
 
-        [ResponseCache(CacheProfileName = "NoCache"), HttpGet("feedback/{ImageId}")]
+        [HttpGet("feedback/{ImageId}")]
         public async Task<IActionResult> Feedback(Guid ImageId)
         {
             var result = await mediator.Send(new GetFeedback(ImageId));
             return NewResult(result);
         }
 
-        [ResponseCache(CacheProfileName = "NoCache"), HttpPost("wateringFeedback")]
+        [HttpPost("wateringFeedback")]
         public async Task<IActionResult> WateringFeedback(GetWateringFeedback command)
         {
             var language = Request.GetTypedHeaders().AcceptLanguage
@@ -31,7 +31,7 @@ namespace Croppilot.API.Controller
             return NewResult(result);
         }
 
-        [ResponseCache(CacheProfileName = "Default"), HttpGet("GetCurrentValue")]
+        [HttpGet("GetCurrentValue")]
         public async Task<IActionResult> GetCurrentValue()
         {
             var result = await mediator.Send(new GetCurrentValue());

@@ -10,4 +10,13 @@ public class VoteRepository(AppDbContext context) : GenericRepository<Vote>(cont
                                       && v.TargetId == targetId
                                       && v.TargetType == targetType, cancellationToken);
     }
+
+    public async Task<List<Vote>> GetUserVotesForPostsAsync(string userId, List<int> postIds, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Vote>()
+            .Where(v => v.UserId == userId
+                        && postIds.Contains(v.TargetId)
+                        && v.TargetType == "post")
+            .ToListAsync(cancellationToken);
+    }
 }

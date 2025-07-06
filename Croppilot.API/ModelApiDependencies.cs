@@ -14,38 +14,7 @@ public static class ModelApiDependencies
 {
     public static IServiceCollection AddApiDependencies(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddControllers(options =>
-            {
-                // Cache Profiles
-                options.CacheProfiles.Add("Default", new CacheProfile
-                {
-                    Duration = 30,
-                    Location = ResponseCacheLocation.Any
-                });
-
-                options.CacheProfiles.Add("NoCache", new CacheProfile
-                {
-                    NoStore = true,
-                    Location = ResponseCacheLocation.None
-                });
-
-                options.CacheProfiles.Add("LongCache", new CacheProfile
-                {
-                    Duration = 300,
-                    Location = ResponseCacheLocation.Client
-                });
-                options.CacheProfiles.Add("OneDayCache", new CacheProfile
-                {
-                    Duration = 86400, // 60 * 60 * 24 = 86400 seconds = 1 day
-                    Location = ResponseCacheLocation.Client
-                });
-
-                options.CacheProfiles.Add("FiveDayCache", new CacheProfile
-                {
-                    Duration = 432000, // 60 * 60 * 24 * 5 = 432000 seconds = 5 days
-                    Location = ResponseCacheLocation.Client
-                });
-            })
+        services.AddControllers()
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

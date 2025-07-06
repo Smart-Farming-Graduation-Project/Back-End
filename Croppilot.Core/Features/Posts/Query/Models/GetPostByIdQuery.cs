@@ -2,7 +2,7 @@
 
 namespace Croppilot.Core.Features.Posts.Query.Models;
 
-public class GetPostByIdQuery : IRequest<Response<PostResponse>>
+public class GetPostByIdQuery : IRequest<Response<GetPostByIdResponse>>
 {
     public int Id { get; set; }
 }

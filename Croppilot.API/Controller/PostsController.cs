@@ -21,7 +21,7 @@ public class PostsController(IMediator mediator) : AppControllerBase
     /// <returns>
     /// An <see cref="IActionResult"/> containing a list of posts or an error response.
     /// </returns>
-    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetPosts"), AllowAnonymous, SwaggerOperation(
+    [HttpGet("GetPosts"), AllowAnonymous, SwaggerOperation(
          Summary = "Retrieve all posts",
          Description = "**Fetches all posts available in the system.**")]
     public async Task<IActionResult> GetPosts()
@@ -38,12 +38,29 @@ public class PostsController(IMediator mediator) : AppControllerBase
     /// <returns>
     /// An <see cref="IActionResult"/> containing the post details or an error response.
     /// </returns>
-    [ResponseCache(CacheProfileName = "Default"), HttpGet("GetPost/{id}"), AllowAnonymous, SwaggerOperation(
+    [HttpGet("GetPost/{id}"), AllowAnonymous, SwaggerOperation(
          Summary = "Retrieve a specific post",
          Description = "**Fetches the details of a post by its ID.**")]
     public async Task<IActionResult> GetPostById([FromRoute] int id)
     {
         var query = new GetPostByIdQuery { Id = id };
+        var response = await mediator.Send(query);
+        return NewResult(response);
+    }
+
+    /// <summary>
+    /// Retrieves all posts created by a specific user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user whose posts to retrieve.</param>
+    /// <returns>
+    /// An <see cref="IActionResult"/> containing a list of posts created by the user or an error response.
+    /// </returns>
+    [HttpGet("GetPostsByUser/{userId}"), AllowAnonymous, SwaggerOperation(
+         Summary = "Retrieve posts by user",
+         Description = "**Fetches all posts created by a specific user.**")]
+    public async Task<IActionResult> GetPostsByUserId([FromRoute] string userId)
+    {
+        var query = new GetPostsByUserIdQuery { UserId = userId };
         var response = await mediator.Send(query);
         return NewResult(response);
     }
